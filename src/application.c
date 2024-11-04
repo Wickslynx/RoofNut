@@ -20,13 +20,15 @@ void check_vk_result(VkResult err) {
 
 // Create and initialize the Application
 Application* Application_Create(const ApplicationSpecification* specification) {
-    Application* app = (Application*)malloc(sizeof(Application));
+    Application* app = (Application*)malloc(sizeof(Application)); //Malloc the size of the application.
     if (!app) {
+        printf("Memory allocation failed.")
         return NULL; // Memory allocation failed
     }
 
     app->specification = *specification;
     app->running = false;
+    app->customtitlebar = false;
     app->timeStep = 0.0f;
     app->frameTime = 0.0f;
     app->lastFrameTime = 0.0f;
@@ -40,12 +42,19 @@ Application* Application_Create(const ApplicationSpecification* specification) {
         return NULL; // GLFW initialization failed
     }
 
+    //If, Customtitlebar is enabled, Remove old titlebar and draw new titlebar !BETA!.
+
+    if (app->customtitlebar != false) {
+        glfwWindowHint(GLFW_DECORATED, GLFW_FALSE);
+        DrawCustomTitleBar(&app);
+    };
+
     // Create the window
     app->windowHandle = glfwCreateWindow(app->specification.width, app->specification.height, app->specification.name, NULL, NULL);
     if (!app->windowHandle) {
         glfwTerminate();
         free(app);
-        return NULL; // Window creation failed
+        return NULL; //Window creation failed. 
     }
 
     return app;
@@ -65,7 +74,7 @@ void Application_Destroy(Application* app) {
 
 
 void DrawCustomTitleBar(Application* app) {
-    // Need to be implemented
+    //NEED TO BE IMPLEMENTED.
 }
 
 // Run the application main loop
@@ -152,7 +161,7 @@ VkCommandBuffer Application_GetCommandBuffer(bool begin) {
     // VkCommandPool commandPool = ...; // Placeholder for command pool
     VkCommandBufferAllocateInfo allocateInfo = {
         .sType = VK_STRUCTURE_TYPE_COMMAND_BUFFER_ALLOCATE_INFO,
-        .commandPool = VK_NULL_HANDLE, // Placeholder for the command pool
+        .commandPool = VK_NULL_HANDLE, /
         .level = VK_COMMAND_BUFFER_LEVEL_PRIMARY,
         .commandBufferCount = 1
     };
@@ -186,8 +195,7 @@ void Application_FlushCommandBuffer(VkCommandBuffer commandBuffer) {
 
 // Submit a resource cleanup function
 void Application_SubmitResourceFree(void (*func)(void)) {
-    // Assuming there's a resource management system in place
-    // Enqueue func for later execution
+    //NEED TO BE IMPLEMTENTED !NOTE! Number 2.
 }
 
 // Placeholder for client-defined application creation
