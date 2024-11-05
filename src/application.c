@@ -64,9 +64,6 @@ Application* Application_Create(const ApplicationSpecification* specification) {
 void Application_Destroy(Application* app) {
     if (!app) return;
 
-    // Cleanup Vulkan and GLFW resources
-    // CleanupVulkan(app); // Placeholder for Vulkan cleanup function
-
     glfwDestroyWindow(app->windowHandle);
     glfwTerminate();
     free(app);
@@ -82,11 +79,12 @@ void Application_Run(Application* app) {
     app->running = true;
 
     while (app->running && !glfwWindowShouldClose(app->windowHandle)) {
-        glfwPollEvents();
-
-        if (Application.DrawCustomTitleBar == true) {
-            DrawCustomTitleBar(Application* app);
-        }
+        glfwPollEvents()
+        //If, Customtitlebar is enabled, Remove old titlebar and draw new titlebar !BETA!.
+        if (app->customtitlebar == true) {
+            glfwWindowHint(GLFW_DECORATED, GLFW_FALSE);
+            DrawCustomTitleBar(&app);
+        };
 
         // Update layers and render UI
         for (size_t i = 0; i < app->layerCount; ++i) {
@@ -107,7 +105,9 @@ void Application_Run(Application* app) {
         app->lastFrameTime = time;
     }
 }
-
+void OnUIRender() {
+    
+}
 // Set the menubar callback function
 void Application_SetMenubarCallback(Application* app, LayerCallback menubarCallback) {
     app->menubarCallback = menubarCallback;
