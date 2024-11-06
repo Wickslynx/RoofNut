@@ -198,9 +198,5 @@ void Application_SubmitResourceFree(void (*func)(void)) {
     //NEED TO BE IMPLEMTENTED !NOTE! Number 2.
 }
 
-// Placeholder for client-defined application creation
-Application* CreateApplication(int argc, char** argv) {
-    ApplicationSpecification spec = { "My Application", 1600, 900 };
-    return Application_Create(&spec);
-}
+
 
