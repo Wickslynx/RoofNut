@@ -7,6 +7,7 @@
 
 #include "Application.h"
 #include "Network.h"
+#include "image.h"
 #include "Input.h"
 #include "Utilites.h"
 
