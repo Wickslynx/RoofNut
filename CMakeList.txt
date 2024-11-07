@@ -6,5 +6,4 @@ find_package(Vulkan REQUIRED)
 
 add_executable(RoofNut roofnut.c)
 
-# Link Vulkan to your project
 target_link_libraries(RoofNut Vulkan::Vulkan)
