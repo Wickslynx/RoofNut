@@ -28,7 +28,6 @@ int nk_glfw_vulkan_init(GLFWwindow* window, struct nk_context** ctx) {
     if (*ctx == NULL) {
         return -1;  // Allocation failed
     }
-    // Initialization code for Vulkan, GLFW, and Nuklear backend should go here
     return 0;
 }
 
