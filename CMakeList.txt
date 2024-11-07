@@ -1,0 +1,11 @@
+cmake_minimum_required(VERSION 3.10)
+project(RoofNut)
+
+# Find Vulkan package
+find_package(Vulkan REQUIRED)
+
+# Add your source files
+add_executable(RoofNut main.cpp)  # Replace with your source files
+
+# Link Vulkan to your project
+target_link_libraries(RoofNut Vulkan::Vulkan)
