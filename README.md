@@ -1,9 +1,12 @@
-﻿# RoofNut---GUI-library
-RoofNut is an simple application framework built with Vulkan and Nuclear, It supports Linux and Windows. 
-Roofnut was heavily inspired by Studio Chernos Walnut application framework and translated into C. 
-!NOTE! Roofnut is in its expermintal stage, nothing is finished. 
-
+﻿# RoofNut -GUI-FrameWork-
+ RoofNut is a simple GUI framework that was built as a school project.
+ RoofNut uses Nuklear for drawing to the screen.
+ ---------------------------------------------------------
+ RoofNut was heavily inspired by Walnut GUI framework for C++.
+ We aim to be the best C GUI framework out there!
+------------------------------------------------------------
 # 3d party librarys:
-Nuclear.
+Nuklear.
+std_image
 GLFW.
 
