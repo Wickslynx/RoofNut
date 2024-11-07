@@ -1,1 +1,9 @@
+Hello, Im Wickslynx!
+Im the main developer for RoofNut.
+I would like to thank you: the user, the collaberator, the contributor,  for taking part in this project.
+Please support this project as it is alot to maintain and build while having alot of schoolwork at the same time.
+I would also like to thank Elliot7118 for being a part of this project for such a long time and being one of my maintainers.
+I will leave a list of contributors under this:
+Elliot7118 (Worked on the core).
+
 
