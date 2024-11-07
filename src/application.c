@@ -8,6 +8,9 @@ VkInstance g_Instance;
 VkPhysicalDevice g_PhysicalDevice;
 VkDevice g_Device;
 GLFWwindow* g_Window;
+VkQueue g_Queue;
+uint32_t queueFamilyIndex = 0; // The queue family index where graphics operations are supported
+vkGetDeviceQueue(g_Device, queueFamilyIndex, 0, &g_Queue);
 
 // Global Nuklear context
 struct nk_context *ctx;
@@ -220,10 +223,26 @@ void Application_FlushCommandBuffer(VkCommandBuffer commandBuffer) {
         .pCommandBuffers = &commandBuffer
     };
 
-    check_vk_result(vkEndCommandBuffer(commandBuffer));
-    // Submit to the graphics queue (assuming g_Queue is defined elsewhere)
-    check_vk_result(vkQueueSubmit(VK_NULL_HANDLE, 1, &submitInfo, VK_NULL_HANDLE)); // Placeholder for actual queue handle
-    check_vk_result(vkQueueWaitIdle(VK_NULL_HANDLE)); // Placeholder for actual queue handle
+   // Assuming g_Device is your Vulkan device and g_Queue is your Vulkan queue handle
+
+// Allocate the command buffer and record commands (this part is handled earlier in your code)
+
+// End the command buffer recording
+check_vk_result(vkEndCommandBuffer(commandBuffer));
+
+// Submit the command buffer to the Vulkan queue
+VkSubmitInfo submitInfo = {
+    .sType = VK_STRUCTURE_TYPE_SUBMIT_INFO,
+    .commandBufferCount = 1,
+    .pCommandBuffers = &commandBuffer,
+    .signalSemaphoreCount = 0, // Optional semaphore for synchronization
+    .pSignalSemaphores = NULL
+};
+
+
+    check_vk_result(vkQueueSubmit(g_Queue, 1, &submitInfo, VK_NULL_HANDLE));
+    check_vk_result(vkQueueWaitIdle(g_Queue));  // Wait for the GPU to finish
+
 }
 
 // Submit a resource cleanup function
