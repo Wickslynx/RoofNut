@@ -8,7 +8,5 @@
 
  
 # 3d party librarys:
-Nuklear.
-std_image
-GLFW.
+Nuklear, GLFW and Vulkan.
 
