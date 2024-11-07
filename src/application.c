@@ -9,6 +9,12 @@ VkPhysicalDevice g_PhysicalDevice;
 VkDevice g_Device;
 GLFWwindow* g_Window;
 
+// Global Nuklear context
+struct nk_context *ctx;
+
+void OnGUiRender() {
+    
+}
 // Function to check Vulkan results
 void check_vk_result(VkResult err) {
     if (err != VK_SUCCESS) {
@@ -17,12 +23,37 @@ void check_vk_result(VkResult err) {
     }
 }
 
+// Function to initialize Nuklear with Vulkan and GLFW
+int nk_glfw_vulkan_init(GLFWwindow* window, struct nk_context** ctx) {
+    // Initialize Nuklear with Vulkan and GLFW here
+    // This is a placeholder function, you will need to find or implement a proper Vulkan backend for Nuklear
+    *ctx = (struct nk_context*)malloc(sizeof(struct nk_context));
+    if (*ctx == NULL) {
+        return -1;  // Allocation failed
+    }
+    // Initialization code for Vulkan, GLFW, and Nuklear backend should go here
+    // You should set up Vulkan command buffers, pipelines, and shaders for rendering the UI
+    return 0;
+}
+
+// Function to render Nuklear UI with Vulkan
+void nk_glfw_vulkan_render(struct nk_context* ctx) {
+    // This is a placeholder for rendering Nuklear UI with Vulkan commands
+    // Vulkan rendering code goes here, including command buffers, pipelines, and swapchain management
+}
+
+// Shutdown Nuklear and Vulkan
+void nk_glfw_vulkan_shutdown(struct nk_context* ctx) {
+    // Cleanup Nuklear resources
+    free(ctx);  // Free Nuklear context
+    // Cleanup Vulkan resources if necessary
+}
 
 // Create and initialize the Application
 Application* Application_Create(const ApplicationSpecification* specification) {
-    Application* app = (Application*)malloc(sizeof(Application)); //Malloc the size of the application.
+    Application* app = (Application*)malloc(sizeof(Application)); // Malloc the size of the application.
     if (!app) {
-        printf("Memory allocation failed.")
+        printf("Memory allocation failed.\n");
         return NULL; // Memory allocation failed
     }
 
@@ -42,19 +73,25 @@ Application* Application_Create(const ApplicationSpecification* specification) {
         return NULL; // GLFW initialization failed
     }
 
-    //If, Customtitlebar is enabled, Remove old titlebar and draw new titlebar !BETA!.
-
+    // If, Customtitlebar is enabled, Remove old titlebar and draw new titlebar !BETA!.
     if (app->customtitlebar != false) {
         glfwWindowHint(GLFW_DECORATED, GLFW_FALSE);
-        DrawCustomTitleBar(&app);
-    };
+        DrawCustomTitleBar(app);
+    }
 
     // Create the window
     app->windowHandle = glfwCreateWindow(app->specification.width, app->specification.height, app->specification.name, NULL, NULL);
     if (!app->windowHandle) {
         glfwTerminate();
         free(app);
-        return NULL; //Window creation failed. 
+        return NULL; // Window creation failed
+    }
+
+    // Initialize Nuklear
+    if (nk_glfw_vulkan_init(app->windowHandle, &ctx) != 0) {
+        printf("Failed to initialize Nuklear.\n");
+        free(app);
+        return NULL; // Nuklear initialization failed
     }
 
     return app;
@@ -64,14 +101,17 @@ Application* Application_Create(const ApplicationSpecification* specification) {
 void Application_Destroy(Application* app) {
     if (!app) return;
 
+    // Shutdown Nuklear and Vulkan resources
+    nk_glfw_vulkan_shutdown(ctx);
+
     glfwDestroyWindow(app->windowHandle);
     glfwTerminate();
     free(app);
 }
 
-
+// Custom title bar drawing function (Not implemented)
 void DrawCustomTitleBar(Application* app) {
-    //NEED TO BE IMPLEMENTED.
+    // NEED TO BE IMPLEMENTED.
 }
 
 // Run the application main loop
@@ -79,21 +119,16 @@ void Application_Run(Application* app) {
     app->running = true;
 
     while (app->running && !glfwWindowShouldClose(app->windowHandle)) {
-        glfwPollEvents()
-        //If, Customtitlebar is enabled, Remove old titlebar and draw new titlebar !BETA!.
-        if (app->customtitlebar == true) {
-            glfwWindowHint(GLFW_DECORATED, GLFW_FALSE);
-            DrawCustomTitleBar(&app);
-        };
+        glfwPollEvents();
 
-        // Update layers and render UI
-        for (size_t i = 0; i < app->layerCount; ++i) {
-            if (app->layers[i] != NULL) {
-                app->layers[i]->OnUpdate(app->timeStep); // Assume Layer has an OnUpdate method
-                app->layers[i]->OnUIRender(); // Assume Layer has an OnUIRender method
-            }
-        }
+        /
+        nk_glfw_vulkan_new_frame(ctx);
 
+        // Create your Nuklear window and widgets here
+        OnGuiRender();
+
+        // Render the Nuklear UI with Vulkan
+        nk_glfw_vulkan_render(ctx);
 
         // Swap buffers
         glfwSwapBuffers(app->windowHandle);
@@ -105,9 +140,7 @@ void Application_Run(Application* app) {
         app->lastFrameTime = time;
     }
 }
-void OnUIRender() {
-    
-}
+
 // Set the menubar callback function
 void Application_SetMenubarCallback(Application* app, LayerCallback menubarCallback) {
     app->menubarCallback = menubarCallback;
@@ -161,7 +194,7 @@ VkCommandBuffer Application_GetCommandBuffer(bool begin) {
     // VkCommandPool commandPool = ...; // Placeholder for command pool
     VkCommandBufferAllocateInfo allocateInfo = {
         .sType = VK_STRUCTURE_TYPE_COMMAND_BUFFER_ALLOCATE_INFO,
-        .commandPool = VK_NULL_HANDLE, /
+        .commandPool = VK_NULL_HANDLE, // Placeholder for actual command pool
         .level = VK_COMMAND_BUFFER_LEVEL_PRIMARY,
         .commandBufferCount = 1
     };
@@ -195,8 +228,5 @@ void Application_FlushCommandBuffer(VkCommandBuffer commandBuffer) {
 
 // Submit a resource cleanup function
 void Application_SubmitResourceFree(void (*func)(void)) {
-    //NEED TO BE IMPLEMTENTED !NOTE! Number 2.
+    // NEED TO BE IMPLEMENTED !NOTE! Number 2.
 }
-
-
-
