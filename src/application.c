@@ -3,21 +3,17 @@
 #include <string.h>
 #include <stdio.h>
 
-// Global variables for Vulkan and GLFW resources
+// Global Vulkan resources
 VkInstance g_Instance;
 VkPhysicalDevice g_PhysicalDevice;
 VkDevice g_Device;
 GLFWwindow* g_Window;
 VkQueue g_Queue;
 uint32_t queueFamilyIndex = 0; // The queue family index where graphics operations are supported
-vkGetDeviceQueue(g_Device, queueFamilyIndex, 0, &g_Queue);
 
 // Global Nuklear context
 struct nk_context *ctx;
 
-void OnGUiRender() {
-    
-}
 // Function to check Vulkan results
 void check_vk_result(VkResult err) {
     if (err != VK_SUCCESS) {
@@ -26,35 +22,30 @@ void check_vk_result(VkResult err) {
     }
 }
 
-// Function to initialize Nuklear with Vulkan and GLFW
+// Initialize Vulkan, GLFW, and Nuklear
 int nk_glfw_vulkan_init(GLFWwindow* window, struct nk_context** ctx) {
-    // Initialize Nuklear with Vulkan and GLFW here
-    // This is a placeholder function, you will need to find or implement a proper Vulkan backend for Nuklear
     *ctx = (struct nk_context*)malloc(sizeof(struct nk_context));
     if (*ctx == NULL) {
         return -1;  // Allocation failed
     }
     // Initialization code for Vulkan, GLFW, and Nuklear backend should go here
-    // You should set up Vulkan command buffers, pipelines, and shaders for rendering the UI
     return 0;
 }
 
-// Function to render Nuklear UI with Vulkan
+// Render Nuklear UI with Vulkan
 void nk_glfw_vulkan_render(struct nk_context* ctx) {
-    // This is a placeholder for rendering Nuklear UI with Vulkan commands
-    // Vulkan rendering code goes here, including command buffers, pipelines, and swapchain management
+    // This is where you would render Nuklear UI with Vulkan commands
+    // Vulkan rendering code goes here, including command buffers, pipelines, etc.
 }
 
 // Shutdown Nuklear and Vulkan
 void nk_glfw_vulkan_shutdown(struct nk_context* ctx) {
-    // Cleanup Nuklear resources
     free(ctx);  // Free Nuklear context
-    // Cleanup Vulkan resources if necessary
 }
 
 // Create and initialize the Application
 Application* Application_Create(const ApplicationSpecification* specification) {
-    Application* app = (Application*)malloc(sizeof(Application)); // Malloc the size of the application.
+    Application* app = (Application*)malloc(sizeof(Application)); // Malloc the size of the application
     if (!app) {
         printf("Memory allocation failed.\n");
         return NULL; // Memory allocation failed
@@ -67,7 +58,7 @@ Application* Application_Create(const ApplicationSpecification* specification) {
     app->frameTime = 0.0f;
     app->lastFrameTime = 0.0f;
     app->layerCount = 0;
-    app->layers = NULL; // Initialize layers to NULL
+    app->layers = NULL;
     app->menubarCallback = NULL;
 
     // Initialize GLFW
@@ -76,7 +67,7 @@ Application* Application_Create(const ApplicationSpecification* specification) {
         return NULL; // GLFW initialization failed
     }
 
-    // If, Customtitlebar is enabled, Remove old titlebar and draw new titlebar !BETA!.
+    // If custom title bar is enabled, handle it
     if (app->customtitlebar != false) {
         glfwWindowHint(GLFW_DECORATED, GLFW_FALSE);
         DrawCustomTitleBar(app);
@@ -90,7 +81,7 @@ Application* Application_Create(const ApplicationSpecification* specification) {
         return NULL; // Window creation failed
     }
 
-    // Initialize Nuklear
+    // Initialize Nuklear with Vulkan
     if (nk_glfw_vulkan_init(app->windowHandle, &ctx) != 0) {
         printf("Failed to initialize Nuklear.\n");
         free(app);
@@ -112,9 +103,9 @@ void Application_Destroy(Application* app) {
     free(app);
 }
 
-// Custom title bar drawing function (Not implemented)
+// Custom title bar drawing function (Placeholder)
 void DrawCustomTitleBar(Application* app) {
-    // NEED TO BE IMPLEMENTED.
+    // NEED TO BE IMPLEMENTED
 }
 
 // Run the application main loop
@@ -124,13 +115,13 @@ void Application_Run(Application* app) {
     while (app->running && !glfwWindowShouldClose(app->windowHandle)) {
         glfwPollEvents();
 
-        /
+        // Create a new frame for Nuklear
         nk_glfw_vulkan_new_frame(ctx);
+        
+        //Users code will be run here.
+        OnUiRender();
 
-        // Create your Nuklear window and widgets here
-        OnGuiRender();
-
-        // Render the Nuklear UI with Vulkan
+        // Render Nuklear UI with Vulkan
         nk_glfw_vulkan_render(ctx);
 
         // Swap buffers
@@ -142,26 +133,6 @@ void Application_Run(Application* app) {
         app->timeStep = fminf(app->frameTime, 0.0333f); // Cap time step at ~30fps
         app->lastFrameTime = time;
     }
-}
-
-// Set the menubar callback function
-void Application_SetMenubarCallback(Application* app, LayerCallback menubarCallback) {
-    app->menubarCallback = menubarCallback;
-}
-
-// Push a layer to the application
-void Application_PushLayer(Application* app, struct Layer* layer) {
-    app->layers = (struct Layer**)realloc(app->layers, sizeof(struct Layer*) * (app->layerCount + 1));
-    if (app->layers) {
-        app->layers[app->layerCount] = layer; // Store the new layer
-        app->layerCount++;
-        layer->OnAttach(); // Call OnAttach for the new layer
-    }
-}
-
-// Close the application
-void Application_Close(Application* app) {
-    app->running = false;
 }
 
 // Get the current time
@@ -193,8 +164,6 @@ VkDevice Application_GetDevice() {
 VkCommandBuffer Application_GetCommandBuffer(bool begin) {
     VkCommandBuffer commandBuffer;
 
-    // Assuming a command pool is available, allocate command buffer here
-    // VkCommandPool commandPool = ...; // Placeholder for command pool
     VkCommandBufferAllocateInfo allocateInfo = {
         .sType = VK_STRUCTURE_TYPE_COMMAND_BUFFER_ALLOCATE_INFO,
         .commandPool = VK_NULL_HANDLE, // Placeholder for actual command pool
@@ -223,29 +192,8 @@ void Application_FlushCommandBuffer(VkCommandBuffer commandBuffer) {
         .pCommandBuffers = &commandBuffer
     };
 
-   // Assuming g_Device is your Vulkan device and g_Queue is your Vulkan queue handle
-
-// Allocate the command buffer and record commands (this part is handled earlier in your code)
-
-// End the command buffer recording
-check_vk_result(vkEndCommandBuffer(commandBuffer));
-
-// Submit the command buffer to the Vulkan queue
-VkSubmitInfo submitInfo = {
-    .sType = VK_STRUCTURE_TYPE_SUBMIT_INFO,
-    .commandBufferCount = 1,
-    .pCommandBuffers = &commandBuffer,
-    .signalSemaphoreCount = 0, // Optional semaphore for synchronization
-    .pSignalSemaphores = NULL
-};
-
-
+    check_vk_result(vkEndCommandBuffer(commandBuffer));
     check_vk_result(vkQueueSubmit(g_Queue, 1, &submitInfo, VK_NULL_HANDLE));
-    check_vk_result(vkQueueWaitIdle(g_Queue));  // Wait for the GPU to finish
-
+    check_vk_result(vkQueueWaitIdle(g_Queue));  // Wait for GPU to finish
 }
 
-// Submit a resource cleanup function
-void Application_SubmitResourceFree(void (*func)(void)) {
-    // NEED TO BE IMPLEMENTED !NOTE! Number 2.
-}
