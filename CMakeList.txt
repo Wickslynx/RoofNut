@@ -4,7 +4,6 @@ project(RoofNut)
 # Find Vulkan package
 find_package(Vulkan REQUIRED)
 
-# Add your source files
 add_executable(RoofNut roofnut.c)
 
 # Link Vulkan to your project
