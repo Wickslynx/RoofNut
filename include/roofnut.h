@@ -5,7 +5,7 @@
 #include "stb_image.h"
 #include "nuclear.h"
 
-#include "Application.h"
+#include "application.h"
 #include "Network.h"
 #include "image.h"
 #include "input.h"
