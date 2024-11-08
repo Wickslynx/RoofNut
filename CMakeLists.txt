@@ -5,8 +5,8 @@ project(RoofNut)
 # Find Vulkan package (Requires that Vulkan is installed)
 find_package(Vulkan REQUIRED)
 
-set(GLFW3_DIR "/include/GLFW/g)
-# Find GLFW3 (if it is installed in a non-standard location)
+set(GLFW3_DIR /include/GLFW/)
+
 find_package(GLFW3 REQUIRED)
 
 find_package(GLFW3 REQUIRED)
