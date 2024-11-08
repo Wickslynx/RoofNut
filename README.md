@@ -1,12 +1,13 @@
 ﻿# RoofNut
  **Version: 1.12**
+ **Currently testing and fixing the linker and cmake errors.**
  
  <small>RoofNut is a simple GUI framework that was built as a school project.
 </small>
 
  <small>RoofNut was heavily inspired by Walnut GUI framework for C++.
  We aim to be the best C GUI framework out there!</small>
-# !Note! RoofNut is not done, i don't even know if it works...
+# RoofNut is not done, i don't even know if it works...
 Use at your own risk, I haven't run any test on it yet and im pretty sertain that you will get Error. If you get any errors, please state them in Issues.
 # How does it work?
 <small> RoofNut uses GLFW and Vulkan to draw a window, you can find this code in the application.c file.
