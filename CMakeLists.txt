@@ -1,26 +1,21 @@
-cmake_minimum_required(VERSION 3.10)
+cmake_minimum_required(VERSION 3.14)
 
-project(RoofNut)
+project(YourVulkanProject)
 
-# Find Vulkan package (Requires that Vulkan is installed)
-find_package(Vulkan REQUIRED)
-
-set(GLFW3_DIR /include/GLFW/)
-
-find_package(GLFW3 REQUIRED)
-
-find_package(GLFW3 REQUIRED)
-
-# Add the source files to the executable
-add_executable(RoofNut 
-    src/application.c 
-    src/input.c 
-    src/Utilites.c 
-    src/image.c
+# Use FetchContent to download GLFW
+include(FetchContent)
+FetchContent_Declare(
+    glfw
+    GIT_REPOSITORY https://github.com/glfw/glfw.git
+    GIT_TAG master
 )
 
-# Specify include directories
-include_directories(${CMAKE_SOURCE_DIR}/include)
+FetchContent_MakeAvailable(glfw)
 
-# Link Vulkan to the executable
-target_link_libraries(RoofNut Vulkan::Vulkan)
+# Optional: Fetch Vulkan SDK or other dependencies here
+# For Vulkan, you'll likely need to use find_package or manually include headers/libs
+
+add_executable(RoofNut src/application.c, src/input.c, src/Utilites.c, src/image.c)
+
+# Link GLFW (and Vulkan if needed)
+target_link_libraries(your_project_name glfw)
