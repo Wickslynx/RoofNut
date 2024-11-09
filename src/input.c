@@ -1,8 +1,9 @@
-#include "Input.h"
+#include "input.h"
+#include <GLFW/glfw3.h>
 
 static int keys[1024];
 static int mouseButtons[32];
-static double mouseX, mouseY,
+static double mouseX, mouseY;
 
 void keycallback(GLFWwindow* window, int key, int scancode, int action, int mods) {
     if (key >= 0 && key < 1024) {
@@ -30,9 +31,9 @@ void cursor_position_callback(GLFWwindow* window, double xpos, double ypos) {
 }
 
 void Input_Init(GLFWwindow* window) {
-    glfSetKeyCallback(window, key_callback);
+    glfwSetKeyCallback(window, keycallback);
     glfwSetMouseButtonCallback(window, mouse_button_callback);
-    glfwsetCursorPosCallback(window, cursor_position_callback);
+    glfwSetCursorPosCallback(window, cursor_position_callback);
     
 }
 
