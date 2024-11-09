@@ -1,6 +1,6 @@
 
-#include "nuklear_glfw_vulkan.h"
-#include "Application.h"
+#include "librarys/Nuklear/nuklear_glfw_vulkan.h"
+#include "application.h"
 
 #define STB_IMAGE_IMPLEMENTATION
 #include "stb_image.h"
