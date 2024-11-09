@@ -19,6 +19,13 @@ For a more in depth guide, please see the "example.c" file.
 Wickslynx: Testing.
 
 Elliot7118: Adding timer to Utilites.
+
 # 3d party librarys:
 Nuklear, GLFW and Vulkan.
+
+# Required librarys:
+
+lixcursor-dev, libxrandr-dev, libxinerama-dev, libxi-dev
+
+**vulkan-sdk**
 
