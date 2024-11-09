@@ -29,3 +29,4 @@ lixcursor-dev, libxrandr-dev, libxinerama-dev, libxi-dev
 
 **vulkan-sdk**
 
+**OpenGL**
