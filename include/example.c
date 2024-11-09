@@ -1,5 +1,5 @@
 // main.c
-#include "roofnut.h" // Include the main Roofnut header
+#include <roofnut.h>
 #include <stdio.h>
 
 Application* app; //Init application.
