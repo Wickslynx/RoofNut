@@ -2,6 +2,8 @@
 #include <stdlib.h>
 #include <string.h>
 #include <stdio.h>
+#include "librarys/Nuklear/nuklear.h"
+#include "librarys/Nuklear/nuklear_glfw_vulkan.h"
 
 // Global Vulkan resources
 VkInstance g_Instance;
@@ -52,7 +54,7 @@ Application* Application_Create(const ApplicationSpecification* specification) {
 
     app->specification = *specification;
     app->running = false;
-    app->customtitlebar = false;
+    app->customTitleBar = false;
     app->timeStep = 0.0f;
     app->frameTime = 0.0f;
     app->lastFrameTime = 0.0f;
@@ -67,7 +69,7 @@ Application* Application_Create(const ApplicationSpecification* specification) {
     }
 
     // If custom title bar is enabled, handle it
-    if (app->customtitlebar != false) {
+    if (app->customTitleBar != false) {
         glfwWindowHint(GLFW_DECORATED, GLFW_FALSE);
         DrawCustomTitleBar(app);
     }
