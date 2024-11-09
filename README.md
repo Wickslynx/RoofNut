@@ -7,7 +7,8 @@
 
  <small>RoofNut was heavily inspired by Walnut GUI framework for C++.
  We aim to be the best C GUI framework out there!</small>
-# <small> Note, RoofNut is not done, you may get alot of errors when you will be running it. <small>
+ 
+ <small> Note, RoofNut is not done, you may get alot of errors when you run it. Please state every error you get in "Issues". <small>
 # How does it work?
 <small> RoofNut uses GLFW and Vulkan to draw a window, you can find this code in the application.c file.
 Nuklear is already installed and implemented with the library, you can write your Nuklear code if you call the OnGuiRender() function.
