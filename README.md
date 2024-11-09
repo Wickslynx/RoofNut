@@ -1,6 +1,6 @@
 ﻿# RoofNut
  **Version: 1.12**
- **Currently testing and fixing the linker and cmake errors.**
+
  
  <small>RoofNut is a simple GUI framework that was built as a school project.
 </small>
