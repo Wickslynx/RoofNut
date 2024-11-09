@@ -7,11 +7,11 @@ extern "C" {
 
 #include "application.h"
 #include "Network.h"
-#include "image.h"
 #include "input.h"
 #include "Utilites.h"
 
 #ifdef __cplusplus
 }
-
 #endif
+
+#endif // ROOFNUT_H
