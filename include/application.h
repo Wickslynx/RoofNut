@@ -39,11 +39,13 @@ typedef struct {
     LayerCallback menubarCallback;  // Function pointer for menubar callback
 } Application;
 
+extern struct nk_context *ctx;
+
 // Function declarations
 Application* Application_Create(const ApplicationSpecification* specification);
 void Application_Destroy(Application* app);
 void DrawCustomTitleBar(Application* app);
-
+void OnUiRender();
 void Application_Run(Application* app);
 void Application_SetMenubarCallback(Application* app, LayerCallback menubarCallback);
 void Application_PushLayer(Application* app, struct Layer* layer);
