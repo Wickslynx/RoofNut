@@ -30,3 +30,10 @@ lixcursor-dev, libxrandr-dev, libxinerama-dev, libxi-dev
 **vulkan-sdk**
 
 **OpenGL**
+
+**Commands:**
+
+sudo apt-get install libx11-dev libxrandr-dev libxinerama-dev libxcursor-dev libxi-dev libgl1-mesa-dev vulkan-utils libvulkan1 libvulkan-dev
+
+
+
