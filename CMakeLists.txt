@@ -37,12 +37,14 @@ FetchContent_MakeAvailable(nuklear)
 # Find Vulkan and OpenGL packages
 find_package(Vulkan REQUIRED)
 find_package(OpenGL REQUIRED)
+find_package(nuklear REQUIRED)
 
 # Link libraries
 target_link_libraries(RoofNut PRIVATE
     glfw
     Vulkan::Vulkan
     OpenGL::GL
+    nuklear
 )
 
 # Include directories for RoofNut and Nuklear headers
