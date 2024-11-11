@@ -1,9 +1,6 @@
 # RoofNut CMakeLists.txt
 
-# Ensure the CMake version is compatible
 cmake_minimum_required(VERSION 3.14)
-
-# Define the project name
 project(RoofNut)
 
 # Set the source files for the library
@@ -11,22 +8,31 @@ set(SOURCE_FILES
     src/application.c
     src/input.c
     src/Utilites.c
+    include/example.c
 )
 
-# Add a static library (use SHARED for a dynamic/shared library if needed)
+# Add a static library
 add_library(RoofNut STATIC ${SOURCE_FILES})
 
-# Fetch and include GLFW (make sure GLFW is built if not found)
+# Fetch and include GLFW
 include(FetchContent)
 FetchContent_Declare(
     glfw
     GIT_REPOSITORY https://github.com/glfw/glfw.git
     GIT_TAG master
 )
-# Disable Wayland support (if not needed) and enable X11 support
+
 set(GLFW_BUILD_WAYLAND OFF CACHE BOOL "Disable Wayland support")
 set(GLFW_BUILD_X11 ON CACHE BOOL "Enable X11 support")
 FetchContent_MakeAvailable(glfw)
+
+# Fetch and include Nuklear
+FetchContent_Declare(
+    nuklear
+    GIT_REPOSITORY https://github.com/vurtun/nuklear.git
+    GIT_TAG master
+)
+FetchContent_MakeAvailable(nuklear)
 
 # Find Vulkan and OpenGL packages
 find_package(Vulkan REQUIRED)
@@ -39,13 +45,13 @@ target_link_libraries(RoofNut PRIVATE
     OpenGL::GL
 )
 
-# Include directories for header files
+# Include directories for RoofNut and Nuklear headers
 target_include_directories(RoofNut PUBLIC
     ${CMAKE_SOURCE_DIR}/include
-    ${CMAKE_SOURCE_DIR}/include/librarys/Nuklear
-    
+    ${nuklear_SOURCE_DIR}
 )
 
-# Install the library and headers (optional)
+# Install the library and headers
 install(TARGETS RoofNut DESTINATION ${CMAKE_INSTALL_PREFIX}/lib)
 install(DIRECTORY ${CMAKE_SOURCE_DIR}/include/ DESTINATION ${CMAKE_INSTALL_PREFIX}/include)
+install(FILES ${nuklear_SOURCE_DIR}/nuklear.h DESTINATION ${CMAKE_INSTALL_PREFIX}/include)
