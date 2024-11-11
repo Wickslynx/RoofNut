@@ -1,0 +1,19 @@
+Here is a step by step guide on how to makee roofnut into a static librarys.
+
+*Make sure you have all the necessary librarys installed.
+*Command to install them: sudo apt-get install libx11-dev libxrandr-dev libxinerama-dev libxcursor-dev libxi-dev libgl1-mesa-dev vulkan-utils libvulkan1 libvulkan-dev
+
+
+Change directory into RoofNuts directory: cd RoofNut
+
+Make a build directory: mkdir build
+
+Change directory into build: cd build
+
+Cmake RoofNuts CMakeList: cmake ..
+
+Make roofnuts static file: sudo make install
+
+Include roofnut into your project using #include <roofnut.h>.
+
+!Note!: RoofNut is not ready yet... It still get linker errors...
