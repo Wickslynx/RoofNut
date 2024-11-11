@@ -2,11 +2,17 @@
 #include <stdlib.h>
 #include <string.h>
 #include <stdio.h>
+#include <vulkan/vulkan.h>
+#include <GLFW/glfw3.h>
+#include "nuklear.h"
 
 // Global Vulkan resources
 VkInstance g_Instance;
 VkPhysicalDevice g_PhysicalDevice;
 VkDevice g_Device;
+VkRenderPass g_RenderPass;
+VkFramebuffer g_Framebuffer;
+VkExtent2D g_SwapChainExtent;
 GLFWwindow* g_Window;
 VkQueue g_Queue;
 uint32_t queueFamilyIndex = 0; // The queue family index where graphics operations are supported
@@ -24,10 +30,11 @@ void check_vk_result(VkResult err) {
 
 // Initialize Vulkan, GLFW, and Nuklear
 int nk_glfw_vulkan_init(GLFWwindow* window, struct nk_context** ctx) {
-    *ctx = (struct nk_context*)malloc(sizeof(struct nk_context)); //Allocate sizeof the nk_context struct.
+    *ctx = (struct nk_context*)malloc(sizeof(struct nk_context)); // Allocate size of nk_context struct.
     if (*ctx == NULL) {
         return -1;  // Allocation failed
     }
+    // Additional setup for Nuklear context can go here if needed.
     return 0;
 }
 
@@ -36,16 +43,16 @@ void nk_glfw_vulkan_render(struct nk_context* ctx) {
     // Allocate and begin a command buffer
     VkCommandBuffer commandBuffer = Application_GetCommandBuffer(true); // Start recording
 
-    //Begin the render pass
+    // Begin the render pass
     VkClearValue clearColor = {.color = {{0.1f, 0.1f, 0.1f, 1.0f}}}; // Clear to dark gray
 
     VkRenderPassBeginInfo renderPassInfo = {
         .sType = VK_STRUCTURE_TYPE_RENDER_PASS_BEGIN_INFO,
-        .renderPass = g_RenderPass, // Global or application-specific render pass
-        .framebuffer = g_Framebuffer, // Global or current framebuffer
+        .renderPass = g_RenderPass,
+        .framebuffer = g_Framebuffer,
         .renderArea = {
             .offset = {0, 0},
-            .extent = g_SwapChainExtent // Width and height of the swapchain image
+            .extent = g_SwapChainExtent
         },
         .clearValueCount = 1,
         .pClearValues = &clearColor
@@ -54,9 +61,9 @@ void nk_glfw_vulkan_render(struct nk_context* ctx) {
     vkCmdBeginRenderPass(commandBuffer, &renderPassInfo, VK_SUBPASS_CONTENTS_INLINE);
 
     // Configure the pipeline / draw Nuklear UI
-    nk_buffer cmds;
+    struct nk_buffer cmds;
     nk_buffer_init_default(&cmds);
-    nk_convert_config config = {
+    struct nk_convert_config config = {
         .global_alpha = 1.0f,
         .shape_AA = NK_ANTI_ALIASING_ON,
         .line_AA = NK_ANTI_ALIASING_ON,
@@ -65,24 +72,22 @@ void nk_glfw_vulkan_render(struct nk_context* ctx) {
         .arc_segment_count = 22,
         .null = {0} // Set null texture if required by Nuklear
     };
-    nk_convert(ctx, &cmds, NULL, &config); // Convert Nuklear commands for rendering
 
-    // Iterate through draw commands
-    const struct nk_draw_command* cmd;
-    nk_draw_foreach(cmd, ctx, &cmds) {
-        if (!cmd->elem_count) continue; // Skip if no elements to draw
+    if (nk_convert(ctx, &cmds, NULL, &config) == NK_CONVERT_SUCCESS) {
+        const struct nk_draw_command* cmd;
+        nk_draw_foreach(cmd, ctx, &cmds) {
+            if (!cmd->elem_count) continue; // Skip if no elements to draw
 
-        // Set the viewport and scissor region
-        VkRect2D scissorRect = {
-            .offset = {cmd->clip_rect.x, cmd->clip_rect.y},
-            .extent = {cmd->clip_rect.w, cmd->clip_rect.h}
-        };
-        vkCmdSetScissor(commandBuffer, 0, 1, &scissorRect);
+            // Set the viewport and scissor region
+            VkRect2D scissorRect = {
+                .offset = {cmd->clip_rect.x, cmd->clip_rect.y},
+                .extent = {cmd->clip_rect.w, cmd->clip_rect.h}
+            };
+            vkCmdSetScissor(commandBuffer, 0, 1, &scissorRect);
 
-        
-
-        // Draw the UI elements
-        vkCmdDraw(commandBuffer, cmd->elem_count, 1, 0, 0); // Number of vertices from Nuklear cmd
+            // Draw the UI elements
+            vkCmdDraw(commandBuffer, cmd->elem_count, 1, 0, 0);
+        }
     }
 
     nk_buffer_free(&cmds); // Clean up the temporary command buffer used by Nuklear
@@ -92,10 +97,8 @@ void nk_glfw_vulkan_render(struct nk_context* ctx) {
     Application_FlushCommandBuffer(commandBuffer);
 }
 
-
-
 void nk_glfw_vulkan_shutdown(struct nk_context* ctx) {
-    free(ctx); //Free the nuklear rendering context.
+    free(ctx); // Free the nuklear rendering context.
 }
 
 // Create and initialize the Application
@@ -106,8 +109,8 @@ Application* Application_Create(const ApplicationSpecification* specification) {
         return NULL; // Memory allocation failed
     }
 
-    //Applications defuat options.
-    app->specification = *specification; 
+    // Application default options.
+    app->specification = *specification;
     app->running = false;
     app->customTitleBar = false;
     app->timeStep = 0.0f;
@@ -173,8 +176,8 @@ void Application_Run(Application* app) {
 
         // Create a new frame for Nuklear
         nk_glfw3_new_frame(ctx);
-        
-        //Users code will be run here.
+
+        // Users code will be run here.
         OnUiRender();
 
         // Render Nuklear UI with Vulkan
@@ -226,7 +229,7 @@ VkCommandBuffer Application_GetCommandBuffer(bool begin) {
         .level = VK_COMMAND_BUFFER_LEVEL_PRIMARY,
         .commandBufferCount = 1
     };
-    
+
     check_vk_result(vkAllocateCommandBuffers(g_Device, &allocateInfo, &commandBuffer));
 
     if (begin) {
@@ -241,15 +244,14 @@ VkCommandBuffer Application_GetCommandBuffer(bool begin) {
 }
 
 // Flush the command buffer
-void Application_FlushCommandBuffer(VkCommandBuffer commandBuffer) { 
+void Application_FlushCommandBuffer(VkCommandBuffer commandBuffer) {
     VkSubmitInfo submitInfo = {
         .sType = VK_STRUCTURE_TYPE_SUBMIT_INFO,
         .commandBufferCount = 1,
         .pCommandBuffers = &commandBuffer
     };
 
-    check_vk_result(vkEndCommandBuffer(commandBuffer)); //End the commandbuffer.
-    check_vk_result(vkQueueSubmit(g_Queue, 1, &submitInfo, VK_NULL_HANDLE)); //Submit vulkan queue.
-    check_vk_result(vkQueueWaitIdle(g_Queue));  // Wait for GPU to finish
+    check_vk_result(vkEndCommandBuffer(commandBuffer));
+    check_vk_result(vkQueueSubmit(g_Queue, 1, &submitInfo, VK_NULL_HANDLE));
+    check_vk_result(vkQueueWaitIdle(g_Queue));
 }
-
