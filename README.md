@@ -12,7 +12,8 @@ Flexible and customizable interface.
 # Getting Started:
 Install necessary dependencies (libx11-dev, libxrandr-dev, etc.).
 Implement the main rendering function using OnGuiRender().
-** <small>Install dependencies: sudo apt-get install -y libx11-dev libxrandr-dev libxinerama-dev libxcursor-dev libxi-dev libgl1-mesa-dev vulkan-utils libvulkan1 libvulkan-dev <small>**
+
+<small>Install dependencies: sudo apt-get install -y libx11-dev libxrandr-dev libxinerama-dev libxcursor-dev libxi-dev libgl1-mesa-dev vulkan-utils libvulkan1 libvulkan-dev <small>
 
 **Example:**
 Check the example.c file for a sample application.
