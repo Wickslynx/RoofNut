@@ -1,19 +1,17 @@
 # RoofNut
 
-**Version 1.20**
+**Version 1.5**
 
-RoofNut is a simple, evolving GUI framework inspired by Walnut. It leverages GLFW and Vulkan for efficient windowing and rendering, and uses Nuklear for an immediate-mode GUI. RoofNut is still in development but aims to provide a lightweight, high-performance GUI for your applications.
+RoofNut is a lightweight GUI framework inspired by Walnut, using GLFW and Vulkan for rendering, and Nuklear for the GUI. It's an evolving library designed for high performance with a customizable, immediate-mode interface.
 
 # Features:
-Built on GLFW and Vulkan for windowing/rendering.
-Immediate-mode GUI using Nuklear.
-Flexible and customizable interface.
-
+Built on GLFW and Vulkan for efficient rendering.
+Uses Nuklear for immediate-mode GUI.
 # Getting Started:
-Install necessary dependencies (libx11-dev, libxrandr-dev, etc.).
+**1. Install dependencies:**
+Run this command to install required libraries automatically:
+*sudo apt-get install libx11-dev libxrandr-dev libxinerama-dev libxcursor-dev libglfw3-dev libvulkan-dev libnuklear-dev*
+**2. Compile and build your application using RoofNut.**
 Implement the main rendering function using OnGuiRender().
-
-<small>Install dependencies: sudo apt-get install -y libx11-dev libxrandr-dev libxinerama-dev libxcursor-dev libxi-dev libgl1-mesa-dev vulkan-utils libvulkan1 libvulkan-dev <small>
-
-**Example:**
-Check the example.c file for a sample application.
+# Example:
+Check the example.c file in the repository for code samples.
