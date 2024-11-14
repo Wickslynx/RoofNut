@@ -14,6 +14,7 @@ Run this command to install required libraries automatically:
 
 *sudo apt-get install libx11-dev libxrandr-dev libxinerama-dev libxcursor-dev libglfw3-dev libvulkan-dev libnuklear-dev*
 
+
 **2. Compile and build your application using RoofNut.**
 Implement the main rendering function using OnGuiRender().
 
