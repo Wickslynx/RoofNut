@@ -3,10 +3,10 @@
 #include <stdbool.h>
 #include <vulkan/vulkan.h>
 #include <GLFW/glfw3.h>
-#include "librarys/Nuklear/nuklear.h"
+
 #include <stdlib.h>
 #include <math.h>
-#include "librarys/Nuklear/nuklear_glfw_vulkan.h"
+
 
 // Error checking for Vulkan calls
 void check_vk_result(VkResult err);

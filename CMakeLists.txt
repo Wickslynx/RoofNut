@@ -9,7 +9,6 @@ set(SOURCE_FILES
     src/application.c
     src/input.c
     src/Utilites.c
-    include/example.c
 )
 
 # Add a static library for RoofNut
@@ -50,6 +49,7 @@ target_link_libraries(RoofNut PRIVATE
 # Include directories for RoofNut and Nuklear headers
 target_include_directories(RoofNut PUBLIC
     ${CMAKE_CURRENT_SOURCE_DIR}/include
+    ${CMAKE_SOURCE_DIR}/include/librarys/Nuklear
     ${nuklear_SOURCE_DIR}
 )
 
