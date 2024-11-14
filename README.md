@@ -1,39 +1,18 @@
-﻿# RoofNut
- **Version: 1.12**
+# RoofNut
 
- 
- <small>RoofNut is a simple GUI framework that was built as a school project.
-</small>
+**Version 1.20**
 
- <small>RoofNut was heavily inspired by Walnut GUI framework for C++.
- We aim to be the best C GUI framework out there!</small>
- 
- <small> Note, RoofNut is not done, you may get alot of errors when you run it. Please state every error you get in "Issues". <small>
-# How does it work?
-<small> RoofNut uses GLFW and Vulkan to draw a window, you can find this code in the application.c file.
-Nuklear is already installed and implemented with the library, you can write your Nuklear code if you call the OnGuiRender() function.
-For a more in depth guide, please see the "example.c" file.
+RoofNut is a simple, evolving GUI framework inspired by Walnut. It leverages GLFW and Vulkan for efficient windowing and rendering, and uses Nuklear for an immediate-mode GUI. RoofNut is still in development but aims to provide a lightweight, high-performance GUI for your applications.
 
-#What are we working on?:
+# Features:
+Built on GLFW and Vulkan for windowing/rendering.
+Immediate-mode GUI using Nuklear.
+Flexible and customizable interface.
 
-Wickslynx: Testing.
+# Getting Started:
+Install necessary dependencies (libx11-dev, libxrandr-dev, etc.).
+Implement the main rendering function using OnGuiRender().
+** <small>Install dependencies: sudo apt-get install -y libx11-dev libxrandr-dev libxinerama-dev libxcursor-dev libxi-dev libgl1-mesa-dev vulkan-utils libvulkan1 libvulkan-dev <small>**
 
-Elliot7118: Adding timer to Utilites.
-
-# 3d party librarys:
-Nuklear, GLFW and Vulkan.
-
-# Required librarys:
-
-lixcursor-dev, libxrandr-dev, libxinerama-dev, libxi-dev
-
-**vulkan-sdk**
-
-**OpenGL**
-
-**Commands:**
-
-sudo apt-get install -y libx11-dev libxrandr-dev libxinerama-dev libxcursor-dev libxi-dev libgl1-mesa-dev vulkan-utils libvulkan1 libvulkan-dev
-
-
-
+**Example:**
+Check the example.c file for a sample application.
