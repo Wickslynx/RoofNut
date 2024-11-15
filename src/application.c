@@ -12,6 +12,8 @@
 #define NK_INCLUDE_DEFAULT_FONT
 #define NK_INCLUDE_STANDARD_VARARGS
 #define NK_INCLUDE_VERTEX_BUFFER_OUTPUT
+#define NK_INCLUDE_GLFW
+#define NK_INCLUDE_VULKAN
 #define NK_IMPLEMENTATION
 
 #include "nuklear.h"
@@ -52,9 +54,9 @@ int nk_glfw_vulkan_init(GLFWwindow* window, struct nk_context** outCtx) {
     return 0;
 }
 
-//Main function to render Nuklear GUI with vulkan
+// Main function to render Nuklear GUI with vulkan
 void nk_glfw_vulkan_render(struct nk_context* ctx) {
-    //Allocate and begin the command buffer.
+    // Allocate and begin the command buffer.
     VkCommandBuffer commandBuffer = Application_GetCommandBuffer(true);
 
     // Define the clear color
@@ -146,10 +148,95 @@ void Application_Destroy(Application* app) {
     // Clean up Nuklear and Vulkan resources
     nk_glfw_vulkan_shutdown(ctx);
 
-    glfwDestroyWindow(app->windowHandle);
-    glfwTerminate();
+    glfwDestroyWindow(app->windowHandle);  // Destroy the GLFW window
+    glfwTerminate();  // Terminate GLFW
     free(app);
 }
 
-// Note: Other functions can go under here.
+// Initialization of Vulkan
+void init_vulkan() {
+    VkApplicationInfo appInfo = {
+        .sType = VK_STRUCTURE_TYPE_APPLICATION_INFO,
+        .pApplicationName = "RoofNut Application",
+        .applicationVersion = VK_MAKE_VERSION(1, 0, 0),
+        .pEngineName = "No Engine",
+        .engineVersion = VK_MAKE_VERSION(1, 0, 0),
+        .apiVersion = VK_API_VERSION_1_0
+    };
 
+    VkInstanceCreateInfo createInfo = {
+        .sType = VK_STRUCTURE_TYPE_INSTANCE_CREATE_INFO,
+        .pApplicationInfo = &appInfo
+    };
+
+    VkResult res = vkCreateInstance(&createInfo, NULL, &g_Instance);
+    check_vk_result(res);  // Check instance creation
+}
+
+// Initialization of device
+void init_device() {
+    uint32_t deviceCount = 0;
+    vkEnumeratePhysicalDevices(g_Instance, &deviceCount, NULL);
+
+    VkPhysicalDevice devices[deviceCount];
+    vkEnumeratePhysicalDevices(g_Instance, &deviceCount, devices);
+
+    if (deviceCount == 0) {
+        fprintf(stderr, "Failed to find a GPU with Vulkan support!\n");
+        exit(EXIT_FAILURE);
+    }
+
+    g_PhysicalDevice = devices[0];
+
+    VkDeviceCreateInfo createInfo = {
+        .sType = VK_STRUCTURE_TYPE_DEVICE_CREATE_INFO
+    };
+
+    VkResult res = vkCreateDevice(g_PhysicalDevice, &createInfo, NULL, &g_Device);
+    check_vk_result(res);  // Check device creation
+}
+
+// Creating render pass
+void create_render_pass() {
+    VkAttachmentDescription colorAttachment = {
+        .format = VK_FORMAT_B8G8R8A8_UNORM,
+        .samples = VK_SAMPLE_COUNT_1_BIT,
+        .loadOp = VK_ATTACHMENT_LOAD_OP_CLEAR,
+        .storeOp = VK_ATTACHMENT_STORE_OP_STORE,
+        .stencilLoadOp = VK_ATTACHMENT_LOAD_OP_DONT_CARE,
+        .stencilStoreOp = VK_ATTACHMENT_STORE_OP_DONT_CARE,
+        .initialLayout = VK_IMAGE_LAYOUT_UNDEFINED,
+        .finalLayout = VK_IMAGE_LAYOUT_PRESENT_SRC_KHR
+    };
+
+    VkAttachmentReference colorAttachmentRef = {
+        .attachment = 0,
+        .layout = VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL
+    };
+
+    VkSubpassDescription subpass = {
+        .pipelineBindPoint = VK_PIPELINE_BIND_POINT_GRAPHICS,
+        .colorAttachmentCount = 1,
+        .pColorAttachments = &colorAttachmentRef
+    };
+
+    VkRenderPassCreateInfo renderPassInfo = {
+        .sType = VK_STRUCTURE_TYPE_RENDER_PASS_CREATE_INFO,
+        .attachmentCount = 1,
+        .pAttachments = &colorAttachment,
+        .subpassCount = 1,
+        .pSubpasses = &subpass
+    };
+
+    VkResult res = vkCreateRenderPass(g_Device, &renderPassInfo, NULL, &g_RenderPass);
+    check_vk_result(res);  // Check render pass creation
+}
+
+// Clean up Vulkan resources
+void cleanup_vulkan() {
+    vkDestroyRenderPass(g_Device, g_RenderPass, NULL);
+    vkDestroyDevice(g_Device, NULL);
+    vkDestroyInstance(g_Instance, NULL);
+}
+
+//Note: Other functions can go under here:

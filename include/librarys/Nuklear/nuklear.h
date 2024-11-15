@@ -7416,7 +7416,7 @@ nk_vsnprintf(char *buf, int buf_size, const char *fmt, va_list args)
         width = NK_DEFAULT;
         if (*iter >= '1' && *iter <= '9') {
             const char *end;
-            width = nk_strtoi(iter,(char **) &end);
+            width = nk_strtoi(iter, (char **)&end);
             if (end == iter)
                 width = -1;
             else iter = end;
@@ -31059,3 +31059,4 @@ nk_tooltipfv(struct nk_context *ctx, const char *fmt, va_list args)
 /// in libraries and brought me to create some of my own. Finally Apoorva Joshi
 /// for his single header file packer.
 */
+
