@@ -1,12 +1,12 @@
-//All includes statments.
-#include "application.h" 
+// All includes statements.
+#include "application.h"
 #include <stdlib.h>
-#include <string.h> 
+#include <string.h>
 #include <stdio.h>
 #include <vulkan/vulkan.h>
 #include <GLFW/glfw3.h>
 
-//Define and include nuklears setup.
+// Define Nuklear's setup / include Nuklear.
 #define NK_INCLUDE_DEFAULT_ALLOCATOR
 #define NK_INCLUDE_FONT_BAKING
 #define NK_INCLUDE_DEFAULT_FONT
@@ -18,11 +18,9 @@
 
 #include "nuklear.h"
 #include "nuklear_glfw_vulkan.h"
-struct nk_context *ctx; //Declare the nuklear rendering context.
+struct nk_context *ctx; // Declare the Nuklear rendering context.
 
-//Note: I have no idea what im writing.... What even is this??
-
-// Declare the global vulkan resources.
+// Declare the global Vulkan resources.
 VkInstance g_Instance;
 VkPhysicalDevice g_PhysicalDevice;
 VkDevice g_Device;
@@ -34,7 +32,7 @@ VkQueue g_Queue;
 uint32_t queueFamilyIndex = 0;
 
 
-// Function to check Vulkan results
+// Function to check Vulkan results.
 void check_vk_result(VkResult err) {
     if (err != VK_SUCCESS) {
         fprintf(stderr, "Vulkan Error: %d\n", err);
@@ -42,45 +40,45 @@ void check_vk_result(VkResult err) {
     }
 }
 
-// Initilaze vulkan, GLFW and nuklear.
+// Initialize Vulkan, GLFW, and Nuklear.
 int nk_glfw_vulkan_init(GLFWwindow* window, struct nk_context** outCtx) {
     *outCtx = (struct nk_context*)malloc(sizeof(struct nk_context));
-    if (*outCtx == NULL) { //If allocation failed.
-        return -1;  
+    if (*outCtx == NULL) { // If allocation failed.
+        return -1;
     }
 
-    //Note: Nuklear setup can go here. 
-    
+    // Note: Nuklear setup can go here. 
+
     return 0;
 }
 
-// Main function to render Nuklear GUI with vulkan
+// Main function to render Nuklear GUI with Vulkan.
 void nk_glfw_vulkan_render(struct nk_context* ctx) {
     // Allocate and begin the command buffer.
     VkCommandBuffer commandBuffer = Application_GetCommandBuffer(true);
 
-    // Define the clear color
+    // Define the clear color.
     VkClearValue clearColor = {.color = {{0.1f, 0.1f, 0.1f, 1.0f}}};
 
     VkRenderPassBeginInfo renderPassInfo = {
-        .sType = VK_STRUCTURE_TYPE_RENDER_PASS_BEGIN_INFO, //Type of structure (RenderPass)
-        .renderPass = g_RenderPass, //The vulkan RenderPass object.
-        .framebuffer = g_Framebuffer, //Specifies the framebuffer. (Where the rendering will take place.)
-        .renderArea = {  //Area that will take affect of the renderpass.
+        .sType = VK_STRUCTURE_TYPE_RENDER_PASS_BEGIN_INFO, // Type of structure (RenderPass)
+        .renderPass = g_RenderPass, // The Vulkan RenderPass object.
+        .framebuffer = g_Framebuffer, // Specifies the framebuffer. (Where the rendering will take place.)
+        .renderArea = {  // Area that will take effect of the render pass.
             .offset = {0, 0},
             .extent = g_SwapChainExtent
         },
-        .clearValueCount = 1,  //Number of clear values.
-        .pClearValues = &clearColor //The clear values.
+        .clearValueCount = 1,  // Number of clear values.
+        .pClearValues = &clearColor // The clear values.
     };
 
-    vkCmdBeginRenderPass(commandBuffer, &renderPassInfo, VK_SUBPASS_CONTENTS_INLINE); //Begin the RenderPass with the information from the renderPassInfo struct.
+    vkCmdBeginRenderPass(commandBuffer, &renderPassInfo, VK_SUBPASS_CONTENTS_INLINE); // Begin the RenderPass with the information from the renderPassInfo struct.
 
     // Prepare Nuklear buffers
     struct nk_buffer cmds, vertices, elements;
-    nk_buffer_init_default(&cmds); //Init the commands.
-    nk_buffer_init_default(&vertices); //Init the vertecies.
-    nk_buffer_init_default(&elements); //Init the elemts.
+    nk_buffer_init_default(&cmds); // Init the commands.
+    nk_buffer_init_default(&vertices); // Init the vertices.
+    nk_buffer_init_default(&elements); // Init the elements.
 
     // Set up Nuklear config.
     struct nk_convert_config config = {
@@ -91,8 +89,8 @@ void nk_glfw_vulkan_render(struct nk_context* ctx) {
         .curve_segment_count = 22,
         .arc_segment_count = 22,
     };
-    
-    if (nk_convert(ctx, &cmds, &vertices, &elements, &config) == NK_CONVERT_SUCCESS) { //If convert was succesfull.
+
+    if (nk_convert(ctx, &cmds, &vertices, &elements, &config) == NK_CONVERT_SUCCESS) { // If convert was successful.
         // Iterate over each draw command
         const struct nk_draw_command* cmd;
         nk_draw_foreach(cmd, ctx, &cmds) {
@@ -121,27 +119,28 @@ void nk_glfw_vulkan_render(struct nk_context* ctx) {
     Application_FlushCommandBuffer(commandBuffer);
 }
 
-
 void nk_glfw_vulkan_shutdown(struct nk_context* ctx) { 
     free(ctx); // Free the Nuklear rendering context (ctx).
 }
 
 // Main application function, used to create the application.
 Application* Application_Create(const ApplicationSpecification* specification) {
-    // Allocate the application, Initialize members.
+    // Initialize GLFW, Vulkan, and other resources
     Application* app = (Application*)malloc(sizeof(Application));
-    
-    // Initialize GLFW, Nuklear, and other stuff...
-    if (nk_glfw_vulkan_init(app->windowHandle, &ctx) != 0) {
-        printf("Failed to initialize Nuklear.\n"); //If not succesfull, print error.
+    if (!app) return NULL;
+
+    // Initialize members, including GLFW window and Vulkan instance
+    app->windowHandle = glfwCreateWindow(specification->width, specification->height, specification->name, NULL, NULL);
+    if (!app->windowHandle) {
         free(app);
         return NULL;
     }
 
+    // You may need to add additional Vulkan and Nuklear initialization here
     return app;
 }
 
-// Main application shutdown and cleanup func.
+// Main application shutdown and cleanup function.
 void Application_Destroy(Application* app) {
     if (!app) return;
 
@@ -182,19 +181,91 @@ void init_device() {
     vkEnumeratePhysicalDevices(g_Instance, &deviceCount, devices);
 
     if (deviceCount == 0) {
-        fprintf(stderr, "Failed to find a GPU with Vulkan support!\n");
+        fprintf(stderr, "Failed to find a GPU with Vulkan support!\n"); // If failed to find Vulkan.
         exit(EXIT_FAILURE);
     }
 
     g_PhysicalDevice = devices[0];
 
     VkDeviceCreateInfo createInfo = {
-        .sType = VK_STRUCTURE_TYPE_DEVICE_CREATE_INFO
+        .sType = VK_STRUCTURE_TYPE_DEVICE_CREATE_INFO // Create device info.
     };
 
     VkResult res = vkCreateDevice(g_PhysicalDevice, &createInfo, NULL, &g_Device);
     check_vk_result(res);  // Check device creation
 }
+
+
+// Function to retrieve the Vulkan command buffer
+VkCommandBuffer Application_GetCommandBuffer(bool begin) {
+    if (g_CommandBuffer == VK_NULL_HANDLE) {
+        // For now, just a simple allocation simulation:
+        VkCommandBufferAllocateInfo allocInfo = {
+            .sType = VK_STRUCTURE_TYPE_COMMAND_BUFFER_ALLOCATE_INFO,
+            .commandPool = VK_NULL_HANDLE, // Set to your command pool handle
+            .level = VK_COMMAND_BUFFER_LEVEL_PRIMARY,
+            .commandBufferCount = 1
+        };
+
+        // Assuming `g_Device` is your Vulkan device
+        VkResult res = vkAllocateCommandBuffers(g_Device, &allocInfo, &g_CommandBuffer);
+        if (res != VK_SUCCESS) {
+            fprintf(stderr, "Failed to allocate command buffer!\n");
+            exit(EXIT_FAILURE);
+        }
+    }
+
+    if (begin) {
+        // Begin recording commands to the command buffer
+        VkCommandBufferBeginInfo beginInfo = {
+            .sType = VK_STRUCTURE_TYPE_COMMAND_BUFFER_BEGIN_INFO,
+            .flags = 0, // Add relevant flags if necessary
+            .pInheritanceInfo = NULL
+        };
+
+        VkResult res = vkBeginCommandBuffer(g_CommandBuffer, &beginInfo);
+        if (res != VK_SUCCESS) {
+            fprintf(stderr, "Failed to begin recording command buffer!\n");
+            exit(EXIT_FAILURE);
+        }
+    }
+
+    return g_CommandBuffer;
+}
+
+// Function to submit the command buffer and cleanup
+void Application_FlushCommandBuffer(VkCommandBuffer commandBuffer) {
+    VkResult res = vkEndCommandBuffer(commandBuffer);
+    if (res != VK_SUCCESS) {
+        fprintf(stderr, "Failed to record command buffer!\n");
+        exit(EXIT_FAILURE);
+    }
+
+    // Add code to submit the command buffer to the Vulkan queue here (if needed)
+    // For now, we assume it's being flushed
+
+    // Example: Submission code (this will vary based on your specific Vulkan setup)
+    VkSubmitInfo submitInfo = {
+        .sType = VK_STRUCTURE_TYPE_SUBMIT_INFO,
+        .commandBufferCount = 1,
+        .pCommandBuffers = &commandBuffer
+    };
+
+    // Assuming `g_Queue` is your Vulkan queue handle
+    res = vkQueueSubmit(g_Queue, 1, &submitInfo, VK_NULL_HANDLE);
+    if (res != VK_SUCCESS) {
+        fprintf(stderr, "Failed to submit command buffer!\n");
+        exit(EXIT_FAILURE);
+    }
+
+    // Optional: Wait for the GPU to finish (for synchronization)
+    vkQueueWaitIdle(g_Queue);
+
+    // After flushing, reset the command buffer for the next use
+    vkFreeCommandBuffers(g_Device, VK_NULL_HANDLE, 1, &g_CommandBuffer);
+    g_CommandBuffer = VK_NULL_HANDLE;
+}
+
 
 // Creating render pass
 void create_render_pass() {
@@ -229,14 +300,13 @@ void create_render_pass() {
     };
 
     VkResult res = vkCreateRenderPass(g_Device, &renderPassInfo, NULL, &g_RenderPass);
-    check_vk_result(res);  // Check render pass creation
+    check_vk_result(res);  // Check render pass creation.
 }
 
-// Clean up Vulkan resources
+// Clean up Vulkan resources.
 void cleanup_vulkan() {
     vkDestroyRenderPass(g_Device, g_RenderPass, NULL);
     vkDestroyDevice(g_Device, NULL);
     vkDestroyInstance(g_Instance, NULL);
 }
 
-//Note: Other functions can go under here:

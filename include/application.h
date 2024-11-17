@@ -6,6 +6,7 @@
 
 #include <stdlib.h>
 #include <math.h>
+#include "roofnut.h"
 
 
 // Error checking for Vulkan calls
@@ -17,6 +18,8 @@ typedef struct {
     uint32_t width;     // Application window width
     uint32_t height;    // Application window height
 } ApplicationSpecification;
+
+static VkCommandBuffer g_CommandBuffer = VK_NULL_HANDLE;
 
 // Layer callback function type
 typedef void (*LayerCallback)(void);
@@ -57,7 +60,6 @@ GLFWwindow* Application_GetWindowHandle(const Application* app);
 VkInstance Application_GetInstance();
 VkPhysicalDevice Application_GetPhysicalDevice();
 VkDevice Application_GetDevice();
-
 VkCommandBuffer Application_GetCommandBuffer(bool begin);
 void Application_FlushCommandBuffer(VkCommandBuffer commandBuffer);
 

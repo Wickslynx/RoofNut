@@ -5,7 +5,6 @@
 extern "C" {
 #endif
 
-#include "application.h"
 #include "input.h"
 #include "Utilites.h"
 
