@@ -12,19 +12,20 @@ set(CMAKE_CXX_STANDARD_REQUIRED True)
 file(GLOB SOURCES
     src/application.c
     src/input.c 
-    src/Utilites.c
+    src/Utilities.c
 )
 
-# Create the static library target for RoofNut
+# Create the library target (STATIC, as you want it to be a library)
 add_library(RoofNut STATIC ${SOURCES})
 
 # Specify the paths to include directories for GLFW and other dependencies
+include_directories("/usr/include/GLFW")
+include_directories("/usr/local/include/GLFW")
 
 # Add include directories for your own headers and Nuklear
 target_include_directories(RoofNut PUBLIC
     ${CMAKE_CURRENT_SOURCE_DIR}/include
     ${CMAKE_SOURCE_DIR}/include/librarys/Nuklear
-    ${CMAKE_SOURCE_DIR}/include/librarys/glfw
 )
 
 # Add the directory where the GLFW library files are located
@@ -39,15 +40,14 @@ target_link_libraries(RoofNut PRIVATE glfw)
 target_link_libraries(RoofNut PRIVATE Vulkan::Vulkan)
 target_link_libraries(RoofNut PRIVATE m)  # Link the math library
 
+# Optional: Define a macro for debugging purposes
 # target_compile_definitions(RoofNut PRIVATE DEBUG)
 
 # Installation targets
 install(TARGETS RoofNut
-    DESTINATION /usr/local/lib  # Install the library to /usr/local/lib
+    DESTINATION /usr/local/lib
 )
 
-# Install header files to /usr/local/include
 install(DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/include/
-    DESTINATION /usr/local/include   
+    DESTINATION /usr/local/include
 )
-
