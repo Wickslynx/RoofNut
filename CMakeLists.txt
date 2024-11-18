@@ -19,13 +19,12 @@ file(GLOB SOURCES
 add_library(RoofNut STATIC ${SOURCES})
 
 # Specify the paths to include directories for GLFW and other dependencies
-include_directories("/usr/include/GLFW")
-include_directories("/usr/local/include/GLFW")
 
 # Add include directories for your own headers and Nuklear
 target_include_directories(RoofNut PUBLIC
     ${CMAKE_CURRENT_SOURCE_DIR}/include
     ${CMAKE_SOURCE_DIR}/include/librarys/Nuklear
+    ${CMAKE_SOURCE_DIR}/include/librarys/glfw
 )
 
 # Add the directory where the GLFW library files are located

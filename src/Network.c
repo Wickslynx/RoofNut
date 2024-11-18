@@ -14,6 +14,7 @@ void createSocket(RoofnutServer *self, const int port, const bool listening) {
     serverAddr.sin_addr.s_addr = INADDR_ANY;
 
     bind(serverSocket, (struct sockaddr*)&serverAddr, sizeof(serverAddr));
+    
     if (listening = true) {
           listen(serverAddr, 500);
           clientSocket = accept(serverSocket, ,0)
