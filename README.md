@@ -18,7 +18,7 @@ Run this command to install required libraries automatically:
 Implement the main rendering function using OnUiRender().
 
 
-**Please see the *example.c* file for further explanation and examples**
+Please see the *example.c* file for further explanation and examples
 
 
 # Current Issues:
