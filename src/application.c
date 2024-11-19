@@ -125,18 +125,19 @@ void nk_glfw_vulkan_shutdown(struct nk_context* ctx) {
 
 // Main application function, used to create the application.
 Application* Application_Create(const ApplicationSpecification* specification) {
-    // Initialize GLFW, Vulkan, and other resources
+    // Initialize GLFW, Vulkan, and other resources.
     Application* app = (Application*)malloc(sizeof(Application));
     if (!app) return NULL;
 
-    // Initialize members, including GLFW window and Vulkan instance
+    // Initialize members, including GLFW window and Vulkan instance.
     app->windowHandle = glfwCreateWindow(specification->width, specification->height, specification->name, NULL, NULL);
     if (!app->windowHandle) {
         free(app);
         return NULL;
     }
 
-    // You may need to add additional Vulkan and Nuklear initialization here
+    //Note: Additional initilatization nedeed?
+eded?
     return app;
 }
 
@@ -144,21 +145,21 @@ Application* Application_Create(const ApplicationSpecification* specification) {
 void Application_Destroy(Application* app) {
     if (!app) return;
 
-    // Clean up Nuklear and Vulkan resources
+    // Clean up Nuklear and Vulkan resources.
     nk_glfw_vulkan_shutdown(ctx);
 
-    glfwDestroyWindow(app->windowHandle);  // Destroy the GLFW window
-    glfwTerminate();  // Terminate GLFW
-    free(app);
+    glfwDestroyWindow(app->windowHandle);  // Destroy the GLFW window.
+    glfwTerminate();  // Terminate GLFW.
+    free(app); //Free the app.
 }
 
-// Initialization of Vulkan
+// Initialization of Vulkan.
 void init_vulkan() {
     VkApplicationInfo appInfo = {
         .sType = VK_STRUCTURE_TYPE_APPLICATION_INFO,
-        .pApplicationName = "RoofNut Application",
+        .pApplicationName = specification->name,
         .applicationVersion = VK_MAKE_VERSION(1, 0, 0),
-        .pEngineName = "No Engine",
+        .pEngineName = "RoofNut",
         .engineVersion = VK_MAKE_VERSION(1, 0, 0),
         .apiVersion = VK_API_VERSION_1_0
     };
@@ -169,10 +170,10 @@ void init_vulkan() {
     };
 
     VkResult res = vkCreateInstance(&createInfo, NULL, &g_Instance);
-    check_vk_result(res);  // Check instance creation
+    check_vk_result(res);  // Check instance creation.
 }
 
-// Initialization of device
+// Initialization of device.
 void init_device() {
     uint32_t deviceCount = 0;
     vkEnumeratePhysicalDevices(g_Instance, &deviceCount, NULL);
@@ -181,33 +182,33 @@ void init_device() {
     vkEnumeratePhysicalDevices(g_Instance, &deviceCount, devices);
 
     if (deviceCount == 0) {
-        fprintf(stderr, "Failed to find a GPU with Vulkan support!\n"); // If failed to find Vulkan.
+        fprintf(stderr, "Failed to find a GPU with Vulkan support!\n"); // If failed to find Vulkan..
         exit(EXIT_FAILURE);
     }
 
     g_PhysicalDevice = devices[0];
 
     VkDeviceCreateInfo createInfo = {
-        .sType = VK_STRUCTURE_TYPE_DEVICE_CREATE_INFO // Create device info.
+        .sType = VK_STRUCTURE_TYPE_DEVICE_CREATE_INFO // Create device info..
     };
 
     VkResult res = vkCreateDevice(g_PhysicalDevice, &createInfo, NULL, &g_Device);
-    check_vk_result(res);  // Check device creation
+    check_vk_result(res);  // Check device creation.
 }
 
 
-// Function to retrieve the Vulkan command buffer
+// Function to retrieve the Vulkan command buffer.
 VkCommandBuffer Application_GetCommandBuffer(bool begin) {
     if (g_CommandBuffer == VK_NULL_HANDLE) {
-        // For now, just a simple allocation simulation:
+        // For now, js a simple allocation.
         VkCommandBufferAllocateInfo allocInfo = {
             .sType = VK_STRUCTURE_TYPE_COMMAND_BUFFER_ALLOCATE_INFO,
-            .commandPool = VK_NULL_HANDLE, // Set to your command pool handle
+            .commandPool = VK_NULL_HANDLE, //Placeholder.
             .level = VK_COMMAND_BUFFER_LEVEL_PRIMARY,
             .commandBufferCount = 1
         };
 
-        // Assuming `g_Device` is your Vulkan device
+        //Allocate the command buffers.
         VkResult res = vkAllocateCommandBuffers(g_Device, &allocInfo, &g_CommandBuffer);
         if (res != VK_SUCCESS) {
             fprintf(stderr, "Failed to allocate command buffer!\n");
@@ -233,7 +234,7 @@ VkCommandBuffer Application_GetCommandBuffer(bool begin) {
     return g_CommandBuffer;
 }
 
-// Function to submit the command buffer and cleanup
+// Function to submit the command buffer and cleanup.
 void Application_FlushCommandBuffer(VkCommandBuffer commandBuffer) {
     VkResult res = vkEndCommandBuffer(commandBuffer);
     if (res != VK_SUCCESS) {
@@ -241,17 +242,14 @@ void Application_FlushCommandBuffer(VkCommandBuffer commandBuffer) {
         exit(EXIT_FAILURE);
     }
 
-    // Add code to submit the command buffer to the Vulkan queue here (if needed)
-    // For now, we assume it's being flushed
-
-    // Example: Submission code (this will vary based on your specific Vulkan setup)
+    // Note: Further code needed?
     VkSubmitInfo submitInfo = {
         .sType = VK_STRUCTURE_TYPE_SUBMIT_INFO,
         .commandBufferCount = 1,
         .pCommandBuffers = &commandBuffer
     };
 
-    // Assuming `g_Queue` is your Vulkan queue handle
+    // Submit the command buffer.
     res = vkQueueSubmit(g_Queue, 1, &submitInfo, VK_NULL_HANDLE);
     if (res != VK_SUCCESS) {
         fprintf(stderr, "Failed to submit command buffer!\n");
@@ -261,13 +259,13 @@ void Application_FlushCommandBuffer(VkCommandBuffer commandBuffer) {
     // Optional: Wait for the GPU to finish (for synchronization)
     vkQueueWaitIdle(g_Queue);
 
-    // After flushing, reset the command buffer for the next use
+    // After flushing, reset the command buffer for the next use.
     vkFreeCommandBuffers(g_Device, VK_NULL_HANDLE, 1, &g_CommandBuffer);
     g_CommandBuffer = VK_NULL_HANDLE;
 }
 
 
-// Creating render pass
+// Creating render pass.
 void create_render_pass() {
     VkAttachmentDescription colorAttachment = {
         .format = VK_FORMAT_B8G8R8A8_UNORM,
@@ -310,3 +308,4 @@ void cleanup_vulkan() {
     vkDestroyInstance(g_Instance, NULL);
 }
 
+//Note: Further code under here.
