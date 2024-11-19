@@ -18,3 +18,4 @@ typedef enum {
     int None = 0;
     int RGBA, RGBA32F;
   } ImageFormat;
+//Note: This is broken, i don't understand what this does as it is AI written. Its scrapped.
