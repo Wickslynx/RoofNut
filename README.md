@@ -15,7 +15,11 @@ Run this command to install required libraries automatically:
 
 
 **2. Compile and build your application using RoofNut.**
-Implement the main rendering function using OnGuiRender().
+Implement the main rendering function using OnUiRender().
+
+# Current Issues:
+
+1. Linker not linking, Unknown function declarations when included library.
 
 # Example:
 Check the example.c file in the repository for code samples.
