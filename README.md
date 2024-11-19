@@ -26,4 +26,4 @@ Implement the main rendering function using OnUiRender().
 
 
 # Example:
-Check the example.c file in the repository for code samples.
+Check the *example.c* file in the repository for code samples.
