@@ -39,7 +39,7 @@ void check_vk_result(VkResult err) {
         exit(EXIT_FAILURE);
     }
 }
-
+//Note: What am i writing?
 // Initialize Vulkan, GLFW, and Nuklear.
 int nk_glfw_vulkan_init(GLFWwindow* window, struct nk_context** outCtx) {
     *outCtx = (struct nk_context*)malloc(sizeof(struct nk_context));
