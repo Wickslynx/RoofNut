@@ -137,7 +137,6 @@ Application* Application_Create(const ApplicationSpecification* specification) {
     }
 
     //Note: Additional initilatization nedeed?
-eded?
     return app;
 }
 
@@ -157,7 +156,7 @@ void Application_Destroy(Application* app) {
 void init_vulkan() {
     VkApplicationInfo appInfo = {
         .sType = VK_STRUCTURE_TYPE_APPLICATION_INFO,
-        .pApplicationName = specification->name,
+        .pApplicationName = "RoofNut application.",
         .applicationVersion = VK_MAKE_VERSION(1, 0, 0),
         .pEngineName = "RoofNut",
         .engineVersion = VK_MAKE_VERSION(1, 0, 0),
