@@ -11,12 +11,19 @@ set(CMAKE_CXX_STANDARD_REQUIRED True)
 # Add source files for the project
 file(GLOB SOURCES
     src/application.c
-    src/input.c 
+    src/input.c
     src/Utilities.c
 )
 
+file(GLOB HEADERS
+    include/application.h
+    include/input.h
+    include/Utilities.h
+    include/roofnut.h
+)
+
 # Create the library target (STATIC, as you want it to be a library)
-add_library(RoofNut STATIC ${SOURCES})
+add_library(RoofNut STATIC ${SOURCES} ${HEADERS})  # Corrected this line
 
 # Specify the paths to include directories for GLFW and other dependencies
 include_directories("/usr/include/GLFW")
@@ -25,6 +32,7 @@ include_directories("/usr/local/include/GLFW")
 # Add include directories for your own headers and Nuklear
 target_include_directories(RoofNut PUBLIC
     ${CMAKE_CURRENT_SOURCE_DIR}/include
+    ${CMAKE_CURRENT_SOURCE_DIR}/src
     ${CMAKE_SOURCE_DIR}/include/librarys/Nuklear
 )
 
@@ -51,3 +59,5 @@ install(TARGETS RoofNut
 install(DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/include/
     DESTINATION /usr/local/include
 )
+
+add_library(RoofNut STATIC ${SOURCES} ${HEADERS}) 

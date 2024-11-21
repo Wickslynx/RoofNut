@@ -7,6 +7,7 @@ extern "C" {
 
 #include "input.h"
 #include "Utilites.h"
+#include "application.h"
 
 #ifdef __cplusplus
 }
