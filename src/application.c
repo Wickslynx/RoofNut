@@ -2,7 +2,6 @@
 #include "application.h"
 #include <stdlib.h>
 #include <string.h>
-#include <stdio.h>
 #include <vulkan/vulkan.h>
 #include <GLFW/glfw3.h>
 
@@ -35,7 +34,6 @@ uint32_t queueFamilyIndex = 0;
 // Function to check Vulkan results.
 void check_vk_result(VkResult err) {
     if (err != VK_SUCCESS) {
-        fprintf(stderr, "Vulkan Error: %d\n", err);
         exit(EXIT_FAILURE);
     }
 }
@@ -181,8 +179,7 @@ void init_device() {
     vkEnumeratePhysicalDevices(g_Instance, &deviceCount, devices);
 
     if (deviceCount == 0) {
-        fprintf(stderr, "Failed to find a GPU with Vulkan support!\n"); // If failed to find Vulkan..
-        exit(EXIT_FAILURE);
+        exit(EXIT_FAILURE); //If failed to find vulkan.
     }
 
     g_PhysicalDevice = devices[0];
@@ -210,13 +207,12 @@ VkCommandBuffer Application_GetCommandBuffer(bool begin) {
         //Allocate the command buffers.
         VkResult res = vkAllocateCommandBuffers(g_Device, &allocInfo, &g_CommandBuffer);
         if (res != VK_SUCCESS) {
-            fprintf(stderr, "Failed to allocate command buffer!\n");
             exit(EXIT_FAILURE);
         }
     }
 
     if (begin) {
-        // Begin recording commands to the command buffer
+        // Begin recording commands to the command buffer.
         VkCommandBufferBeginInfo beginInfo = {
             .sType = VK_STRUCTURE_TYPE_COMMAND_BUFFER_BEGIN_INFO,
             .flags = 0, // Add relevant flags if necessary
@@ -225,7 +221,6 @@ VkCommandBuffer Application_GetCommandBuffer(bool begin) {
 
         VkResult res = vkBeginCommandBuffer(g_CommandBuffer, &beginInfo);
         if (res != VK_SUCCESS) {
-            fprintf(stderr, "Failed to begin recording command buffer!\n");
             exit(EXIT_FAILURE);
         }
     }
@@ -237,7 +232,6 @@ VkCommandBuffer Application_GetCommandBuffer(bool begin) {
 void Application_FlushCommandBuffer(VkCommandBuffer commandBuffer) {
     VkResult res = vkEndCommandBuffer(commandBuffer);
     if (res != VK_SUCCESS) {
-        fprintf(stderr, "Failed to record command buffer!\n");
         exit(EXIT_FAILURE);
     }
 
@@ -251,11 +245,10 @@ void Application_FlushCommandBuffer(VkCommandBuffer commandBuffer) {
     // Submit the command buffer.
     res = vkQueueSubmit(g_Queue, 1, &submitInfo, VK_NULL_HANDLE);
     if (res != VK_SUCCESS) {
-        fprintf(stderr, "Failed to submit command buffer!\n");
         exit(EXIT_FAILURE);
     }
 
-    // Optional: Wait for the GPU to finish (for synchronization)
+    // Note: Wait for the GPU to finish?
     vkQueueWaitIdle(g_Queue);
 
     // After flushing, reset the command buffer for the next use.
