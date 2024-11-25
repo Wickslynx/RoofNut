@@ -1,70 +1,48 @@
-#pragma once
-#include <stdint.h>
+#ifndef APPLICATION_H
+#define APPLICATION_H
+
 #include <stdbool.h>
 #include <vulkan/vulkan.h>
 #include <GLFW/glfw3.h>
 
-#include <stdlib.h>
-#include <math.h>
-#include "roofnut.h"
+// Define constants, if needed, for Vulkan or GLFW initialization
+#define APPLICATION_NAME "RoofNut Application"
 
+// Vulkan global resources
+extern VkInstance g_Instance;
+extern VkPhysicalDevice g_PhysicalDevice;
+extern VkDevice g_Device;
+extern VkRenderPass g_RenderPass;
+extern VkFramebuffer g_Framebuffer;
+extern VkExtent2D g_SwapChainExtent;
+extern GLFWwindow* g_Window;
+extern VkQueue g_Queue;
+extern uint32_t queueFamilyIndex;
+extern VkCommandBuffer g_CommandBuffer; // Command buffer for Vulkan
 
-// Error checking for Vulkan calls
-void check_vk_result(VkResult err);
-
-// Application configuration structure
-typedef struct {
-    const char* name;   // Application name
-    uint32_t width;     // Application window width
-    uint32_t height;    // Application window height
-} ApplicationSpecification;
-
-static VkCommandBuffer g_CommandBuffer = VK_NULL_HANDLE;
-
-// Layer callback function type
-typedef void (*LayerCallback)(void);
-
-// Application structure containing application state and resources
-typedef struct {
-    ApplicationSpecification specification;
-    GLFWwindow* windowHandle;
-    bool running;
-
-    float timeStep;
-    float frameTime;
-    float lastFrameTime;
-
-    bool customTitleBar;
-
-    size_t layerCount;
-    struct Layer** layers;
-
-    LayerCallback menubarCallback;  // Function pointer for menubar callback
-} Application;
-
-extern struct nk_context *ctx;
+// Nuklear context
+extern struct nk_context *ctx; // Nuklear context for GUI
 
 // Function declarations
-Application* Application_Create(const ApplicationSpecification* specification);
-void Application_Destroy(Application* app);
-void DrawCustomTitleBar(Application* app);
-void OnUiRender();
-void Application_Run(Application* app);
-void Application_SetMenubarCallback(Application* app, LayerCallback menubarCallback);
-void Application_PushLayer(Application* app, struct Layer* layer);
-void Application_Close(Application* app);
 
-float Application_GetTime(const Application* app);
-GLFWwindow* Application_GetWindowHandle(const Application* app);
+// Vulkan utilities
+void check_vk_result(VkResult err);
+void init_vulkan();
+void init_device();
+void create_render_pass();
+void cleanup_vulkan();
 
-VkInstance Application_GetInstance();
-VkPhysicalDevice Application_GetPhysicalDevice();
-VkDevice Application_GetDevice();
+// Vulkan Command Buffer
 VkCommandBuffer Application_GetCommandBuffer(bool begin);
 void Application_FlushCommandBuffer(VkCommandBuffer commandBuffer);
 
-void Application_SubmitResourceFree(void (*func)(void));
+// Application lifecycle functions
+Application* Application_Create(const ApplicationSpecification* specification);
+void Application_Destroy(Application* app);
 
-// Implemented by the client application
-Application* CreateApplication(int argc, char** argv);
+// Nuklear and GLFW Vulkan integration
+int nk_glfw_vulkan_init(GLFWwindow* window, struct nk_context** outCtx);
+void nk_glfw_vulkan_render(struct nk_context* ctx);
+void nk_glfw_vulkan_shutdown(struct nk_context* ctx);
 
+#endif // APPLICATION_H
