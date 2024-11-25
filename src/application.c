@@ -2,6 +2,7 @@
 #include "application.h"
 #include <stdlib.h>
 #include <string.h>
+#include <stdio.h>
 #include <vulkan/vulkan.h>
 #include <GLFW/glfw3.h>
 
@@ -17,7 +18,8 @@
 
 #include "nuklear.h"
 #include "nuklear_glfw_vulkan.h"
-struct nk_context *ctx; // Declare the Nuklear rendering context.
+
+struct nk_context *ctx; 
 
 // Declare the global Vulkan resources.
 VkInstance g_Instance;
@@ -28,15 +30,18 @@ VkFramebuffer g_Framebuffer;
 VkExtent2D g_SwapChainExtent;
 GLFWwindow* g_Window;
 VkQueue g_Queue;
+VkCommandBuffer g_CommandBuffer; // Vulkan commandbuffer.
+VkCommandPool g_CommandPool; // Command pool for Vulkan.
 uint32_t queueFamilyIndex = 0;
-
 
 // Function to check Vulkan results.
 void check_vk_result(VkResult err) {
     if (err != VK_SUCCESS) {
+        fprintf(stderr, "Vulkan error: %d\n", err);
         exit(EXIT_FAILURE);
     }
 }
+
 //Note: What am i writing?
 // Initialize Vulkan, GLFW, and Nuklear.
 int nk_glfw_vulkan_init(GLFWwindow* window, struct nk_context** outCtx) {
@@ -121,21 +126,83 @@ void nk_glfw_vulkan_shutdown(struct nk_context* ctx) {
     free(ctx); // Free the Nuklear rendering context (ctx).
 }
 
+// Function to create a Vulkan render pass.
+void create_render_pass() {
+    // Create the attachment description for the color attachment.
+    VkAttachmentDescription colorAttachment = {
+        .format = VK_FORMAT_B8G8R8A8_UNORM, // Color format for the swapchain.
+        .samples = VK_SAMPLE_COUNT_1_BIT,  // Number of samples (1 for no multisampling).
+        .loadOp = VK_ATTACHMENT_LOAD_OP_CLEAR, // Clear the attachment before the render pass starts.
+        .storeOp = VK_ATTACHMENT_STORE_OP_STORE, // Store the attachment after rendering.
+        .stencilLoadOp = VK_ATTACHMENT_LOAD_OP_DONT_CARE, // No stencil buffer operation.
+        .stencilStoreOp = VK_ATTACHMENT_STORE_OP_DONT_CARE, // No stencil buffer store operation.
+        .initialLayout = VK_IMAGE_LAYOUT_UNDEFINED, // Initial layout for the attachment.
+        .finalLayout = VK_IMAGE_LAYOUT_PRESENT_SRC_KHR // Final layout for presenting to the swapchain.
+    };
+
+    // Create a reference to the color attachment.
+    VkAttachmentReference colorAttachmentRef = {
+        .attachment = 0, // Index of the attachment (0 for color).
+        .layout = VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL // Layout to use for color attachment during rendering.
+    };
+
+    // Create a subpass description (this represents the rendering pipeline and its attachments).
+    VkSubpassDescription subpass = {
+        .pipelineBindPoint = VK_PIPELINE_BIND_POINT_GRAPHICS, // The pipeline bind point is graphics.
+        .colorAttachmentCount = 1, // Only one color attachment.
+        .pColorAttachments = &colorAttachmentRef // Reference to the color attachment.
+    };
+
+    // Create the render pass creation info structure.
+    VkRenderPassCreateInfo renderPassInfo = {
+        .sType = VK_STRUCTURE_TYPE_RENDER_PASS_CREATE_INFO, // Type of the structure.
+        .attachmentCount = 1, // Number of attachments.
+        .pAttachments = &colorAttachment, // Reference to the attachment.
+        .subpassCount = 1, // Number of subpasses.
+        .pSubpasses = &subpass // Reference to the subpass description.
+    };
+
+    // Create the render pass using Vulkan API.
+    VkResult res = vkCreateRenderPass(g_Device, &renderPassInfo, NULL, &g_RenderPass);
+    check_vk_result(res); // Check the result of render pass creation.
+}
+
+
 // Main application function, used to create the application.
 Application* Application_Create(const ApplicationSpecification* specification) {
-    // Initialize GLFW, Vulkan, and other resources.
-    Application* app = (Application*)malloc(sizeof(Application));
-    if (!app) return NULL;
+    // Initialize GLFW
+   
+    if (!glfwInit()) {
+        const char* error_description;
+        glfwGetError(&error_description);
+        printf("GLFW Initialization failed: %s\n", error_description);
+        return NULL; // If GLFW initialization fails.
+    }
 
-    // Initialize members, including GLFW window and Vulkan instance.
-    app->windowHandle = glfwCreateWindow(specification->width, specification->height, specification->name, NULL, NULL);
-    if (!app->windowHandle) {
-        free(app);
+
+    // Enable Vulkan support for GLFW
+    glfwWindowHint(GLFW_CLIENT_API, GLFW_NO_API); // No OpenGL context required for Vulkan.
+    glfwWindowHint(GLFW_RESIZABLE, GLFW_FALSE); // Make the window non-resizable if you prefer.
+
+    // Create the window
+    Application* app = (Application*)malloc(sizeof(Application));
+    if (!app)  {
+        printf("Allocation of Application failed\n");
+        glfwTerminate();  // Make sure to terminate GLFW if allocation fails.
         return NULL;
     }
 
-    //Note: Additional initilatization nedeed?
-    return app;
+    app->windowHandle = glfwCreateWindow(specification->width, specification->height, specification->name, NULL, NULL);
+    if (!app->windowHandle) {
+        printf("Failed to create GLFW window. \n");
+        free(app);
+        glfwTerminate(); // Terminate GLFW if window creation fails.
+        return NULL;
+    }
+
+    // Initialize Vulkan here if needed, this step can be part of the app setup.
+
+    return app; // Return the app if everything is fine.
 }
 
 // Main application shutdown and cleanup function.
@@ -147,7 +214,7 @@ void Application_Destroy(Application* app) {
 
     glfwDestroyWindow(app->windowHandle);  // Destroy the GLFW window.
     glfwTerminate();  // Terminate GLFW.
-    free(app); //Free the app.
+    free(app); // Free the app.
 }
 
 // Initialization of Vulkan.
@@ -179,7 +246,7 @@ void init_device() {
     vkEnumeratePhysicalDevices(g_Instance, &deviceCount, devices);
 
     if (deviceCount == 0) {
-        exit(EXIT_FAILURE); //If failed to find vulkan.
+        exit(EXIT_FAILURE); // If failed to find Vulkan device.
     }
 
     g_PhysicalDevice = devices[0];
@@ -192,19 +259,18 @@ void init_device() {
     check_vk_result(res);  // Check device creation.
 }
 
-
 // Function to retrieve the Vulkan command buffer.
 VkCommandBuffer Application_GetCommandBuffer(bool begin) {
     if (g_CommandBuffer == VK_NULL_HANDLE) {
-        // For now, js a simple allocation.
+        // For now, just a simple allocation.
         VkCommandBufferAllocateInfo allocInfo = {
             .sType = VK_STRUCTURE_TYPE_COMMAND_BUFFER_ALLOCATE_INFO,
-            .commandPool = VK_NULL_HANDLE, //Placeholder.
+            .commandPool = g_CommandPool, // Use the command pool here.
             .level = VK_COMMAND_BUFFER_LEVEL_PRIMARY,
             .commandBufferCount = 1
         };
 
-        //Allocate the command buffers.
+        // Allocate the command buffers.
         VkResult res = vkAllocateCommandBuffers(g_Device, &allocInfo, &g_CommandBuffer);
         if (res != VK_SUCCESS) {
             exit(EXIT_FAILURE);
@@ -252,52 +318,28 @@ void Application_FlushCommandBuffer(VkCommandBuffer commandBuffer) {
     vkQueueWaitIdle(g_Queue);
 
     // After flushing, reset the command buffer for the next use.
-    vkFreeCommandBuffers(g_Device, VK_NULL_HANDLE, 1, &g_CommandBuffer);
-    g_CommandBuffer = VK_NULL_HANDLE;
+    vkFreeCommandBuffers(g_Device, g_CommandPool, 1, &commandBuffer);
 }
 
-
-// Creating render pass.
-void create_render_pass() {
-    VkAttachmentDescription colorAttachment = {
-        .format = VK_FORMAT_B8G8R8A8_UNORM,
-        .samples = VK_SAMPLE_COUNT_1_BIT,
-        .loadOp = VK_ATTACHMENT_LOAD_OP_CLEAR,
-        .storeOp = VK_ATTACHMENT_STORE_OP_STORE,
-        .stencilLoadOp = VK_ATTACHMENT_LOAD_OP_DONT_CARE,
-        .stencilStoreOp = VK_ATTACHMENT_STORE_OP_DONT_CARE,
-        .initialLayout = VK_IMAGE_LAYOUT_UNDEFINED,
-        .finalLayout = VK_IMAGE_LAYOUT_PRESENT_SRC_KHR
-    };
-
-    VkAttachmentReference colorAttachmentRef = {
-        .attachment = 0,
-        .layout = VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL
-    };
-
-    VkSubpassDescription subpass = {
-        .pipelineBindPoint = VK_PIPELINE_BIND_POINT_GRAPHICS,
-        .colorAttachmentCount = 1,
-        .pColorAttachments = &colorAttachmentRef
-    };
-
-    VkRenderPassCreateInfo renderPassInfo = {
-        .sType = VK_STRUCTURE_TYPE_RENDER_PASS_CREATE_INFO,
-        .attachmentCount = 1,
-        .pAttachments = &colorAttachment,
-        .subpassCount = 1,
-        .pSubpasses = &subpass
-    };
-
-    VkResult res = vkCreateRenderPass(g_Device, &renderPassInfo, NULL, &g_RenderPass);
-    check_vk_result(res);  // Check render pass creation.
-}
-
-// Clean up Vulkan resources.
+// Function to clean up Vulkan resources.
 void cleanup_vulkan() {
-    vkDestroyRenderPass(g_Device, g_RenderPass, NULL);
-    vkDestroyDevice(g_Device, NULL);
-    vkDestroyInstance(g_Instance, NULL);
+    // First, destroy the render pass.
+    if (g_RenderPass != VK_NULL_HANDLE) {
+        vkDestroyRenderPass(g_Device, g_RenderPass, NULL);
+        g_RenderPass = VK_NULL_HANDLE; // Reset to null handle after destruction.
+    }
+
+    // Destroy the Vulkan device.
+    if (g_Device != VK_NULL_HANDLE) {
+        vkDestroyDevice(g_Device, NULL);
+        g_Device = VK_NULL_HANDLE; // Reset to null handle after destruction.
+    }
+
+    // Destroy the Vulkan instance.
+    if (g_Instance != VK_NULL_HANDLE) {
+        vkDestroyInstance(g_Instance, NULL);
+        g_Instance = VK_NULL_HANDLE; // Reset to null handle after destruction.
+    }
 }
 
-//Note: Further code under here.
+

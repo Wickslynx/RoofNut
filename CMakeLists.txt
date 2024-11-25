@@ -2,11 +2,11 @@
 cmake_minimum_required(VERSION 3.10)
 
 # Set the project name and version
-project(RoofNut VERSION 1.0)
+project(RoofNut VERSION 1.0 LANGUAGES C)
 
-# Set C++ standard
-set(CMAKE_CXX_STANDARD 11)
-set(CMAKE_CXX_STANDARD_REQUIRED True)
+# Set C standard
+set(CMAKE_C_STANDARD 11)
+set(CMAKE_C_STANDARD_REQUIRED True)
 
 # Add source files for the project
 file(GLOB SOURCES
@@ -22,34 +22,20 @@ file(GLOB HEADERS
     include/roofnut.h
 )
 
-# Create the library target (STATIC, as you want it to be a library)
+# Create the library target
 add_library(RoofNut STATIC ${SOURCES} ${HEADERS})
 
-# Specify the paths to include directories for GLFW and other dependencies
-include_directories("/usr/include/GLFW")
-include_directories("/usr/local/include/GLFW")
-
-# Add include directories for your own headers and Nuklear
+# Include directories for project and dependencies
 target_include_directories(RoofNut PUBLIC
-    ${CMAKE_CURRENT_SOURCE_DIR}/include    # Ensure this path is correct for 'roofnut.h'
-    ${CMAKE_CURRENT_SOURCE_DIR}/src
+    ${CMAKE_CURRENT_SOURCE_DIR}/include
     ${CMAKE_SOURCE_DIR}/include/librarys/Nuklear
 )
 
-# Add the directory where the GLFW library files are located
-link_directories("/usr/lib/x86_64-linux-gnu")
-link_directories("/usr/local/lib")
-
-# Find Vulkan package
+# Find required Vulkan package
 find_package(Vulkan REQUIRED)
 
-# Link the required libraries to the target
-target_link_libraries(RoofNut PRIVATE glfw)
-target_link_libraries(RoofNut PRIVATE Vulkan::Vulkan)
-target_link_libraries(RoofNut PRIVATE m)  # Link the math library
-
-# Optional: Define a macro for debugging purposes
-# target_compile_definitions(RoofNut PRIVATE DEBUG)
+# Link dependencies
+target_link_libraries(RoofNut PRIVATE glfw Vulkan::Vulkan m)
 
 # Installation targets
 install(TARGETS RoofNut
@@ -58,4 +44,10 @@ install(TARGETS RoofNut
 
 install(DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/include/
     DESTINATION /usr/local/include
+    FILES_MATCHING PATTERN "*.h"
 )
+
+# Ignore this, Its made for my testing (Wickslynx).
+# add_executable(RoofNutTest test.c)
+
+target_link_libraries(RoofNutTest PRIVATE RoofNut glfw Vulkan::Vulkan m)

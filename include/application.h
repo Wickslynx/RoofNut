@@ -23,6 +23,26 @@ extern VkCommandBuffer g_CommandBuffer; // Command buffer for Vulkan
 // Nuklear context
 extern struct nk_context *ctx; // Nuklear context for GUI
 
+ //Struct declarations.
+typedef struct {
+    const char* name;   // Application name
+    uint32_t width;     // Application window width
+    uint32_t height;    // Application window height
+} ApplicationSpecification;
+
+typedef void (*LayerCallback)(void);
+
+typedef struct {
+    ApplicationSpecification specification;
+    GLFWwindow* windowHandle;
+    bool running;
+    bool customTitleBar;
+    size_t layerCount;
+    struct Layer** layers;
+    LayerCallback menubarCallback;  // Function pointer for menubar callback
+} Application;
+
+
 // Function declarations
 
 // Vulkan utilities
@@ -44,5 +64,8 @@ void Application_Destroy(Application* app);
 int nk_glfw_vulkan_init(GLFWwindow* window, struct nk_context** outCtx);
 void nk_glfw_vulkan_render(struct nk_context* ctx);
 void nk_glfw_vulkan_shutdown(struct nk_context* ctx);
+void create_render_pass(void);
+void cleanup_vulkan(void);
+
 
 #endif // APPLICATION_H
