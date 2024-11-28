@@ -50,4 +50,5 @@ install(DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/include/
 # Ignore this, Its made for my testing (Wickslynx).
 # add_executable(RoofNutTest test.c)
 
-target_link_libraries(RoofNutTest PRIVATE RoofNut glfw Vulkan::Vulkan m)
+#Ignore this, made for my testing (Wickslynx)
+# target_link_libraries(RoofNutTest PRIVATE RoofNut glfw Vulkan::Vulkan m)
