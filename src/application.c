@@ -213,11 +213,11 @@ void Application_Destroy(Application* app) {
 void init_vulkan() {
     VkApplicationInfo appInfo = {
         .sType = VK_STRUCTURE_TYPE_APPLICATION_INFO,
-        .pApplicationName = "RoofNut application.",
-        .applicationVersion = VK_MAKE_VERSION(1, 0, 0),
-        .pEngineName = "RoofNut",
-        .engineVersion = VK_MAKE_VERSION(1, 0, 0),
-        .apiVersion = VK_API_VERSION_1_0
+        .pApplicationName = "RoofNut application.", //Set the application name. (Not visible)
+        .applicationVersion = VK_MAKE_VERSION(1, 0, 0), //Set the application version.
+        .pEngineName = "RoofNut", //Set the engine name (RoofNut).
+        .engineVersion = VK_MAKE_VERSION(1, 5, 1),//Set the engine version.
+        .apiVersion = VK_API_VERSION_1_0 //Set the api version (1).
     };
 
     VkInstanceCreateInfo createInfo = {
