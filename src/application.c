@@ -92,7 +92,7 @@ void nk_glfw_vulkan_render(struct nk_context* ctx) {
         .curve_segment_count = 22,
         .arc_segment_count = 22,
     };
-
+    Not
     if (nk_convert(ctx, &cmds, &vertices, &elements, &config) == NK_CONVERT_SUCCESS) { // If convert was successful.
         // Iterate over each draw command
         const struct nk_draw_command* cmd;
@@ -182,7 +182,6 @@ Application* Application_Create(const ApplicationSpecification* specification) {
 
     // Enable Vulkan support for GLFW
     glfwWindowHint(GLFW_CLIENT_API, GLFW_NO_API); // No OpenGL context required for Vulkan.
-    glfwWindowHint(GLFW_RESIZABLE, GLFW_FALSE); // Make the window non-resizable if you prefer.
 
     // Create the window
     Application* app = (Application*)malloc(sizeof(Application));
@@ -200,7 +199,7 @@ Application* Application_Create(const ApplicationSpecification* specification) {
         return NULL;
     }
 
-    // Initialize Vulkan here if needed, this step can be part of the app setup.
+    // Note:  Initialize Vulkan here needed? Part of app setup?
 
     return app; // Return the app if everything is fine.
 }
