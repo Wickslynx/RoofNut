@@ -24,6 +24,7 @@ Please see the *example.c* file for further explanation and examples
 # Current Issues:
 
 **1. Linker not linking**, Unknown function declarations when included library.
+**2. Segmentation fault**, When running program with compatible drives i get "Segmentationfault".
 
 
 ***RoofNut is still in development, no stable version has released.***
