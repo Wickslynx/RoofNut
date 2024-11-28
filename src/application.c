@@ -1,4 +1,3 @@
-// All includes statements.
 #include "application.h"
 #include <stdlib.h>
 #include <string.h>
@@ -42,7 +41,6 @@ void check_vk_result(VkResult err) {
     }
 }
 
-//Note: What am i writing?
 // Initialize Vulkan, GLFW, and Nuklear.
 int nk_glfw_vulkan_init(GLFWwindow* window, struct nk_context** outCtx) {
     *outCtx = (struct nk_context*)malloc(sizeof(struct nk_context));
@@ -50,7 +48,7 @@ int nk_glfw_vulkan_init(GLFWwindow* window, struct nk_context** outCtx) {
         return -1;
     }
 
-    // Note: Nuklear setup can go here. 
+    // Nuklear setup can go here. 
 
     return 0;
 }
@@ -64,18 +62,18 @@ void nk_glfw_vulkan_render(struct nk_context* ctx) {
     VkClearValue clearColor = {.color = {{0.1f, 0.1f, 0.1f, 1.0f}}};
 
     VkRenderPassBeginInfo renderPassInfo = {
-        .sType = VK_STRUCTURE_TYPE_RENDER_PASS_BEGIN_INFO, // Type of structure (RenderPass)
-        .renderPass = g_RenderPass, // The Vulkan RenderPass object.
-        .framebuffer = g_Framebuffer, // Specifies the framebuffer. (Where the rendering will take place.)
-        .renderArea = {  // Area that will take effect of the render pass.
+        .sType = VK_STRUCTURE_TYPE_RENDER_PASS_BEGIN_INFO, 
+        .renderPass = g_RenderPass, 
+        .framebuffer = g_Framebuffer, 
+        .renderArea = { 
             .offset = {0, 0},
             .extent = g_SwapChainExtent
         },
-        .clearValueCount = 1,  // Number of clear values.
-        .pClearValues = &clearColor // The clear values.
+        .clearValueCount = 1, 
+        .pClearValues = &clearColor 
     };
 
-    vkCmdBeginRenderPass(commandBuffer, &renderPassInfo, VK_SUBPASS_CONTENTS_INLINE); // Begin the RenderPass with the information from the renderPassInfo struct.
+    vkCmdBeginRenderPass(commandBuffer, &renderPassInfo, VK_SUBPASS_CONTENTS_INLINE);
 
     // Prepare Nuklear buffers
     struct nk_buffer cmds, vertices, elements;
@@ -92,9 +90,8 @@ void nk_glfw_vulkan_render(struct nk_context* ctx) {
         .curve_segment_count = 22,
         .arc_segment_count = 22,
     };
-    Not
+
     if (nk_convert(ctx, &cmds, &vertices, &elements, &config) == NK_CONVERT_SUCCESS) { // If convert was successful.
-        // Iterate over each draw command
         const struct nk_draw_command* cmd;
         nk_draw_foreach(cmd, ctx, &cmds) {
             if (!cmd->elem_count) continue;  // Skip empty commands
@@ -167,7 +164,6 @@ void create_render_pass() {
     check_vk_result(res); // Check the result of render pass creation.
 }
 
-
 // Main application function, used to create the application.
 Application* Application_Create(const ApplicationSpecification* specification) {
     // Initialize GLFW
@@ -178,7 +174,6 @@ Application* Application_Create(const ApplicationSpecification* specification) {
         printf("GLFW Initialization failed: %s\n", error_description);
         return NULL; // If GLFW initialization fails.
     }
-
 
     // Enable Vulkan support for GLFW
     glfwWindowHint(GLFW_CLIENT_API, GLFW_NO_API); // No OpenGL context required for Vulkan.
@@ -198,8 +193,6 @@ Application* Application_Create(const ApplicationSpecification* specification) {
         glfwTerminate(); // Terminate GLFW if window creation fails.
         return NULL;
     }
-
-    // Note:  Initialize Vulkan here needed? Part of app setup?
 
     return app; // Return the app if everything is fine.
 }
@@ -240,105 +233,42 @@ void init_vulkan() {
 void init_device() {
     uint32_t deviceCount = 0;
     vkEnumeratePhysicalDevices(g_Instance, &deviceCount, NULL);
+    if (deviceCount == 0) {
+        printf("Failed to find GPUs with Vulkan support.\n");
+        exit(1);  // Exit if no Vulkan-supported devices found.
+    }
 
     VkPhysicalDevice devices[deviceCount];
     vkEnumeratePhysicalDevices(g_Instance, &deviceCount, devices);
+    g_PhysicalDevice = devices[0];  // Select the first available GPU.
 
-    if (deviceCount == 0) {
-        exit(EXIT_FAILURE); // If failed to find Vulkan device.
+    // Select queue family.
+    uint32_t queueFamilyCount = 0;
+    vkGetPhysicalDeviceQueueFamilyProperties(g_PhysicalDevice, &queueFamilyCount, NULL);
+    VkQueueFamilyProperties queueFamilies[queueFamilyCount];
+    vkGetPhysicalDeviceQueueFamilyProperties(g_PhysicalDevice, &queueFamilyCount, queueFamilies);
+
+    for (uint32_t i = 0; i < queueFamilyCount; i++) {
+        if (queueFamilies[i].queueFlags & VK_QUEUE_GRAPHICS_BIT) {
+            queueFamilyIndex = i;
+            break;
+        }
     }
 
-    g_PhysicalDevice = devices[0];
-
-    VkDeviceCreateInfo createInfo = {
-        .sType = VK_STRUCTURE_TYPE_DEVICE_CREATE_INFO // Create device info..
+    float queuePriority = 1.0f;
+    VkDeviceQueueCreateInfo queueCreateInfo = {
+        .sType = VK_STRUCTURE_TYPE_DEVICE_QUEUE_CREATE_INFO,
+        .queueFamilyIndex = queueFamilyIndex,
+        .queueCount = 1,
+        .pQueuePriorities = &queuePriority
     };
 
-    VkResult res = vkCreateDevice(g_PhysicalDevice, &createInfo, NULL, &g_Device);
+    VkDeviceCreateInfo deviceCreateInfo = {
+        .sType = VK_STRUCTURE_TYPE_DEVICE_CREATE_INFO,
+        .queueCreateInfoCount = 1,
+        .pQueueCreateInfos = &queueCreateInfo
+    };
+
+    res = vkCreateDevice(g_PhysicalDevice, &deviceCreateInfo, NULL, &g_Device);
     check_vk_result(res);  // Check device creation.
 }
-
-// Function to retrieve the Vulkan command buffer.
-VkCommandBuffer Application_GetCommandBuffer(bool begin) {
-    if (g_CommandBuffer == VK_NULL_HANDLE) {
-        // For now, just a simple allocation.
-        VkCommandBufferAllocateInfo allocInfo = {
-            .sType = VK_STRUCTURE_TYPE_COMMAND_BUFFER_ALLOCATE_INFO,
-            .commandPool = g_CommandPool, // Use the command pool here.
-            .level = VK_COMMAND_BUFFER_LEVEL_PRIMARY,
-            .commandBufferCount = 1
-        };
-
-        // Allocate the command buffers.
-        VkResult res = vkAllocateCommandBuffers(g_Device, &allocInfo, &g_CommandBuffer);
-        if (res != VK_SUCCESS) {
-            exit(EXIT_FAILURE);
-        }
-    }
-
-    if (begin) {
-        // Begin recording commands to the command buffer.
-        VkCommandBufferBeginInfo beginInfo = {
-            .sType = VK_STRUCTURE_TYPE_COMMAND_BUFFER_BEGIN_INFO,
-            .flags = 0, // Add relevant flags if necessary
-            .pInheritanceInfo = NULL
-        };
-
-        VkResult res = vkBeginCommandBuffer(g_CommandBuffer, &beginInfo);
-        if (res != VK_SUCCESS) {
-            exit(EXIT_FAILURE);
-        }
-    }
-
-    return g_CommandBuffer;
-}
-
-// Function to submit the command buffer and cleanup.
-void Application_FlushCommandBuffer(VkCommandBuffer commandBuffer) {
-    VkResult res = vkEndCommandBuffer(commandBuffer);
-    if (res != VK_SUCCESS) {
-        exit(EXIT_FAILURE);
-    }
-
-    // Note: Further code needed?
-    VkSubmitInfo submitInfo = {
-        .sType = VK_STRUCTURE_TYPE_SUBMIT_INFO,
-        .commandBufferCount = 1,
-        .pCommandBuffers = &commandBuffer
-    };
-
-    // Submit the command buffer.
-    res = vkQueueSubmit(g_Queue, 1, &submitInfo, VK_NULL_HANDLE);
-    if (res != VK_SUCCESS) {
-        exit(EXIT_FAILURE);
-    }
-
-    // Note: Wait for the GPU to finish?
-    vkQueueWaitIdle(g_Queue);
-
-    // After flushing, reset the command buffer for the next use.
-    vkFreeCommandBuffers(g_Device, g_CommandPool, 1, &commandBuffer);
-}
-
-// Function to clean up Vulkan resources.
-void cleanup_vulkan() {
-    // First, destroy the render pass.
-    if (g_RenderPass != VK_NULL_HANDLE) {
-        vkDestroyRenderPass(g_Device, g_RenderPass, NULL);
-        g_RenderPass = VK_NULL_HANDLE; // Reset to null handle after destruction.
-    }
-
-    // Destroy the Vulkan device.
-    if (g_Device != VK_NULL_HANDLE) {
-        vkDestroyDevice(g_Device, NULL);
-        g_Device = VK_NULL_HANDLE; // Reset to null handle after destruction.
-    }
-
-    // Destroy the Vulkan instance.
-    if (g_Instance != VK_NULL_HANDLE) {
-        vkDestroyInstance(g_Instance, NULL);
-        g_Instance = VK_NULL_HANDLE; // Reset to null handle after destruction.
-    }
-}
-
-
