@@ -5,6 +5,7 @@
 #include <vulkan/vulkan.h>
 #include <GLFW/glfw3.h>
 
+
 // Global Vulkan resources
 VkInstance g_Instance;
 VkPhysicalDevice g_PhysicalDevice;
@@ -14,12 +15,18 @@ VkFramebuffer g_Framebuffer;
 VkSurfaceKHR g_Surface;
 VkSurfaceCapabilitiesKHR g_SurfaceCapabilities;
 VkExtent2D g_SwapChainExtent;
+VkSemaphore renderSemaphore;
 GLFWwindow* g_Window;
 VkQueue g_Queue;
 VkCommandBuffer g_CommandBuffer;
 VkCommandPool g_CommandPool;
 uint32_t queueFamilyIndex = 0;
 VkSwapchainKHR g_Swapchain; // Add this to hold the swapchain.
+int imageIndex;
+VkImageView* imageViews = NULL;  // To hold image views
+VkImage* swapchainImages = NULL; // To hold swapchain images
+VkSurfaceFormatKHR selectedFormat; // To hold selected surface format
+
 
 // Function to check Vulkan results.
 void check_vk_result(VkResult err) {
@@ -48,7 +55,8 @@ void init_vulkan() {
     VkResult res = vkCreateInstance(&createInfo, NULL, &g_Instance);
     check_vk_result(res);  // Check instance creation.
 
-    init_swapchain(); // Call init_swapchain after Vulkan instance creation.
+    uint32_t imageCount = 0;
+    vkGetSwapchainImagesKHR(g_Device, g_Swapchain, &imageCount, NULL);
 }
 
 // Initialization of device.
@@ -92,10 +100,28 @@ void init_device() {
     };
 
     VkResult res = vkCreateDevice(g_PhysicalDevice, &deviceCreateInfo, NULL, &g_Device);
-    check_vk_result(res);  // Check device creation.
+    check_vk_result(res);  // Check device 
 }
 
 void init_swapchain() {
+
+    imageViews = malloc(sizeof(VkImageView) * swapchainImageCount);
+
+    for (uint32_t i = 0; i < swapchainImageCount; ++i) {
+    	VkImageViewCreateInfo viewInfo = {
+        .sType = VK_STRUCTURE_TYPE_IMAGE_VIEW_CREATE_INFO,
+        .image = swapchainImages[i],
+        .viewType = VK_IMAGE_VIEW_TYPE_2D,
+        .format = selectedFormat.format,
+        .subresourceRange = {
+        .aspectMask = VK_IMAGE_ASPECT_COLOR_BIT,
+        .baseMipLevel = 0,
+        .levelCount = 1,
+        .baseArrayLayer = 0,
+        .layerCount = 1
+    };
+
+    vkCreateImageView(g_Device, &viewInfo, NULL, &imageViews[i]);
     // Ensure GLFW has been initialized and the window is created before calling this function
     glfwCreateWindowSurface(g_Instance, g_Window, NULL, &g_Surface); // Create a window surface.
 
@@ -155,6 +181,46 @@ void init_swapchain() {
     }
 }
 
+void init_buffers() {
+    // Allocate space for framebuffers
+    g_Framebuffer = malloc(sizeof(VkFramebuffer) * imageCount);
+
+
+    for (uint32_t i = 0; i < imageCount; ++i) {
+    	VkFramebufferCreateInfo framebufferInfo = {
+        	.sType = VK_STRUCTURE_TYPE_FRAMEBUFFER_CREATE_INFO,
+        	.renderPass = g_RenderPass,
+        	.attachmentCount = 1,
+        	.pAttachments = &imageViews[i],
+        	.width = g_SwapChainExtent.width,
+        	.height = g_SwapChainExtent.height,
+        	.layers = 1
+	}
+    };
+
+    vkCreateFramebuffer(g_Device, &framebufferInfo, NULL, &g_Framebuffer[i]);
+}
+
+
+    // Create command pool
+    VkCommandPoolCreateInfo poolInfo = {
+        .sType = VK_STRUCTURE_TYPE_COMMAND_POOL_CREATE_INFO,
+        .queueFamilyIndex = queueFamilyIndex,
+    };
+    check_vk_result(vkCreateCommandPool(g_Device, &poolInfo, NULL, &g_CommandPool));
+
+    // Allocate command buffer
+    VkCommandBufferAllocateInfo allocInfo = {
+        .sType = VK_STRUCTURE_TYPE_COMMAND_BUFFER_ALLOCATE_INFO,
+        .commandPool = g_CommandPool,
+        .level = VK_COMMAND_BUFFER_LEVEL_PRIMARY,
+        .commandBufferCount = 1
+    };
+    check_vk_result(vkAllocateCommandBuffers(g_Device, &allocInfo, &g_CommandBuffer));
+}
+
+
+
 void render_pass() {
     //Define the color attachments (image).
     VkAttachmentDescription colorAttachment = {
@@ -193,7 +259,7 @@ void render_pass() {
     VkResult res = vkCreateRenderPass(g_Device, &renderPassInfo, NULL, &g_RenderPass);
     check_vk_result(res);
     
-    printf("Render pass done.")
+    printf("Render pass done.");
 } 
 
 // Main application function, used to create the application.
@@ -235,6 +301,8 @@ void main_loop() {
     init_device();
     init_vulkan();
     init_swapchain();
+    init_buffers();
+
     
     while (!glfwWindowShouldClose(g_Window)) {
         glfwPollEvents(); // Process window events
