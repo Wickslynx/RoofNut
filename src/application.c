@@ -229,6 +229,72 @@ Application* Application_Create(const ApplicationSpecification* specification) {
 
     return app; // Return the app if everything is fine.
 }
+// Main rendering loop
+void main_loop() {
+
+    init_device();
+    init_vulkan();
+    init_swapchain();
+    
+    while (!glfwWindowShouldClose(g_Window)) {
+        glfwPollEvents(); // Process window events
+
+        // Start a new frame
+        vkQueueWaitIdle(g_Queue); // Ensure the previous frame is finished
+
+        // Record command buffer
+        VkCommandBufferBeginInfo beginInfo = {
+            .sType = VK_STRUCTURE_TYPE_COMMAND_BUFFER_BEGIN_INFO,
+            .flags = VK_COMMAND_BUFFER_USAGE_ONE_TIME_SUBMIT_BIT
+        };
+
+        vkBeginCommandBuffer(g_CommandBuffer, &beginInfo);
+
+        VkClearValue clearValue = { .color = {{0.0f, 0.0f, 0.0f, 1.0f}} };
+        VkRenderPassBeginInfo renderPassInfo = {
+            .sType = VK_STRUCTURE_TYPE_RENDER_PASS_BEGIN_INFO,
+            .renderPass = g_RenderPass,
+            .framebuffer = g_Framebuffer,
+            .renderArea = {
+                .offset = {0, 0},
+                .extent = g_SwapChainExtent
+            },
+            .clearValueCount = 1,
+            .pClearValues = &clearValue
+        };
+
+        vkCmdBeginRenderPass(g_CommandBuffer, &renderPassInfo, VK_SUBPASS_CONTENTS_INLINE);
+
+        // Add drawing commands here (e.g., vkCmdDraw)
+
+        vkCmdEndRenderPass(g_CommandBuffer);
+        vkEndCommandBuffer(g_CommandBuffer);
+
+        // Submit command buffer
+        VkSubmitInfo submitInfo = {
+            .sType = VK_STRUCTURE_TYPE_SUBMIT_INFO,
+            .commandBufferCount = 1,
+            .pCommandBuffers = &g_CommandBuffer
+        };
+
+        vkQueueSubmit(g_Queue, 1, &submitInfo, VK_NULL_HANDLE);
+
+        // Present frame
+        VkPresentInfoKHR presentInfo = {
+            .sType = VK_STRUCTURE_TYPE_PRESENT_INFO_KHR,
+            .swapchainCount = 1,
+            .pSwapchains = &g_Swapchain,
+            .pImageIndices = &imageIndex,
+            .waitSemaphoreCount = 1,
+            .pWaitSemaphores = &renderSemaphore
+        };
+
+        vkQueuePresentKHR(g_Queue, &presentInfo);
+    }
+
+    vkDeviceWaitIdle(g_Device); // Ensure all GPU tasks are finished before exiting
+}
+
 
 // Main application shutdown and cleanup function.
 void Application_Destroy(Application* app) {
@@ -245,6 +311,3 @@ void Application_Destroy(Application* app) {
     glfwTerminate();  // Terminate GLFW.
     free(app); // Free the app.
 }
-
-
-
