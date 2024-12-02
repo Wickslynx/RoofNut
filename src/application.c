@@ -50,6 +50,7 @@ const char* validationLayers[] = {"VK_LAYER_KHRONOS_validation"};
 
 #define NK_VULKAN_IMPLEMENTATION
 #include "nuklear_glfw_vulkan.h"
+#include "nuklear.frag"
 
 struct nk_allocator allocator = { 0 }; 
 
