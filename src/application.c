@@ -5,14 +5,13 @@
 #include <vulkan/vulkan.h>
 #include <GLFW/glfw3.h>
 
-
-// Global Vulkan resources
-VkInstance g_Instance;
-VkPhysicalDevice g_PhysicalDevice;
-VkDevice g_Device;
-VkRenderPass g_RenderPass;
-VkFramebuffer g_Framebuffer;
-VkSurfaceKHR g_Surface;
+// Declares the global vulkan resources.
+VkInstance g_Instance; //Declares the vulkan instance.
+VkPhysicalDevice g_PhysicalDevice; //Declares the vulkan physical device.
+VkDevice g_Device; //Declares the vulkan device.
+VkRenderPass g_RenderPass; //Declares the renderpass.
+VkFramebuffer* g_Framebuffers; //Declares the vulkan framebuffers.
+VkSurfaceKHR g_Surface; //Declares the vulkan surfaces.
 VkSurfaceCapabilitiesKHR g_SurfaceCapabilities;
 VkExtent2D g_SwapChainExtent;
 VkSemaphore renderSemaphore;
@@ -21,12 +20,40 @@ VkQueue g_Queue;
 VkCommandBuffer g_CommandBuffer;
 VkCommandPool g_CommandPool;
 uint32_t queueFamilyIndex = 0;
-VkSwapchainKHR g_Swapchain; // Add this to hold the swapchain.
+VkSwapchainKHR g_Swapchain;
 int imageIndex;
-VkImageView* imageViews = NULL;  // To hold image views
-VkImage* swapchainImages = NULL; // To hold swapchain images
-VkSurfaceFormatKHR selectedFormat; // To hold selected surface format
+VkSemaphore imageAvailableSemaphore;
+VkImageView* imageViews = NULL;
+VkImage* swapchainImages = NULL;
+VkSurfaceFormatKHR selectedFormat;
+uint32_t swapchainImageCount = 0; // Added definition
 
+
+const char* validationLayers[] = {"VK_LAYER_KHRONOS_validation"};
+
+
+#define VK_USE_PLATFORM_WAYLAND_KHR
+
+#include <vulkan/vulkan_wayland.h>
+
+//Additonal Nuklear setup.
+
+#define NK_INCLUDE_FIXED_TYPES
+#define NK_INCLUDE_STANDARD_IO
+#define NK_INCLUDE_DEFAULT_ALLOCATOR
+#define NK_INCLUDE_VERTEX_BUFFER_OUTPUT
+#define NK_INCLUDE_FONT_BAKING
+#define NK_INCLUDE_DEFAULT_FONT
+#define NK_INCLUDE_COMMAND_USERDATA
+#define NK_IMPLEMENTATION
+#include "nuklear.h"
+
+#define NK_VULKAN_IMPLEMENTATION
+#include "nuklear_vulkan.h"
+
+struct nk_context *ctx; 
+struct nk_allocator allocator = {0}; 
+struct nk_vulkan_device vk = {0};
 
 // Function to check Vulkan results.
 void check_vk_result(VkResult err) {
@@ -36,28 +63,48 @@ void check_vk_result(VkResult err) {
     }
 }
 
-// Initialization of Vulkan.
+
+void init_nuklear(VkDevice device, VkPhysicalDevice physicalDevice, VkInstance instance, VkQueue queue, VkRenderPass renderPass) {
+	ctx = nk_vulkan_init(device, physicalDevice, instance, queue, renderPass, width, height); 
+	struct nk_font_atlas *atlas; 
+	nk_vulkan_font_stash_begin(&atlas); 
+	nk_vulkan_font_stash_end();
+
+	printf("Nuklear initilalized.");
+}
+
 void init_vulkan() {
     VkApplicationInfo appInfo = {
         .sType = VK_STRUCTURE_TYPE_APPLICATION_INFO,
-        .pApplicationName = "RoofNut application.", // Set the application name.
-        .applicationVersion = VK_MAKE_VERSION(1, 0, 0), // Set the application version.
-        .pEngineName = "RoofNut", // Set the engine name.
-        .engineVersion = VK_MAKE_VERSION(1, 5, 1), // Set the engine version.
-        .apiVersion = VK_API_VERSION_1_0 // Set the API version (1).
+        .pApplicationName = "RoofNut application",
+        .applicationVersion = VK_MAKE_VERSION(1, 0, 0),
+        .pEngineName = "RoofNut",
+        .engineVersion = VK_MAKE_VERSION(1, 5, 1),
+        .apiVersion = VK_API_VERSION_1_0
     };
+
+    const char* instanceExtensions[] = { 
+	    VK_KHR_SURFACE_EXTENSION_NAME, 
+	    VK_KHR_WAYLAND_SURFACE_EXTENSION_NAME, 
+	    VK_KHR_SWAPCHAIN_EXTENSION_NAME
+    }; //Note: Wayland is required.
 
     VkInstanceCreateInfo createInfo = {
         .sType = VK_STRUCTURE_TYPE_INSTANCE_CREATE_INFO,
-        .pApplicationInfo = &appInfo
+        .pApplicationInfo = &appInfo,
+        .enabledLayerCount = 0,
+        .ppEnabledLayerNames = validationLayers
     };
 
     VkResult res = vkCreateInstance(&createInfo, NULL, &g_Instance);
-    check_vk_result(res);  // Check instance creation.
+    if (res != VK_SUCCESS) {
+        fprintf(stderr, "Failed to create Vulkan instance: %d\n", res);
+        exit(EXIT_FAILURE);
+    }
 
-    uint32_t imageCount = 0;
-    vkGetSwapchainImagesKHR(g_Device, g_Swapchain, &imageCount, NULL);
+    printf("Vulkan instance created successfully.\n");
 }
+
 
 // Initialization of device.
 void init_device() {
@@ -65,14 +112,13 @@ void init_device() {
     vkEnumeratePhysicalDevices(g_Instance, &deviceCount, NULL);
     if (deviceCount == 0) {
         printf("Failed to find GPUs with Vulkan support.\n");
-        exit(1);
+        exit(EXIT_FAILURE);
     }
 
     VkPhysicalDevice devices[deviceCount];
     vkEnumeratePhysicalDevices(g_Instance, &deviceCount, devices);
-    g_PhysicalDevice = devices[0]; // Select the first available GPU.
+    g_PhysicalDevice = devices[0]; // Select the first device for simplicity
 
-    // Select queue family.
     uint32_t queueFamilyCount = 0;
     vkGetPhysicalDeviceQueueFamilyProperties(g_PhysicalDevice, &queueFamilyCount, NULL);
     VkQueueFamilyProperties queueFamilies[queueFamilyCount];
@@ -93,75 +139,56 @@ void init_device() {
         .pQueuePriorities = &queuePriority
     };
 
+    const char* deviceExtensions[] = { VK_KHR_SWAPCHAIN_EXTENSION_NAME };
+
     VkDeviceCreateInfo deviceCreateInfo = {
         .sType = VK_STRUCTURE_TYPE_DEVICE_CREATE_INFO,
         .queueCreateInfoCount = 1,
-        .pQueueCreateInfos = &queueCreateInfo
+        .pQueueCreateInfos = &queueCreateInfo,
+        .enabledExtensionCount = 1,
+        .ppEnabledExtensionNames = deviceExtensions
     };
 
     VkResult res = vkCreateDevice(g_PhysicalDevice, &deviceCreateInfo, NULL, &g_Device);
-    check_vk_result(res);  // Check device 
+    if (res != VK_SUCCESS) {
+        printf("Failed to create Vulkan device: %d\n", res);
+        exit(EXIT_FAILURE);
+    }
+
+    vkGetDeviceQueue(g_Device, queueFamilyIndex, 0, &g_Queue);
 }
 
+
 void init_swapchain() {
-
-    imageViews = malloc(sizeof(VkImageView) * swapchainImageCount);
-
-    for (uint32_t i = 0; i < swapchainImageCount; ++i) {
-    	VkImageViewCreateInfo viewInfo = {
-        .sType = VK_STRUCTURE_TYPE_IMAGE_VIEW_CREATE_INFO,
-        .image = swapchainImages[i],
-        .viewType = VK_IMAGE_VIEW_TYPE_2D,
-        .format = selectedFormat.format,
-        .subresourceRange = {
-        .aspectMask = VK_IMAGE_ASPECT_COLOR_BIT,
-        .baseMipLevel = 0,
-        .levelCount = 1,
-        .baseArrayLayer = 0,
-        .layerCount = 1
-    };
-
-    vkCreateImageView(g_Device, &viewInfo, NULL, &imageViews[i]);
-    // Ensure GLFW has been initialized and the window is created before calling this function
-    glfwCreateWindowSurface(g_Instance, g_Window, NULL, &g_Surface); // Create a window surface.
+    // Assuming g_Window is a GLFW window created with Wayland support
+    VkResult res = glfwCreateWindowSurface(g_Instance, g_Window, NULL, &g_Surface);
+    check_vk_result(res);
 
     uint32_t formatCount = 0;
-    vkGetPhysicalDeviceSurfaceFormatsKHR(g_PhysicalDevice, g_Surface, &formatCount, NULL); // Check for available surface formats.
+    res = vkGetPhysicalDeviceSurfaceFormatsKHR(g_PhysicalDevice, g_Surface, &formatCount, NULL);
+    check_vk_result(res);
+
     if (formatCount == 0) {
-        printf("No surface formats found.");
+        printf("No surface formats found.\n");
         exit(EXIT_FAILURE);
     }
 
     VkSurfaceFormatKHR surfaceFormats[formatCount];
-    vkGetPhysicalDeviceSurfaceFormatsKHR(g_PhysicalDevice, g_Surface, &formatCount, surfaceFormats);
+    res = vkGetPhysicalDeviceSurfaceFormatsKHR(g_PhysicalDevice, g_Surface, &formatCount, surfaceFormats);
+    check_vk_result(res);
 
-    vkGetPhysicalDeviceSurfaceCapabilitiesKHR(g_PhysicalDevice, g_Surface, &g_SurfaceCapabilities); // Get the surface format capabilities.
+    vkGetPhysicalDeviceSurfaceCapabilitiesKHR(g_PhysicalDevice, g_Surface, &g_SurfaceCapabilities);
 
-    // Select surface format
-    VkSurfaceFormatKHR selectedFormat;
-    if (formatCount == 1 && surfaceFormats[0].format == VK_FORMAT_UNDEFINED) {
-        selectedFormat.format = VK_FORMAT_B8G8R8A8_UNORM;
-        selectedFormat.colorSpace = VK_COLOR_SPACE_SRGB_NONLINEAR_KHR;
-    } else {
-        selectedFormat = surfaceFormats[0];
-    }
-
-    // Select present mode
-    VkPresentModeKHR selectedPresentMode = VK_PRESENT_MODE_FIFO_KHR; // Select the default mode.
-
-    uint32_t imageCount = g_SurfaceCapabilities.minImageCount + 1;
-    if (g_SurfaceCapabilities.maxImageCount > 0 && imageCount > g_SurfaceCapabilities.maxImageCount) {
-        imageCount = g_SurfaceCapabilities.maxImageCount;
-    }
+    selectedFormat = surfaceFormats[0];  // Simplified selection logic
 
     VkExtent2D swapchainExtent = g_SurfaceCapabilities.currentExtent;
-    swapchainExtent.width = 800; // Example width; replace with actual app width if needed.
-    swapchainExtent.height = 600; // Example height; replace with actual app height if needed.
+    swapchainExtent.width = 800;
+    swapchainExtent.height = 600;
 
     VkSwapchainCreateInfoKHR swapchainCreateInfo = {
         .sType = VK_STRUCTURE_TYPE_SWAPCHAIN_CREATE_INFO_KHR,
         .surface = g_Surface,
-        .minImageCount = imageCount,
+        .minImageCount = g_SurfaceCapabilities.minImageCount + 1,
         .imageFormat = selectedFormat.format,
         .imageColorSpace = selectedFormat.colorSpace,
         .imageExtent = swapchainExtent,
@@ -169,47 +196,45 @@ void init_swapchain() {
         .imageUsage = VK_IMAGE_USAGE_COLOR_ATTACHMENT_BIT,
         .preTransform = g_SurfaceCapabilities.currentTransform,
         .compositeAlpha = VK_COMPOSITE_ALPHA_OPAQUE_BIT_KHR,
-        .presentMode = selectedPresentMode,
+        .presentMode = VK_PRESENT_MODE_FIFO_KHR,
         .clipped = VK_FALSE,
         .oldSwapchain = VK_NULL_HANDLE
     };
 
-    VkResult res = vkCreateSwapchainKHR(g_Device, &swapchainCreateInfo, NULL, &g_Swapchain);
-    if (res != VK_SUCCESS) {
-        printf("Failed to create swapchain\n");
-        exit(EXIT_FAILURE);
-    }
+    res = vkCreateSwapchainKHR(g_Device, &swapchainCreateInfo, NULL, &g_Swapchain);
+    check_vk_result(res);
+
+    vkGetSwapchainImagesKHR(g_Device, g_Swapchain, &swapchainImageCount, NULL);
 }
+
+
 
 void init_buffers() {
-    // Allocate space for framebuffers
-    g_Framebuffer = malloc(sizeof(VkFramebuffer) * imageCount);
+    g_Framebuffers = malloc(sizeof(VkFramebuffer) * swapchainImageCount);
+    if (!g_Framebuffers) {
+	printf("Framebuffer creation failed");
+	exit(EXIT_FAILURE);
+    }
+    for (uint32_t i = 0; i < swapchainImageCount; ++i) {
+        VkFramebufferCreateInfo framebufferInfo = {
+            .sType = VK_STRUCTURE_TYPE_FRAMEBUFFER_CREATE_INFO,
+            .renderPass = g_RenderPass,
+            .attachmentCount = 1,
+            .pAttachments = &imageViews[i],
+            .width = g_SwapChainExtent.width,
+            .height = g_SwapChainExtent.height,
+            .layers = 1
+        };
 
+        vkCreateFramebuffer(g_Device, &framebufferInfo, NULL, &g_Framebuffers[i]);
+    }
 
-    for (uint32_t i = 0; i < imageCount; ++i) {
-    	VkFramebufferCreateInfo framebufferInfo = {
-        	.sType = VK_STRUCTURE_TYPE_FRAMEBUFFER_CREATE_INFO,
-        	.renderPass = g_RenderPass,
-        	.attachmentCount = 1,
-        	.pAttachments = &imageViews[i],
-        	.width = g_SwapChainExtent.width,
-        	.height = g_SwapChainExtent.height,
-        	.layers = 1
-	}
-    };
-
-    vkCreateFramebuffer(g_Device, &framebufferInfo, NULL, &g_Framebuffer[i]);
-}
-
-
-    // Create command pool
     VkCommandPoolCreateInfo poolInfo = {
         .sType = VK_STRUCTURE_TYPE_COMMAND_POOL_CREATE_INFO,
         .queueFamilyIndex = queueFamilyIndex,
     };
     check_vk_result(vkCreateCommandPool(g_Device, &poolInfo, NULL, &g_CommandPool));
 
-    // Allocate command buffer
     VkCommandBufferAllocateInfo allocInfo = {
         .sType = VK_STRUCTURE_TYPE_COMMAND_BUFFER_ALLOCATE_INFO,
         .commandPool = g_CommandPool,
@@ -219,52 +244,44 @@ void init_buffers() {
     check_vk_result(vkAllocateCommandBuffers(g_Device, &allocInfo, &g_CommandBuffer));
 }
 
-
-
 void render_pass() {
-    //Define the color attachments (image).
     VkAttachmentDescription colorAttachment = {
-        .format = VK_FORMAT_B8G8R8A8_UNORM,  // Format of the swapchain image
-        .samples = VK_SAMPLE_COUNT_1_BIT,   // No multisampling.
-        .loadOp = VK_ATTACHMENT_LOAD_OP_CLEAR, // Clear the color attachment at the start.
-        .storeOp = VK_ATTACHMENT_STORE_OP_STORE, // Store the result at the end.
+        .format = VK_FORMAT_B8G8R8A8_UNORM,
+        .samples = VK_SAMPLE_COUNT_1_BIT,
+        .loadOp = VK_ATTACHMENT_LOAD_OP_CLEAR,
+        .storeOp = VK_ATTACHMENT_STORE_OP_STORE,
         .stencilLoadOp = VK_ATTACHMENT_LOAD_OP_DONT_CARE,
         .stencilStoreOp = VK_ATTACHMENT_STORE_OP_DONT_CARE,
-        .initialLayout = VK_IMAGE_LAYOUT_UNDEFINED,  // No initial layout.
-        .finalLayout = VK_IMAGE_LAYOUT_PRESENT_SRC_KHR  // Layout after rendering (ready for presentation).
-    }; 
+        .initialLayout = VK_IMAGE_LAYOUT_UNDEFINED,
+        .finalLayout = VK_IMAGE_LAYOUT_PRESENT_SRC_KHR
+    };
 
-    //Reference the attachment.
     VkAttachmentReference colorAttachmentRef = {
-        .attachment = 0,  // Index of the attachment
-        .layout = VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL  // Use optimal layout for color attachment
+        .attachment = 0,
+        .layout = VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL
     };
 
-    //Define the subpass to use the color attachments.
     VkSubpassDescription subpass = {
-        .pipelineBindPoint = VK_PIPELINE_BIND_POINT_GRAPHICS,  // Graphics pipeline
-        .colorAttachmentCount = 1,  // Number of color attachments
-        .pColorAttachments = &colorAttachmentRef  // Reference to the color attachment
+        .pipelineBindPoint = VK_PIPELINE_BIND_POINT_GRAPHICS,
+        .colorAttachmentCount = 1,
+        .pColorAttachments = &colorAttachmentRef
     };
-    // Define the render pass info.
+
     VkRenderPassCreateInfo renderPassInfo = {
         .sType = VK_STRUCTURE_TYPE_RENDER_PASS_CREATE_INFO,
-        .attachmentCount = 1,  // One attachment (swapchain image)
-        .pAttachments = &colorAttachment,  // Attachments
-        .subpassCount = 1,  // One subpass
-        .pSubpasses = &subpass  // Subpass definition
+        .attachmentCount = 1,
+        .pAttachments = &colorAttachment,
+        .subpassCount = 1,
+        .pSubpasses = &subpass
     };
 
-    // Create the render pass.
     VkResult res = vkCreateRenderPass(g_Device, &renderPassInfo, NULL, &g_RenderPass);
     check_vk_result(res);
-    
-    printf("Render pass done.");
-} 
 
-// Main application function, used to create the application.
+    printf("Render pass done.");
+}
+
 Application* Application_Create(const ApplicationSpecification* specification) {
-    // Initialize GLFW
     if (!glfwInit()) {
         const char* error_description;
         glfwGetError(&error_description);
@@ -272,14 +289,12 @@ Application* Application_Create(const ApplicationSpecification* specification) {
         return NULL;
     }
 
-    // Enable Vulkan support for GLFW
-    glfwWindowHint(GLFW_CLIENT_API, GLFW_NO_API); // No OpenGL context required for Vulkan.
+    glfwWindowHint(GLFW_CLIENT_API, GLFW_NO_API);
 
-    // Create the window
     Application* app = (Application*)malloc(sizeof(Application));
     if (!app) {
         printf("Allocation of Application failed\n");
-        glfwTerminate();  // Make sure to terminate GLFW if allocation fails.
+        glfwTerminate();
         return NULL;
     }
 
@@ -287,30 +302,32 @@ Application* Application_Create(const ApplicationSpecification* specification) {
     if (!app->windowHandle) {
         printf("Failed to create GLFW window. \n");
         free(app);
-        glfwTerminate(); // Terminate GLFW if window creation fails.
+        glfwTerminate();
         return NULL;
     }
 
-    g_Window = app->windowHandle; // Assign to global variable
+    g_Window = app->windowHandle;
 
-    return app; // Return the app if everything is fine.
+    return app;
 }
-// Main rendering loop
-void main_loop() {
 
-    init_device();
+void main_loop() {
     init_vulkan();
+    init_device();        
     init_swapchain();
     init_buffers();
+    init_nuklear(g_Device, g_PhysicalDevice, g_Instance, g_Queue, g_RenderPass);
 
-    
+
     while (!glfwWindowShouldClose(g_Window)) {
-        glfwPollEvents(); // Process window events
+        glfwPollEvents();
 
-        // Start a new frame
-        vkQueueWaitIdle(g_Queue); // Ensure the previous frame is finished
+        vkQueueWaitIdle(g_Queue);
 
-        // Record command buffer
+	nk_input_begin(ctx); 
+	OnUiRender();
+	nk_input_end(ctx);
+	    
         VkCommandBufferBeginInfo beginInfo = {
             .sType = VK_STRUCTURE_TYPE_COMMAND_BUFFER_BEGIN_INFO,
             .flags = VK_COMMAND_BUFFER_USAGE_ONE_TIME_SUBMIT_BIT
@@ -322,7 +339,7 @@ void main_loop() {
         VkRenderPassBeginInfo renderPassInfo = {
             .sType = VK_STRUCTURE_TYPE_RENDER_PASS_BEGIN_INFO,
             .renderPass = g_RenderPass,
-            .framebuffer = g_Framebuffer,
+            .framebuffer = g_Framebuffers[imageIndex],
             .renderArea = {
                 .offset = {0, 0},
                 .extent = g_SwapChainExtent
@@ -332,13 +349,12 @@ void main_loop() {
         };
 
         vkCmdBeginRenderPass(g_CommandBuffer, &renderPassInfo, VK_SUBPASS_CONTENTS_INLINE);
-
-        // Add drawing commands here (e.g., vkCmdDraw)
-
-        vkCmdEndRenderPass(g_CommandBuffer);
+	
+        nk_vulkan_render(ctx, g_CommandBuffer, NK_ANTI_ALIASING_ON); //Render Nuklear code.
+	    
+	vkCmdEndRenderPass(g_CommandBuffer);
         vkEndCommandBuffer(g_CommandBuffer);
 
-        // Submit command buffer
         VkSubmitInfo submitInfo = {
             .sType = VK_STRUCTURE_TYPE_SUBMIT_INFO,
             .commandBufferCount = 1,
@@ -347,7 +363,6 @@ void main_loop() {
 
         vkQueueSubmit(g_Queue, 1, &submitInfo, VK_NULL_HANDLE);
 
-        // Present frame
         VkPresentInfoKHR presentInfo = {
             .sType = VK_STRUCTURE_TYPE_PRESENT_INFO_KHR,
             .swapchainCount = 1,
@@ -360,22 +375,22 @@ void main_loop() {
         vkQueuePresentKHR(g_Queue, &presentInfo);
     }
 
-    vkDeviceWaitIdle(g_Device); // Ensure all GPU tasks are finished before exiting
+    vkDeviceWaitIdle(g_Device);
 }
 
-
-// Main application shutdown and cleanup function.
 void Application_Destroy(Application* app) {
     if (!app) return;
 
-    // Clean up Vulkan resources
+    vkDestroySemaphore(g_Device, renderSemaphore, NULL);
+    vkDestroySemaphore(g_Device, imageAvailableSemaphore, NULL);
     vkDestroySwapchainKHR(g_Device, g_Swapchain, NULL);
     vkDestroySurfaceKHR(g_Instance, g_Surface, NULL);
     vkDestroyDevice(g_Device, NULL);
     vkDestroyInstance(g_Instance, NULL);
 
-    // Clean up GLFW
-    glfwDestroyWindow(app->windowHandle);  // Destroy the GLFW window.
-    glfwTerminate();  // Terminate GLFW.
-    free(app); // Free the app.
+    glfwDestroyWindow(app->windowHandle);
+    glfwTerminate();
+    free(app);
+    free(swapchainImages);
+    free(imageViews);
 }
