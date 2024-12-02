@@ -49,11 +49,10 @@ const char* validationLayers[] = {"VK_LAYER_KHRONOS_validation"};
 #include "nuklear.h"
 
 #define NK_VULKAN_IMPLEMENTATION
-#include "nuklear_vulkan.h"
+#include "nuklear_glfw_vulkan.h"
 
-struct nk_context *ctx; 
-struct nk_allocator allocator = {0}; 
-struct nk_vulkan_device vk = {0};
+struct nk_allocator allocator = { 0 }; 
+
 
 // Function to check Vulkan results.
 void check_vk_result(VkResult err) {
@@ -64,13 +63,13 @@ void check_vk_result(VkResult err) {
 }
 
 
-void init_nuklear(VkDevice device, VkPhysicalDevice physicalDevice, VkInstance instance, VkQueue queue, VkRenderPass renderPass) {
-	ctx = nk_vulkan_init(device, physicalDevice, instance, queue, renderPass, width, height); 
-	struct nk_font_atlas *atlas; 
-	nk_vulkan_font_stash_begin(&atlas); 
-	nk_vulkan_font_stash_end();
+struct nk_context *ctx; 
 
-	printf("Nuklear initilalized.");
+void init_nuklear(GLFWwindow* window, VkDevice device, VkPhysicalDevice physicalDevice, uint32_t queueFamilyIndex, VkImageView* imageViews, uint32_t imageViewCount, VkFormat format, VkExtent2D extent) { 
+	ctx = nk_glfw3_init(window, device, physicalDevice, queueFamilyIndex, imageViews, imageViewCount, format, extent.width, extent.height, queue);
+	struct nk_font_atlas *atlas; 
+	nk_glfw3_font_stash_begin(&atlas); 
+	nk_glfw3_font_stash_end(); 
 }
 
 void init_vulkan() {
@@ -316,8 +315,7 @@ void main_loop() {
     init_device();        
     init_swapchain();
     init_buffers();
-    init_nuklear(g_Device, g_PhysicalDevice, g_Instance, g_Queue, g_RenderPass);
-
+    init_nuklear(g_Window, g_Device, g_PhysicalDevice, queueFamilyIndex, imageViews, swapchainImageCount, selectedFormat.format, g_SwapChainExtent);
 
     while (!glfwWindowShouldClose(g_Window)) {
         glfwPollEvents();
@@ -349,9 +347,10 @@ void main_loop() {
         };
 
         vkCmdBeginRenderPass(g_CommandBuffer, &renderPassInfo, VK_SUBPASS_CONTENTS_INLINE);
-	
-        nk_vulkan_render(ctx, g_CommandBuffer, NK_ANTI_ALIASING_ON); //Render Nuklear code.
 	    
+	nk_glfw3_render(g_Queue, NK_ANTI_ALIASING_ON); 
+ 
+
 	vkCmdEndRenderPass(g_CommandBuffer);
         vkEndCommandBuffer(g_CommandBuffer);
 
