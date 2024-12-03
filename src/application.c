@@ -5,7 +5,7 @@
 #include <GLFW/glfw3.h>
 
 
-ifndef ROOFNUT_NO_DEBUG 
+#ifndef ROOFNUT_NO_DEBUG 
 const char* validationLayers[] = {"VK_LAYER_KHRONOS_validation"};
 endif 
 
@@ -47,7 +47,7 @@ void init_nuklear(GLFWwindow* window, VkDevice device, VkPhysicalDevice physical
 // Function to initialize OpenGL
 
 
-ifdef ROOFNUT_USE_VULKAN
+#ifdef ROOFNUT_USE_VULKAN
 
 #define VK_USE_PLATFORM_WAYLAND_KHR
 
