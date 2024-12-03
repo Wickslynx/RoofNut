@@ -27,7 +27,7 @@ int main() {
         return EXIT_FAILURE;
     }
 
-    main_loop(); //Will render a Window.
+    RoofNut_loop(); //Will render a Window.
     
     Application_Destroy(app);
 
