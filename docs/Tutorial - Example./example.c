@@ -1,8 +1,12 @@
 #include <stdio.h>
 #include <roofnut.h>
 
-//Use OPENGL.
+//Debug = On
+#define ROOFNUT_DEBUG 
+
+//Use OpenGL
 #define ROOFNUT_USE_OPENGL 
+
 //Uncomment to use vulkan.
 // #define ROOFNUT_USE_VULKAN
 
