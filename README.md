@@ -34,10 +34,8 @@ Please see the *example.c* file for further explanation and examples
 
 # Current Issues:
 
-**1. Linker not linking**, Unknown function declarations when included library.  (Worked on)
+**1. Segmentation fault (vulkan)**, When running program with compatible drivers i get "Segmentationfault". (Abandoned, *as of lack of driver support*)
 
-**2. Segmentation fault**, When running program with compatible drives i get "Segmentationfault". (Worked on)
-
-**3. Additonal debugging needed (vulkan)** , (Wickslynx) can't test the vulkan version as my drivers are outdated. Hence why i added OPENGL support. (Worked on)
+**2. Additonal debugging needed (vulkan)** , (Wickslynx) can't test the vulkan version as my drivers are outdated. Hence why i added OPENGL support. (Worked on)
 
 ***RoofNut is still in development, no stable version has released.***
