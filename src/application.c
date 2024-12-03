@@ -5,9 +5,9 @@
 #include <GLFW/glfw3.h>
 
 
-#ifndef ROOFNUT_NO_DEBUG 
+#ifdef ROOFNUT_DEBUG 
 const char* validationLayers[] = {"VK_LAYER_KHRONOS_validation"};
-endif 
+#endif 
 
 //Additonal Nuklear setup.
 
