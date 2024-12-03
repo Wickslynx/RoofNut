@@ -23,10 +23,9 @@ int main() {
         return EXIT_FAILURE;
     }
 
-    main_loop();
+    main_loop(); //Will render a Window.
     
     Application_Destroy(app);
-    cleanup_vulkan();
 
     return 0;
 }
