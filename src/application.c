@@ -293,35 +293,6 @@ void render_pass() {
     printf("Render pass done.");
 }
 
-Application* Application_Create(const ApplicationSpecification* specification) {
-    if (!glfwInit()) {
-        const char* error_description;
-        glfwGetError(&error_description);
-        printf("GLFW Initialization failed: %s\n", error_description);
-        return NULL;
-    }
-
-    glfwWindowHint(GLFW_CLIENT_API, GLFW_NO_API);
-
-    Application* app = (Application*)malloc(sizeof(Application));
-    if (!app) {
-        printf("Allocation of Application failed\n");
-        glfwTerminate();
-        return NULL;
-    }
-
-    app->windowHandle = glfwCreateWindow(specification->width, specification->height, specification->name, NULL, NULL);
-    if (!app->windowHandle) {
-        printf("Failed to create GLFW window. \n");
-        free(app);
-        glfwTerminate();
-        return NULL;
-    }
-
-    g_Window = app->windowHandle;
-
-    return app;
-}
 
 
 void RoofNut_loop() {
@@ -473,6 +444,35 @@ void DestroyOpenGl() {
 }
 
 #endif
+Application* Application_Create(const ApplicationSpecification* specification) {
+    if (!glfwInit()) {
+        const char* error_description;
+        glfwGetError(&error_description);
+        printf("GLFW Initialization failed: %s\n", error_description);
+        return NULL;
+    }
+
+    glfwWindowHint(GLFW_CLIENT_API, GLFW_NO_API);
+
+    Application* app = (Application*)malloc(sizeof(Application));
+    if (!app) {
+        printf("Allocation of Application failed\n");
+        glfwTerminate();
+        return NULL;
+    }
+
+    app->windowHandle = glfwCreateWindow(specification->width, specification->height, specification->name, NULL, NULL);
+    if (!app->windowHandle) {
+        printf("Failed to create GLFW window. \n");
+        free(app);
+        glfwTerminate();
+        return NULL;
+    }
+
+    g_Window = app->windowHandle;
+
+    return app;
+}
 
 void Application_Destroy(Application* app) {
     if (!app) return;
