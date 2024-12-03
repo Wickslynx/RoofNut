@@ -73,6 +73,43 @@ void init_nuklear(GLFWwindow* window, VkDevice device, VkPhysicalDevice physical
 	nk_glfw3_font_stash_end(); 
 }
 
+// Function to initialize OpenGL
+void init_opengl() {
+    // Initialize GLFW
+    if (!glfwInit()) {
+        const char* error_description;
+        glfwGetError(&error_description);
+        printf("GLFW Initialization failed: %s\n", error_description);
+        exit(EXIT_FAILURE);
+    }
+
+    // Set GLFW window hints for OpenGL
+    glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
+    glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
+    glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
+
+    // Create GLFW window
+    g_Window = glfwCreateWindow(800, 600, "RoofNut application", NULL, NULL);
+    if (!g_Window) {
+        printf("Failed to create GLFW window.\n");
+        glfwTerminate();
+        exit(EXIT_FAILURE);
+    }
+
+    // Make the OpenGL context current
+    glfwMakeContextCurrent(g_Window);
+
+    // Initialize GLEW
+    glewExperimental = GL_TRUE;
+    if (glewInit() != GLEW_OK) {
+        printf("Failed to initialize GLEW.\n");
+        exit(EXIT_FAILURE);
+    }
+
+    // Set the viewport
+    glViewport(0, 0, 800, 600);
+}
+
 void init_vulkan() {
     VkApplicationInfo appInfo = {
         .sType = VK_STRUCTURE_TYPE_APPLICATION_INFO,
@@ -311,6 +348,8 @@ Application* Application_Create(const ApplicationSpecification* specification) {
     return app;
 }
 
+#ifdef ROOFNUT_USE_VULKAN
+
 void main_loop() {
     init_vulkan();
     init_device();        
@@ -377,6 +416,27 @@ void main_loop() {
 
     vkDeviceWaitIdle(g_Device);
 }
+
+#endif
+
+#ifdef ROOFNUT_USE_OPENGL
+void main_loop() {
+    	init_opengl();
+
+	while (!glfwWindowShouldClose(g_Window)) {
+        // Poll for and process events
+        glfwPollEvents();
+
+        // Render here
+        glClear(GL_COLOR_BUFFER_BIT);
+
+        // Swap front and back buffers
+        glfwSwapBuffers(g_Window);
+		
+    	}
+}
+
+#endif
 
 void Application_Destroy(Application* app) {
     if (!app) return;
