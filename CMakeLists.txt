@@ -31,11 +31,23 @@ target_include_directories(RoofNut PUBLIC
     ${CMAKE_SOURCE_DIR}/include/librarys/Nuklear
 )
 
-# Find required Vulkan package
-find_package(Vulkan REQUIRED)
+# Option to choose Vulkan or OpenGL
+option(USE_VULKAN "Use Vulkan for rendering" OFF)
+option(USE_OPENGL "Use OpenGL for rendering" OFF)
 
-# Link dependencies
-target_link_libraries(RoofNut PRIVATE glfw Vulkan::Vulkan m)
+if(USE_VULKAN)
+    message(STATUS "Using Vulkan for rendering")
+    target_compile_definitions(RoofNut PRIVATE ROOFNUT_USE_VULKAN)
+    find_package(Vulkan REQUIRED)
+    target_link_libraries(RoofNut PRIVATE glfw Vulkan::Vulkan m)
+elseif(USE_OPENGL)
+    message(STATUS "Using OpenGL for rendering")
+    target_compile_definitions(RoofNut PRIVATE ROOFNUT_USE_OPENGL)
+    find_package(OpenGL REQUIRED)
+    target_link_libraries(RoofNut PRIVATE glfw OpenGL::GL m)
+else()
+    message(FATAL_ERROR "No rendering API selected. Please specify -DUSE_VULKAN=ON or -DUSE_OPENGL=ON")
+endif()
 
 # Installation targets
 install(TARGETS RoofNut
@@ -50,5 +62,5 @@ install(DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/include/
 # Ignore this, Its made for my testing (Wickslynx).
 # add_executable(RoofNutTest test.c)
 
-#Ignore this, made for my testing (Wickslynx)
+# Ignore this, made for my testing (Wickslynx)
 # target_link_libraries(RoofNutTest PRIVATE RoofNut glfw Vulkan::Vulkan m)
