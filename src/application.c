@@ -2,8 +2,57 @@
 #include <stdlib.h>
 #include <stdio.h>
 #include <string.h>
-#include <vulkan/vulkan.h>
 #include <GLFW/glfw3.h>
+
+
+ifndef ROOFNUT_NO_DEBUG 
+const char* validationLayers[] = {"VK_LAYER_KHRONOS_validation"};
+endif 
+
+//Additonal Nuklear setup.
+
+#define NK_INCLUDE_FIXED_TYPES
+#define NK_INCLUDE_STANDARD_IO
+#define NK_INCLUDE_DEFAULT_ALLOCATOR
+#define NK_INCLUDE_VERTEX_BUFFER_OUTPUT
+#define NK_INCLUDE_FONT_BAKING
+#define NK_INCLUDE_DEFAULT_FONT
+#define NK_INCLUDE_COMMAND_USERDATA
+#define NK_IMPLEMENTATION
+#include "nuklear.h"
+
+#define NK_VULKAN_IMPLEMENTATION
+#include "nuklear_glfw_vulkan.h"
+#include "nuklear.frag"
+
+// struct nk_allocator allocator = { 0 };  Uncomment to use NK, Can't get it to link so don't worry bout it.
+
+
+#ifdef ROOFNUT_IMPLEMENTATION
+
+
+ /* Note: Uncomment to use Nuklear, I can't get it to link so dont worry bout it for now.
+ 
+ struct nk_context *ctx; 
+
+void init_nuklear(GLFWwindow* window, VkDevice device, VkPhysicalDevice physicalDevice, uint32_t queueFamilyIndex, VkImageView* imageViews, uint32_t imageViewCount, VkFormat format, VkExtent2D extent) { 
+	ctx = nk_glfw3_init(window, device, physicalDevice, queueFamilyIndex, imageViews, imageViewCount, format, extent.width, extent.height, queue);
+	struct nk_font_atlas *atlas; 
+	nk_glfw3_font_stash_begin(&atlas); 
+	nk_glfw3_font_stash_end(); 
+}
+
+*/
+
+// Function to initialize OpenGL
+
+
+ifdef ROOFNUT_USE_VULKAN
+
+#define VK_USE_PLATFORM_WAYLAND_KHR
+
+#include <vulkan/vulkan.h>
+#include <vulkan/vulkan_wayland.h>
 
 // Declares the global vulkan resources.
 VkInstance g_Instance; //Declares the vulkan instance.
@@ -26,34 +75,7 @@ VkSemaphore imageAvailableSemaphore;
 VkImageView* imageViews = NULL;
 VkImage* swapchainImages = NULL;
 VkSurfaceFormatKHR selectedFormat;
-uint32_t swapchainImageCount = 0; // Added definition
-
-
-const char* validationLayers[] = {"VK_LAYER_KHRONOS_validation"};
-
-
-#define VK_USE_PLATFORM_WAYLAND_KHR
-
-#include <vulkan/vulkan_wayland.h>
-
-//Additonal Nuklear setup.
-
-#define NK_INCLUDE_FIXED_TYPES
-#define NK_INCLUDE_STANDARD_IO
-#define NK_INCLUDE_DEFAULT_ALLOCATOR
-#define NK_INCLUDE_VERTEX_BUFFER_OUTPUT
-#define NK_INCLUDE_FONT_BAKING
-#define NK_INCLUDE_DEFAULT_FONT
-#define NK_INCLUDE_COMMAND_USERDATA
-#define NK_IMPLEMENTATION
-#include "nuklear.h"
-
-#define NK_VULKAN_IMPLEMENTATION
-#include "nuklear_glfw_vulkan.h"
-#include "nuklear.frag"
-
-// struct nk_allocator allocator = { 0 };  Uncomment to use NK, Can't get it to link so don't worry bout it.
-
+uint32_t swapchainImageCount = 0; 
 
 // Function to check Vulkan results.
 void check_vk_result(VkResult err) {
@@ -61,57 +83,6 @@ void check_vk_result(VkResult err) {
         fprintf(stderr, "Vulkan error: %d\n", err);
         exit(EXIT_FAILURE);
     }
-}
-
-
- /* Note: Uncomment to use Nuklear, I can't get it to link so dont worry bout it for now.
- 
- struct nk_context *ctx; 
-
-void init_nuklear(GLFWwindow* window, VkDevice device, VkPhysicalDevice physicalDevice, uint32_t queueFamilyIndex, VkImageView* imageViews, uint32_t imageViewCount, VkFormat format, VkExtent2D extent) { 
-	ctx = nk_glfw3_init(window, device, physicalDevice, queueFamilyIndex, imageViews, imageViewCount, format, extent.width, extent.height, queue);
-	struct nk_font_atlas *atlas; 
-	nk_glfw3_font_stash_begin(&atlas); 
-	nk_glfw3_font_stash_end(); 
-}
-
-*/
-
-// Function to initialize OpenGL
-void init_opengl() {
-    // Initialize GLFW
-    if (!glfwInit()) {
-        const char* error_description;
-        glfwGetError(&error_description);
-        printf("GLFW Initialization failed: %s\n", error_description);
-        exit(EXIT_FAILURE);
-    }
-
-    // Set GLFW window hints for OpenGL
-    glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
-    glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
-    glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
-
-    // Create GLFW window
-    g_Window = glfwCreateWindow(800, 600, "RoofNut application", NULL, NULL);
-    if (!g_Window) {
-        printf("Failed to create GLFW window.\n");
-        glfwTerminate();
-        exit(EXIT_FAILURE);
-    }
-
-    // Make the OpenGL context current
-    glfwMakeContextCurrent(g_Window);
-
-    // Initialize GLEW
-    glewExperimental = GL_TRUE;
-    if (glewInit() != GLEW_OK) {
-        printf("Failed to initialize GLEW.\n");
-        exit(EXIT_FAILURE);
-    }
-
-    // Set the viewport
-    glViewport(0, 0, 800, 600);
 }
 
 void init_vulkan() {
@@ -352,9 +323,8 @@ Application* Application_Create(const ApplicationSpecification* specification) {
     return app;
 }
 
-#ifdef ROOFNUT_USE_VULKAN
 
-void main_loop() {
+void RoofNut_loop() {
     init_vulkan();
     init_device();        
     init_swapchain();
@@ -366,6 +336,7 @@ void main_loop() {
         glfwPollEvents();
 
         vkQueueWaitIdle(g_Queue);
+	    
 	/* Note: Uncomment to use Nuklear, Can't get it to link so we will not care about it for now.
 	nk_input_begin(ctx); 
 	OnUiRender();
@@ -423,11 +394,61 @@ void main_loop() {
     vkDeviceWaitIdle(g_Device);
 }
 
+void DestroyVulkan() {
+    vkDestroySemaphore(g_Device, renderSemaphore, NULL);
+    vkDestroySemaphore(g_Device, imageAvailableSemaphore, NULL);
+    vkDestroySwapchainKHR(g_Device, g_Swapchain, NULL);
+    vkDestroySurfaceKHR(g_Instance, g_Surface, NULL);
+    vkDestroyDevice(g_Device, NULL);
+    vkDestroyInstance(g_Instance, NULL);
+
+    free(app);
+    free(swapchainImages);
+    free(imageViews);
+}
+
 #endif
 
 #ifdef ROOFNUT_USE_OPENGL
 
-void main_loop() {
+#include <GL/glew.h>
+void init_opengl() {
+    // Initialize GLFW
+    if (!glfwInit()) {
+        const char* error_description;
+        glfwGetError(&error_description);
+        printf("GLFW Initialization failed: %s\n", error_description);
+        exit(EXIT_FAILURE);
+    }
+
+    // Set GLFW window hints for OpenGL
+    glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
+    glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
+    glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
+
+    // Create GLFW window
+    g_Window = glfwCreateWindow(800, 600, "RoofNut application", NULL, NULL);
+    if (!g_Window) {
+        printf("Failed to create GLFW window.\n");
+        glfwTerminate();
+        exit(EXIT_FAILURE);
+    }
+
+    // Make the OpenGL context current
+    glfwMakeContextCurrent(g_Window);
+
+    // Initialize GLEW
+    glewExperimental = GL_TRUE;
+    if (glewInit() != GLEW_OK) {
+        printf("Failed to initialize GLEW.\n");
+        exit(EXIT_FAILURE);
+    }
+
+    // Set the viewport
+    glViewport(0, 0, 800, 600);
+}
+
+void RoofNut_loop() {
     	init_opengl();
 
 	//Note: OPENGL version does NOT support Nuklear..
@@ -447,21 +468,22 @@ void main_loop() {
     	}
 }
 
+void DestroyOpenGl() {
+	//No code here rn.
+}
+
 #endif
 
 void Application_Destroy(Application* app) {
     if (!app) return;
-
-    vkDestroySemaphore(g_Device, renderSemaphore, NULL);
-    vkDestroySemaphore(g_Device, imageAvailableSemaphore, NULL);
-    vkDestroySwapchainKHR(g_Device, g_Swapchain, NULL);
-    vkDestroySurfaceKHR(g_Instance, g_Surface, NULL);
-    vkDestroyDevice(g_Device, NULL);
-    vkDestroyInstance(g_Instance, NULL);
+    #ifdef ROOFNUT_USE_VULKAN
+	DestroyVulkan();
+    #else defined(ROOFNUT_USE_OPENGL);
+	DestroyOpenGl();
 
     glfwDestroyWindow(app->windowHandle);
     glfwTerminate();
-    free(app);
-    free(swapchainImages);
-    free(imageViews);
+
 }
+
+#endif 
