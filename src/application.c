@@ -52,7 +52,7 @@ const char* validationLayers[] = {"VK_LAYER_KHRONOS_validation"};
 #include "nuklear_glfw_vulkan.h"
 #include "nuklear.frag"
 
-struct nk_allocator allocator = { 0 }; 
+// struct nk_allocator allocator = { 0 };  Uncomment to use NK, Can't get it to link so don't worry bout it.
 
 
 // Function to check Vulkan results.
@@ -64,7 +64,9 @@ void check_vk_result(VkResult err) {
 }
 
 
-struct nk_context *ctx; 
+ /* Note: Uncomment to use Nuklear, I can't get it to link so dont worry bout it for now.
+ 
+ struct nk_context *ctx; 
 
 void init_nuklear(GLFWwindow* window, VkDevice device, VkPhysicalDevice physicalDevice, uint32_t queueFamilyIndex, VkImageView* imageViews, uint32_t imageViewCount, VkFormat format, VkExtent2D extent) { 
 	ctx = nk_glfw3_init(window, device, physicalDevice, queueFamilyIndex, imageViews, imageViewCount, format, extent.width, extent.height, queue);
@@ -72,6 +74,8 @@ void init_nuklear(GLFWwindow* window, VkDevice device, VkPhysicalDevice physical
 	nk_glfw3_font_stash_begin(&atlas); 
 	nk_glfw3_font_stash_end(); 
 }
+
+*/
 
 // Function to initialize OpenGL
 void init_opengl() {
@@ -355,16 +359,18 @@ void main_loop() {
     init_device();        
     init_swapchain();
     init_buffers();
-    init_nuklear(g_Window, g_Device, g_PhysicalDevice, queueFamilyIndex, imageViews, swapchainImageCount, selectedFormat.format, g_SwapChainExtent);
+	
+    // init_nuklear(g_Window, g_Device, g_PhysicalDevice, queueFamilyIndex, imageViews, swapchainImageCount, selectedFormat.format, g_SwapChainExtent); // Note: Uncomment to use Nuklear.
 
     while (!glfwWindowShouldClose(g_Window)) {
         glfwPollEvents();
 
         vkQueueWaitIdle(g_Queue);
-
+	/* Note: Uncomment to use Nuklear, Can't get it to link so we will not care about it for now.
 	nk_input_begin(ctx); 
 	OnUiRender();
 	nk_input_end(ctx);
+	*/
 	    
         VkCommandBufferBeginInfo beginInfo = {
             .sType = VK_STRUCTURE_TYPE_COMMAND_BUFFER_BEGIN_INFO,
@@ -388,7 +394,7 @@ void main_loop() {
 
         vkCmdBeginRenderPass(g_CommandBuffer, &renderPassInfo, VK_SUBPASS_CONTENTS_INLINE);
 	    
-	nk_glfw3_render(g_Queue, NK_ANTI_ALIASING_ON); 
+	 // nk_glfw3_render(g_Queue, NK_ANTI_ALIASING_ON);  Note: Uncomment to use Nuklear.
  
 
 	vkCmdEndRenderPass(g_CommandBuffer);
@@ -420,16 +426,21 @@ void main_loop() {
 #endif
 
 #ifdef ROOFNUT_USE_OPENGL
+
 void main_loop() {
     	init_opengl();
+
+	//Note: OPENGL version does NOT support Nuklear..
 
 	while (!glfwWindowShouldClose(g_Window)) {
         // Poll for and process events
         glfwPollEvents();
-
+		
+	
         // Render here
         glClear(GL_COLOR_BUFFER_BIT);
 
+	
         // Swap front and back buffers
         glfwSwapBuffers(g_Window);
 		
