@@ -1,6 +1,7 @@
 
 #include "application_vulkan.h"
 
+#include <GLFW/glfw3.h>
 #define VK_USE_PLATFORM_WAYLAND_KHR
 
 #include <vulkan/vulkan.h>
