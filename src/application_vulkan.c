@@ -362,11 +362,8 @@ Application* Application_Create(const ApplicationSpecification* specification) {
 
 void Application_Destroy(Application* app) {
     if (!app) return;
-    #ifdef ROOFNUT_USE_VULKAN
-	DestroyVulkan();
-    #else defined(ROOFNUT_USE_OPENGL);
-	DestroyOpenGl();
-
+   
+    DestroyVulkan();
     glfwDestroyWindow(app->windowHandle);
     glfwTerminate();
 
