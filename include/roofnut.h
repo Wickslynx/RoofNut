@@ -7,7 +7,7 @@ extern "C" {
 
 #include "input.h"
 #include "Utilites.h"
-#include "application.h"
+#include "application_vulkan.h"
 
 #ifdef __cplusplus
 }
