@@ -10,13 +10,13 @@ set(CMAKE_C_STANDARD_REQUIRED True)
 
 # Add source files for the project
 file(GLOB SOURCES
-    src/application.c
+    src/application_vulkan.c
     src/input.c
     src/Utilities.c
 )
 
 file(GLOB HEADERS
-    include/application.h
+    include/application_vulkan.h
     include/input.h
     include/Utilities.h
     include/roofnut.h
@@ -31,23 +31,14 @@ target_include_directories(RoofNut PUBLIC
     ${CMAKE_SOURCE_DIR}/include/librarys/Nuklear
 )
 
-# Option to choose Vulkan or OpenGL
-option(USE_VULKAN "Use Vulkan for rendering" OFF)
-option(USE_OPENGL "Use OpenGL for rendering" OFF)
 
-if(USE_VULKAN)
-    message(STATUS "Using Vulkan for rendering")
-    target_compile_definitions(RoofNut PRIVATE ROOFNUT_USE_VULKAN)
-    find_package(Vulkan REQUIRED)
-    target_link_libraries(RoofNut PRIVATE glfw Vulkan::Vulkan m)
-elseif(USE_OPENGL)
-    message(STATUS "Using OpenGL for rendering")
-    target_compile_definitions(RoofNut PRIVATE ROOFNUT_USE_OPENGL)
-    find_package(OpenGL REQUIRED)
-    target_link_libraries(RoofNut PRIVATE glfw OpenGL::GL m)
-else()
-    message(FATAL_ERROR "No rendering API selected. Please specify -DUSE_VULKAN=ON or -DUSE_OPENGL=ON")
-endif()
+
+
+message(STATUS "Using Vulkan for rendering")
+target_compile_definitions(RoofNut PRIVATE ROOFNUT_USE_VULKAN)
+find_package(Vulkan REQUIRED)
+target_link_libraries(RoofNut PRIVATE glfw Vulkan::Vulkan m)
+
 
 # Installation targets
 install(TARGETS RoofNut
