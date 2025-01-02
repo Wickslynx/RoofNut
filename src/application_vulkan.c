@@ -30,6 +30,10 @@ VkImage* swapchainImages = NULL;
 VkSurfaceFormatKHR selectedFormat;
 uint32_t swapchainImageCount = 0; 
 
+const char* validationLayers[] = {
+    "VK_LAYER_KHRONOS_validation"
+};
+
 // Function to check Vulkan results.
 void check_vk_result(VkResult err) {
     if (err != VK_SUCCESS) {
