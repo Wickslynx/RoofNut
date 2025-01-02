@@ -322,18 +322,6 @@ void RoofNut_loop() {
     vkDeviceWaitIdle(g_Device);
 }
 
-void DestroyVulkan() {
-    vkDestroySemaphore(g_Device, renderSemaphore, NULL);
-    vkDestroySemaphore(g_Device, imageAvailableSemaphore, NULL);
-    vkDestroySwapchainKHR(g_Device, g_Swapchain, NULL);
-    vkDestroySurfaceKHR(g_Instance, g_Surface, NULL);
-    vkDestroyDevice(g_Device, NULL);
-    vkDestroyInstance(g_Instance, NULL);
-
-    free(app);
-    free(swapchainImages);
-    free(imageViews);
-}
 
 Application* Application_Create(const ApplicationSpecification* specification) {
     if (!glfwInit()) {
@@ -364,6 +352,21 @@ Application* Application_Create(const ApplicationSpecification* specification) {
 
     return app;
 }
+
+
+void DestroyVulkan() {
+    vkDestroySemaphore(g_Device, renderSemaphore, NULL);
+    vkDestroySemaphore(g_Device, imageAvailableSemaphore, NULL);
+    vkDestroySwapchainKHR(g_Device, g_Swapchain, NULL);
+    vkDestroySurfaceKHR(g_Instance, g_Surface, NULL);
+    vkDestroyDevice(g_Device, NULL);
+    vkDestroyInstance(g_Instance, NULL);
+
+    free(app);
+    free(swapchainImages);
+    free(imageViews);
+}
+
 
 void Application_Destroy(Application* app) {
     if (!app) return;
