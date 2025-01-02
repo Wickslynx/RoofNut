@@ -7,7 +7,13 @@ extern "C" {
 
 #include "input.h"
 #include "Utilites.h"
+
+
+#ifdef ROOFNUT_USE_VULKAN
 #include "application_vulkan.h"
+#else
+#include "application_opengl.h"
+#endif
 
 #ifdef __cplusplus
 }
