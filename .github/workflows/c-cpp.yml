@@ -20,14 +20,14 @@ jobs:
         sudo apt-get install -y build-essential cmake
         sudo apt-get install libx11-dev libxrandr-dev libxinerama-dev libxcursor-dev libglfw3-dev libvulkan-dev libxi-dev
 
-   - name: mkdir build
-     run: mkdir build
+    - name: mkdir build
+      run: mkdir build
 
-   - name: cd build
-     run: cd build
+    - name: cd build
+      run: cd build
      
-   - name: cmake ..
-     run: cmake ..
+    - name: cmake ..
+      run: cmake ..
 
     - name: make
       run: make
