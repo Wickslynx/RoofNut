@@ -2,7 +2,10 @@
 #include <stdlib.h>
 #include <stdio.h>
 #include <string.h>
+
+#include <GL/glew.h>
 #include <GLFW/glfw3.h>
+
 
 
 
@@ -20,16 +23,16 @@
 #include "nuklear.h"
 
 #define NK_VULKAN_IMPLEMENTATION
-#include "nuklear_glfw_vulkan.h"
-#include "nuklear.frag"
+#include "nuklear_glfw_gl3.h"
 
-// struct nk_allocator allocator = { 0 };  Uncomment to use NK, Can't get it to link so don't worry bout it.
+
+struct nk_allocator allocator = { 0 }; // Uncomment to use NK, Can't get it to link so don't worry bout it.
 
 
 #ifdef ROOFNUT_IMPLEMENTATION
 
 
- /* Note: Uncomment to use Nuklear, I can't get it to link so dont worry bout it for now.
+ // Note: Uncomment to use Nuklear, I can't get it to link so dont worry bout it for now.
  
  struct nk_context *ctx; 
 
@@ -40,12 +43,13 @@ void init_nuklear(GLFWwindow* window, VkDevice device, VkPhysicalDevice physical
 	nk_glfw3_font_stash_end(); 
 }
 
-*/
+//*/
 
 // Function to initialize OpenGL
 
 
-#include <GL/glew.h>
+
+extern GLFWwindow *g_Window;
 
 void init_opengl() {
     // Initialize GLFW
@@ -84,7 +88,8 @@ void init_opengl() {
 }
 
 void RoofNut_loop() {
-    	init_opengl();
+    init_nuklear();
+    init_opengl();
 
 	//Note: OPENGL version does NOT support Nuklear..
 
@@ -95,6 +100,10 @@ void RoofNut_loop() {
 	
         // Render here
         glClear(GL_COLOR_BUFFER_BIT);
+
+        nK_glfw3_new_frame();
+        UiRender();
+        nk_end(ctx);
 
 	
         // Swap front and back buffers
@@ -150,4 +159,3 @@ void Application_Destroy(Application* app) {
 
 }
 
-#endif 

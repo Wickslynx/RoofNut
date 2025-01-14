@@ -1,6 +1,7 @@
 
 #include "application_vulkan.h"
-
+#include <stdlib.h>
+#include <stdio.h>
 #include <GLFW/glfw3.h>
 #define VK_USE_PLATFORM_WAYLAND_KHR
 
@@ -362,9 +363,10 @@ void DestroyVulkan() {
     vkDestroyDevice(g_Device, NULL);
     vkDestroyInstance(g_Instance, NULL);
 
-    free(app);
     free(swapchainImages);
     free(imageViews);
+
+  
 }
 
 
@@ -372,9 +374,11 @@ void Application_Destroy(Application* app) {
     if (!app) return;
    
     DestroyVulkan();
+    free(app);
     glfwDestroyWindow(app->windowHandle);
     glfwTerminate();
 
+    
 }
 
 

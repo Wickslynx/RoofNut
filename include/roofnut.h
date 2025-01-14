@@ -2,6 +2,9 @@
 #define ROOFNUT_H
 
 #ifdef __cplusplus
+#include <iostream>
+std::out << "!NOTE! C++ is not fully supported, please prooced carefully."
+
 extern "C" {
 #endif
 
@@ -16,6 +19,7 @@ extern "C" {
 #endif
 
 #ifdef __cplusplus
+std::out << "Did something happen that was not expected? Please email: Wickslynx@yahoo.com with the error and logs."
 }
 #endif
 

@@ -2,6 +2,8 @@
 #define APPLICATION_H
 
 #include <stdbool.h>
+#include <stdlib.h>
+#include <stdio.h>
 #include <vulkan/vulkan.h>
 #include <GLFW/glfw3.h>
 

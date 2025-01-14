@@ -8,22 +8,52 @@ project(RoofNut VERSION 1.0 LANGUAGES C)
 set(CMAKE_C_STANDARD 11)
 set(CMAKE_C_STANDARD_REQUIRED True)
 
-# Add source files for the project
-file(GLOB SOURCES
-    src/application_vulkan.c
-    src/input.c
-    src/Utilities.c
-)
+find_package(Vulkan QUIET)
+find_package(OpenGL QUIET)
 
-file(GLOB HEADERS
-    include/application_vulkan.h
-    include/input.h
-    include/Utilities.h
-    include/roofnut.h
-)
+if (Vulkan_FOUND)
+    message(STATUS "Using Vulkan for rendering.")
+    add_definitions(-DUSE_VULKAN)
+    set(SOURCES
+        src/application_vulkan.c
+        src/input.c
+        src/Utilites.c
+    )
+    set(HEADERS
+        include/application_vulkan.h
+        include/input.h
+        include/Utilites.h
+        include/roofnut.h
+    )
+    set(GRAPHICS_LIBRARIES Vulkan::Vulkan)
+elseif (OpenGL_FOUND)
+    message(STATUS "Using OpenGL for rendering.")
+    add_definitions(-DUSE_OPENGL)
+    set(SOURCES
+        src/application_opengl.c
+        src/input.c
+        src/Utilites.c
+    )
+    set(HEADERS
+        include/application_opengl.h
+        include/input.h
+        include/Utilites.h
+        include/roofnut.h
+    )
+    set(GRAPHICS_LIBRARIES OpenGL::GL)
+else()
+    message(FATAL_ERROR "Neither Vulkan nor OpenGL could be found.")
+endif()
 
 # Create the library target
 add_library(RoofNut STATIC ${SOURCES} ${HEADERS})
+
+# Define macros
+if (Vulkan_FOUND)
+    target_compile_definitions(RoofNut PRIVATE ROOFNUT_USE_VULKAN)
+elseif (OpenGL_FOUND)
+    target_compile_definitions(RoofNut PRIVATE ROOFNUT_USE_OPENGL)
+endif()
 
 # Include directories for project and dependencies
 target_include_directories(RoofNut PUBLIC
@@ -31,14 +61,8 @@ target_include_directories(RoofNut PUBLIC
     ${CMAKE_SOURCE_DIR}/include/librarys/Nuklear
 )
 
-
-
-
-message(STATUS "Using Vulkan for rendering")
-target_compile_definitions(RoofNut PRIVATE ROOFNUT_USE_VULKAN)
-find_package(Vulkan REQUIRED)
-target_link_libraries(RoofNut PRIVATE glfw Vulkan::Vulkan m)
-
+# Link the appropriate libraries
+target_link_libraries(RoofNut PRIVATE glfw ${GRAPHICS_LIBRARIES} m)
 
 # Installation targets
 install(TARGETS RoofNut
@@ -50,8 +74,8 @@ install(DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/include/
     FILES_MATCHING PATTERN "*.h"
 )
 
-# Ignore this, Its made for my testing (Wickslynx).
-# add_executable(RoofNutTest test.c)
+# Ignore this, It's made for my testing (Wickslynx).
+add_executable(RoofNutTest test.c)
 
-# Ignore this, made for my testing (Wickslynx)
-# target_link_libraries(RoofNutTest PRIVATE RoofNut glfw Vulkan::Vulkan m)
+# Ignore this, made for my testing (Wickslynx).
+target_link_libraries(RoofNutTest PRIVATE RoofNut glfw OpenGL::GL m)
