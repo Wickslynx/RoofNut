@@ -10,7 +10,7 @@ set(CMAKE_C_STANDARD_REQUIRED True)
 
 
 
-add_subdirectory(include/external/glfw)
+add_subdirectory(include/external/glfw3)
 
 
 find_package(Vulkan QUIET)
