@@ -10,7 +10,7 @@ set(CMAKE_C_STANDARD_REQUIRED True)
 
 
 
-add_subdirectory(include/external/glfw3)
+add_subdirectory(include/external/glfw)
 
 
 find_package(Vulkan QUIET)
@@ -31,6 +31,7 @@ if (Vulkan_FOUND)
         include/roofnut.h
     )
     set(GRAPHICS_LIBRARIES Vulkan::Vulkan)
+
 elseif (OpenGL_FOUND)
     message(STATUS "Using OpenGL for rendering.")
     add_definitions(-DUSE_OPENGL)

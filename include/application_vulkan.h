@@ -5,7 +5,7 @@
 #include <stdlib.h>
 #include <stdio.h>
 #include <vulkan/vulkan.h>
-#include "external/glfw3/include/GLFW/glfw3.h"
+#include "external/glfw/include/GLFW/glfw3.h"
 
 // Define constants, if needed, for Vulkan or GLFW initialization
 #define APPLICATION_NAME "RoofNut Application"

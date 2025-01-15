@@ -4,7 +4,7 @@
 #include <string.h>
 
 #include <GL/glew.h>
-#include "external/glfw3/include/GLFW/glfw3.h"
+#include "external/glfw/include/GLFW/glfw3.h"
 
 
 
