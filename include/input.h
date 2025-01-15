@@ -1,5 +1,5 @@
 #pragma once
-#include <GLFW/glfw3.h>
+#include "external/glfw/include/GLFW/glfw3.h"
 
 //Declare functions.
 void Input_Init(GLFWwindow* window);

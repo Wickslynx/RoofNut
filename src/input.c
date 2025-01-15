@@ -1,5 +1,5 @@
 #include "input.h"
-#include <GLFW/glfw3.h>
+#include "external/glfw/include/GLFW/glfw3.h"
 
 static int keys[1024];
 static int mouseButtons[32];

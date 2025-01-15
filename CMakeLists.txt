@@ -8,6 +8,11 @@ project(RoofNut VERSION 1.0 LANGUAGES C)
 set(CMAKE_C_STANDARD 11)
 set(CMAKE_C_STANDARD_REQUIRED True)
 
+
+
+add_subdirectory(include/external/glfw)
+
+
 find_package(Vulkan QUIET)
 find_package(OpenGL QUIET)
 
@@ -40,6 +45,8 @@ elseif (OpenGL_FOUND)
         include/Utilites.h
         include/roofnut.h
     )
+    find_package(GLEW REQUIRED) 
+    set(EXTRA_LIBRARIES GLEW::GLEW)
     set(GRAPHICS_LIBRARIES OpenGL::GL)
 else()
     message(FATAL_ERROR "Neither Vulkan nor OpenGL could be found.")
@@ -58,11 +65,12 @@ endif()
 # Include directories for project and dependencies
 target_include_directories(RoofNut PUBLIC
     ${CMAKE_CURRENT_SOURCE_DIR}/include
+    ${CMAKE_CURRENT_SOURCE_DIR}/include/external/glfw/include/GLFW
     ${CMAKE_SOURCE_DIR}/include/librarys/Nuklear
 )
 
 # Link the appropriate libraries
-target_link_libraries(RoofNut PRIVATE glfw ${GRAPHICS_LIBRARIES} m)
+target_link_libraries(RoofNut PRIVATE glfw ${GRAPHICS_LIBRARIES} ${EXTRA_LIBRAREIS} m)
 
 # Installation targets
 install(TARGETS RoofNut
@@ -78,4 +86,4 @@ install(DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/include/
 add_executable(RoofNutTest test.c)
 
 # Ignore this, made for my testing (Wickslynx).
-target_link_libraries(RoofNutTest PRIVATE RoofNut glfw OpenGL::GL m)
+target_link_libraries(RoofNutTest PRIVATE RoofNut glfw ${EXTRA_LIBRARIES} ${GRAPHICS_LIBRARIES} m)

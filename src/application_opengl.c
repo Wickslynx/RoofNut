@@ -4,14 +4,24 @@
 #include <string.h>
 
 #include <GL/glew.h>
-#include <GLFW/glfw3.h>
+#include "external/glfw/include/GLFW/glfw3.h"
 
 
 
+extern GLFWwindow *g_Window;
+GLFWwindow* g_Window = NULL;
 
+
+struct Application {
+    struct ApplicationSpecification specification;
+    bool running;
+    bool customTitleBar;
+    GLFWwindow* windowHandle;
+};
 
 //Additonal Nuklear setup.
 
+#ifdef ROOFNUT_NUKLEAR
 #define NK_INCLUDE_FIXED_TYPES
 #define NK_INCLUDE_STANDARD_IO
 #define NK_INCLUDE_DEFAULT_ALLOCATOR
@@ -20,34 +30,42 @@
 #define NK_INCLUDE_DEFAULT_FONT
 #define NK_INCLUDE_COMMAND_USERDATA
 #define NK_IMPLEMENTATION
-#include "nuklear.h"
+#include "external/Nuklear/nuklear.h"
 
 #define NK_VULKAN_IMPLEMENTATION
-#include "nuklear_glfw_gl3.h"
+#include "external/Nuklear/nuklear_glfw_gl3.h"
 
 
 struct nk_allocator allocator = { 0 }; // Uncomment to use NK, Can't get it to link so don't worry bout it.
 
 
-#ifdef ROOFNUT_IMPLEMENTATION
+
 
 
  // Note: Uncomment to use Nuklear, I can't get it to link so dont worry bout it for now.
  
- struct nk_context *ctx; 
+struct nk_context *ctx; 
+struct nk_font_atlas *atlas;
+struct nk_glfw glfw;
 
-void init_nuklear(GLFWwindow* window, VkDevice device, VkPhysicalDevice physicalDevice, uint32_t queueFamilyIndex, VkImageView* imageViews, uint32_t imageViewCount, VkFormat format, VkExtent2D extent) { 
-	ctx = nk_glfw3_init(window, device, physicalDevice, queueFamilyIndex, imageViews, imageViewCount, format, extent.width, extent.height, queue);
-	struct nk_font_atlas *atlas; 
-	nk_glfw3_font_stash_begin(&atlas); 
-	nk_glfw3_font_stash_end(); 
+void init_nuklear(GLFWwindow* window) {
+    ctx = nk_glfw3_init(&glfw, window, NK_GLFW3_INSTALL_CALLBACKS);
+
+    /* Load Fonts */
+    struct nk_font_atlas *atlas;
+    nk_glfw3_font_stash_begin(&glfw, &atlas);
+    /* If you have a ttf file, you can add it here */
+    /* E.g., struct nk_font *droid = nk_font_atlas_add_from_file(atlas, "path/to/your/font.ttf", 14, 0); */
+    nk_glfw3_font_stash_end(&glfw);
 }
+
 
 //*/
 
 // Function to initialize OpenGL
 
 
+#endif
 
 extern GLFWwindow *g_Window;
 
@@ -88,7 +106,9 @@ void init_opengl() {
 }
 
 void RoofNut_loop() {
-    init_nuklear();
+    #ifdef ROOFNUT_NUKLEAR
+    init_nuklear(g_Window);
+    #endif
     init_opengl();
 
 	//Note: OPENGL version does NOT support Nuklear..
@@ -100,10 +120,11 @@ void RoofNut_loop() {
 	
         // Render here
         glClear(GL_COLOR_BUFFER_BIT);
-
-        nK_glfw3_new_frame();
+        #ifdef ROOFNUT_NUKLEAR
+        nk_glfw3_new_frame(&glfw);
         UiRender();
         nk_end(ctx);
+        #endif
 
 	
         // Swap front and back buffers
@@ -116,7 +137,8 @@ void DestroyOpenGl() {
 	//No code here rn.
 }
 
-Application* Application_Create(const ApplicationSpecification* specification) {
+
+struct Application* Application_Create(const struct ApplicationSpecification* specification) {
     if (!glfwInit()) {
         const char* error_description;
         glfwGetError(&error_description);
@@ -126,7 +148,7 @@ Application* Application_Create(const ApplicationSpecification* specification) {
 
     glfwWindowHint(GLFW_CLIENT_API, GLFW_NO_API);
 
-    Application* app = (Application*)malloc(sizeof(Application));
+    struct Application* app = (struct Application*)malloc(sizeof(struct Application));
     if (!app) {
         printf("Allocation of Application failed\n");
         glfwTerminate();
@@ -135,18 +157,18 @@ Application* Application_Create(const ApplicationSpecification* specification) {
 
     app->windowHandle = glfwCreateWindow(specification->width, specification->height, specification->name, NULL, NULL);
     if (!app->windowHandle) {
-        printf("Failed to create GLFW window. \n");
+        printf("Failed to create GLFW window.\n");
         free(app);
         glfwTerminate();
         return NULL;
     }
 
     g_Window = app->windowHandle;
-
     return app;
 }
 
-void Application_Destroy(Application* app) {
+
+void Application_Destroy(struct Application* app) {
     if (!app) return;
     
 
@@ -158,4 +180,3 @@ void Application_Destroy(Application* app) {
     glfwTerminate();
 
 }
-

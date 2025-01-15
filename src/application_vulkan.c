@@ -2,7 +2,7 @@
 #include "application_vulkan.h"
 #include <stdlib.h>
 #include <stdio.h>
-#include <GLFW/glfw3.h>
+#include "external/glfw/include/GLFW/glfw3.h"
 #define VK_USE_PLATFORM_WAYLAND_KHR
 
 #include <vulkan/vulkan.h>
