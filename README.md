@@ -38,4 +38,4 @@ Please see the *example.c* file for further explanation and examples
 
 **2. Additonal debugging needed (vulkan)** , (Wickslynx) can't test the vulkan version as my drivers are outdated. Hence why i added OPENGL support. (Worked on)
 
-***RoofNut is still in development, no stable version has released.***
+***RoofNut is still in development, one stable version has released.***
