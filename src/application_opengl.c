@@ -97,7 +97,7 @@ void init_opengl() {
     // Initialize GLEW
     glewExperimental = GL_TRUE;
     if (glewInit() != GLEW_OK) {
-        printf("Failed to initialize GLEW.\n");
+        printf("Failed to initialize GLEW.%s\n", glewGetErrorString(glewInitResult));
         exit(EXIT_FAILURE);
     }
 
@@ -120,6 +120,7 @@ void RoofNut_loop() {
 	
         // Render here
         glClear(GL_COLOR_BUFFER_BIT);
+		
         #ifdef ROOFNUT_NUKLEAR
         nk_glfw3_new_frame(&glfw);
         UiRender();
