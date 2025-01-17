@@ -68,7 +68,6 @@ void init_nuklear(GLFWwindow* window) {
 #endif
 
 extern GLFWwindow *g_Window;
-
 void init_opengl() {
     // Initialize GLFW
     if (!glfwInit()) {
@@ -78,10 +77,13 @@ void init_opengl() {
         exit(EXIT_FAILURE);
     }
 
-    // Set GLFW window hints for OpenGL
+    // Set GLFW window hints before window creation
     glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
     glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
     glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
+    #ifdef __APPLE__
+        glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, GL_TRUE);
+    #endif
 
     // Create GLFW window
     g_Window = glfwCreateWindow(800, 600, "RoofNut application", NULL, NULL);
@@ -94,26 +96,31 @@ void init_opengl() {
     // Make the OpenGL context current
     glfwMakeContextCurrent(g_Window);
 
-    //Check the GL version.
-    const GLubyte* glVersion = glGetString(GL_VERSION);
-    if (glVersion == NULL) { 
-	    printf("Failed to retrieve OpenGL version.\n");
-    } else { 
-	    printf("OpenGL version: %s\n", glVersion); 
-    }
-
     // Initialize GLEW
     glewExperimental = GL_TRUE;
     GLenum glewInitResult = glewInit();
-	
-    if (glewInitResult != GLEW_OK) { 
-	    printf("Failed to initialize GLEW: %s\n", glewGetErrorString(glewInitResult)); 
-	    glfwTerminate(); 
-	    exit(EXIT_FAILURE); 
+    if (glewInitResult != GLEW_OK) {
+        printf("Failed to initialize GLEW: %s\n", glewGetErrorString(glewInitResult));
+        glfwTerminate();
+        exit(EXIT_FAILURE);
     }
-	
+
+    // Now that GLEW is initialized, we can safely check OpenGL version
+    const GLubyte* glVersion = glGetString(GL_VERSION);
+    if (glVersion == NULL) {
+        printf("Failed to retrieve OpenGL version.\n");
+    } else {
+        printf("OpenGL version: %s\n", glVersion);
+    }
+
     // Set the viewport
     glViewport(0, 0, 800, 600);
+
+    // Enable debug output if available
+    if (GLEW_ARB_debug_output) {
+        glEnable(GL_DEBUG_OUTPUT);
+        glEnable(GL_DEBUG_OUTPUT_SYNCHRONOUS);
+    }
 }
 
 void RoofNut_loop() {
