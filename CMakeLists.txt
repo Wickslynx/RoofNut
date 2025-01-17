@@ -83,8 +83,9 @@ install(DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/include/
     FILES_MATCHING PATTERN "*.h"
 )
 
+
 # Ignore this, It's made for my testing (Wickslynx).
-add_executable(RoofNutTest test.c)
+#add_executable(RoofNutTest test.c)
 
 # Ignore this, made for my testing (Wickslynx).
-target_link_libraries(RoofNutTest PRIVATE RoofNut glfw ${EXTRA_LIBRARIES} ${GRAPHICS_LIBRARIES} m)
+#target_link_libraries(RoofNutTest PRIVATE RoofNut glfw ${EXTRA_LIBRARIES} ${GRAPHICS_LIBRARIES} m)
