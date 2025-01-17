@@ -112,7 +112,6 @@ void RoofNut_loop() {
     #ifdef ROOFNUT_NUKLEAR
     init_nuklear(g_Window);
     #endif
-    init_opengl();
 
 	//Note: OPENGL version does NOT support Nuklear..
 
@@ -168,6 +167,8 @@ struct Application* Application_Create(const struct ApplicationSpecification* sp
     }
 
     g_Window = app->windowHandle;
+    init_opengl();
+
     return app;
 }
 
