@@ -71,7 +71,7 @@ target_include_directories(RoofNut PUBLIC
 )
 
 # Link the appropriate libraries
-target_link_libraries(RoofNut PRIVATE glfw ${GRAPHICS_LIBRARIES} ${EXTRA_LIBRAREIS} m)
+target_link_libraries(RoofNut PRIVATE glfw ${GRAPHICS_LIBRARIES} ${EXTRA_LIBRARIES} m)
 
 # Installation targets
 install(TARGETS RoofNut
