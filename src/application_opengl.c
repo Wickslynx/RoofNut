@@ -164,7 +164,6 @@ struct Application* Application_Create(const struct ApplicationSpecification* sp
         return NULL;
     }
 
-    glfwWindowHint(GLFW_CLIENT_API, GLFW_NO_API);
 
     struct Application* app = (struct Application*)malloc(sizeof(struct Application));
     if (!app) {
