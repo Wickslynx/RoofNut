@@ -94,6 +94,14 @@ void init_opengl() {
     // Make the OpenGL context current
     glfwMakeContextCurrent(g_Window);
 
+    //Check the GL version.
+    const GLubyte* glVersion = glGetString(GL_VERSION);
+    if (glVersion == NULL) { 
+	    printf("Failed to retrieve OpenGL version.\n");
+    } else { 
+	    printf("OpenGL version: %s\n", glVersion); 
+    }
+
     // Initialize GLEW
     glewExperimental = GL_TRUE;
     GLenum glewInitResult = glewInit();
