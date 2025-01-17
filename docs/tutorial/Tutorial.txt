@@ -12,8 +12,8 @@ Change directory into build: cd build
 
 Cmake RoofNuts CMakeList: cmake ..
 
-Make roofnuts static file: sudo make install
+Make roofnut into a static file: sudo make install
 
 Include roofnut into your project using #include <roofnut.h>.
 
-!Note!: RoofNut is not ready yet... It still get linker errors...
+

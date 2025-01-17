@@ -5,15 +5,17 @@
 //Debug = On
 #define ROOFNUT_DEBUG 
 
+
+
 //RoofNut will automaticly detect the right lib.
 
 //Use OpenGL -- If you want to restrict it to a single lib only.
 //#define ROOFNUT_USE_OPENGL 
 
 //Uncomment to use vulkan. -- If you want to restrict it to a single lib only.
-// #define ROOFNUT_USE_VULKAN
+//#define ROOFNUT_USE_VULKAN
 
-#define ROOFNUT_IMPLEMENTATION
+#define ROOFNUT_IMPLEMENTAON
 
 //Set this to your applications name.
 #define APPLICATION_NAME "EXAMPLE"
