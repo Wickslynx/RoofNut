@@ -96,11 +96,14 @@ void init_opengl() {
 
     // Initialize GLEW
     glewExperimental = GL_TRUE;
-    if (glewInit() != GLEW_OK) {
-        printf("Failed to initialize GLEW.%s\n", glewGetErrorString(glewInitResult));
-        exit(EXIT_FAILURE);
+    GLenum glewInitResult = glewInit();
+	
+    if (glewInitResult != GLEW_OK) { 
+	    printf("Failed to initialize GLEW: %s\n", glewGetErrorString(glewInitResult)); 
+	    glfwTerminate(); 
+	    exit(EXIT_FAILURE); 
     }
-
+	
     // Set the viewport
     glViewport(0, 0, 800, 600);
 }
