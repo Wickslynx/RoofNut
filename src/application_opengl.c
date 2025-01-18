@@ -68,6 +68,10 @@ void init_nuklear(GLFWwindow* window) {
 #endif
 
 extern GLFWwindow *g_Window;
+
+
+
+
 void init_opengl() {
     // Initialize GLFW
     if (!glfwInit()) {
@@ -93,35 +97,34 @@ void init_opengl() {
         exit(EXIT_FAILURE);
     }
 
-    // Make the OpenGL context current
+    // Make the OpenGL context current BEFORE initializing GLEW
     glfwMakeContextCurrent(g_Window);
 
+    // Enable vsync (optional but recommended)
+    glfwSwapInterval(1);
+
     // Initialize GLEW
-    glewExperimental = GL_TRUE;
-    GLenum glewInitResult = glewInit();
-    if (glewInitResult != GLEW_OK) {
-        printf("Failed to initialize GLEW: %s\n", glewGetErrorString(glewInitResult));
+    GLenum err = glewInit();
+    if (err != GLEW_OK) {
+        printf("Failed to initialize GLEW: %s\n", glewGetErrorString(err));
+        glfwDestroyWindow(g_Window);
         glfwTerminate();
         exit(EXIT_FAILURE);
     }
 
     // Now that GLEW is initialized, we can safely check OpenGL version
-    const GLubyte* glVersion = glGetString(GL_VERSION);
-    if (glVersion == NULL) {
-        printf("Failed to retrieve OpenGL version.\n");
-    } else {
-        printf("OpenGL version: %s\n", glVersion);
-    }
+    printf("OpenGL version: %s\n", glGetString(GL_VERSION));
+    printf("GLEW version: %s\n", glewGetString(GLEW_VERSION));
 
     // Set the viewport
-    glViewport(0, 0, 800, 600);
+    int width, height;
+    glfwGetFramebufferSize(g_Window, &width, &height);
+    glViewport(0, 0, width, height);
 
-    // Enable debug output if available
-    if (GLEW_ARB_debug_output) {
-        glEnable(GL_DEBUG_OUTPUT);
-        glEnable(GL_DEBUG_OUTPUT_SYNCHRONOUS);
-    }
+    // Basic OpenGL setup
+    glClearColor(0.2f, 0.3f, 0.3f, 1.0f);
 }
+
 
 void RoofNut_loop() {
     #ifdef ROOFNUT_NUKLEAR
@@ -156,33 +159,24 @@ void DestroyOpenGl() {
 }
 
 
+
 struct Application* Application_Create(const struct ApplicationSpecification* specification) {
-    if (!glfwInit()) {
-        const char* error_description;
-        glfwGetError(&error_description);
-        printf("GLFW Initialization failed: %s\n", error_description);
-        return NULL;
-    }
-
-
     struct Application* app = (struct Application*)malloc(sizeof(struct Application));
     if (!app) {
         printf("Allocation of Application failed\n");
-        glfwTerminate();
         return NULL;
     }
 
-    app->windowHandle = glfwCreateWindow(specification->width, specification->height, specification->name, NULL, NULL);
-    if (!app->windowHandle) {
-        printf("Failed to create GLFW window.\n");
-        free(app);
-        glfwTerminate();
-        return NULL;
-    }
-
-    g_Window = app->windowHandle;
+    // Copy specification
+    memcpy(&app->specification, specification, sizeof(struct ApplicationSpecification));
+    
+    // Initialize OpenGL (this will create the window and set up GLEW)
     init_opengl();
-
+    
+    // Store the window handle
+    app->windowHandle = g_Window;
+    app->running = true;
+    
     return app;
 }
 
