@@ -6,6 +6,13 @@
 #include <GL/glew.h>
 #include "external/glfw/include/GLFW/glfw3.h"
 
+struct Application {
+    struct ApplicationSpecification specification;
+    bool running;
+    bool customTitleBar;
+    GLFWwindow* windowHandle;
+};
+
 
 //Additonal Nuklear setup.
 
