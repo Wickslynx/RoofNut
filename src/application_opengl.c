@@ -2,6 +2,8 @@
 #include <stdio.h>
 #include <string.h>
 
+#include "appliction_opengl.h"
+
 
 #include <GL/glew.h>
 #include "external/glfw/include/GLFW/glfw3.h"
