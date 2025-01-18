@@ -7,10 +7,6 @@
 #include <string.h>
 
 
-//Define and set the GLFW window to null. 
-extern GLFWwindow *g_Window; 
-GLFWwindow* g_Window = NULL;
-
 
 struct ApplicationSpecification {
     const char* name;
