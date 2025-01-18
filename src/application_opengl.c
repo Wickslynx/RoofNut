@@ -94,7 +94,9 @@ void init_opengl() {
     // Create GLFW window
     g_Window = glfwCreateWindow(800, 600, "RoofNut application", NULL, NULL);
     if (!g_Window) {
-        printf("Failed to create GLFW window.\n");
+	const char* error_description; 
+	glfwGetError(&error_description);
+        printf("Failed to create GLFW window, %s\n", error_description);
         glfwTerminate();
         exit(EXIT_FAILURE);
     }
@@ -123,8 +125,7 @@ void init_opengl() {
     glfwGetFramebufferSize(g_Window, &width, &height);
     glViewport(0, 0, width, height);
 
-    // Basic OpenGL setup
-    glClearColor(0.2f, 0.3f, 0.3f, 1.0f);
+ 
 }
 
 
