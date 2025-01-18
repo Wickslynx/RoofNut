@@ -16,7 +16,7 @@ struct ApplicationSpecification {
     const char* name;
     int width; 
     int height; 
-}
+};
 
 
 struct Application {
