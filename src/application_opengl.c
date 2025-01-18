@@ -6,6 +6,11 @@
 #include <GL/glew.h>
 #include "external/glfw/include/GLFW/glfw3.h"
 
+//Define and set the GLFW window to null. 
+extern GLFWwindow *g_Window; 
+GLFWwindow* g_Window = NULL;
+
+
 struct Application {
     struct ApplicationSpecification specification;
     bool running;
