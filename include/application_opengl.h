@@ -1,3 +1,6 @@
+#ifndef APPLICATION_OPENGL
+#define APPLICATION_OPENGL
+
 #include <stdlib.h>
 #include <stdio.h>
 #include <stdbool.h>   
@@ -38,3 +41,4 @@ void UiRender();
 struct Application* Application_Create(const struct ApplicationSpecification* specification);
 void Application_Destroy(struct Application* app);
 
+#endif 
