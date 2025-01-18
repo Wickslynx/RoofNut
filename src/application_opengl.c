@@ -3,21 +3,7 @@
 #include <stdio.h>
 #include <string.h>
 
-#include <GL/glew.h>
-#include "external/glfw/include/GLFW/glfw3.h"
 
-
-
-extern GLFWwindow *g_Window;
-GLFWwindow* g_Window = NULL;
-
-
-struct Application {
-    struct ApplicationSpecification specification;
-    bool running;
-    bool customTitleBar;
-    GLFWwindow* windowHandle;
-};
 
 //Additonal Nuklear setup.
 
