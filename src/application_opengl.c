@@ -3,6 +3,9 @@
 #include <string.h>
 
 
+#include <GL/glew.h>
+#include "external/glfw/include/GLFW/glfw3.h"
+
 
 //Additonal Nuklear setup.
 
