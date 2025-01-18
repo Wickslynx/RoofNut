@@ -1,4 +1,3 @@
-#include "application_opengl.h"
 #include <stdlib.h>
 #include <stdio.h>
 #include <string.h>
