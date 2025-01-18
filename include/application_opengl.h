@@ -9,6 +9,7 @@
 #include <GL/glew.h>
 #include "external/glfw/include/GLFW/glfw3.h"
 
+#include "application_opengl.c"
 
 //Define and set the GLFW window to null. 
 extern GLFWwindow *g_Window; 
