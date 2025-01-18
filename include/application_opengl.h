@@ -12,6 +12,13 @@ extern GLFWwindow *g_Window;
 GLFWwindow* g_Window = NULL;
 
 
+struct ApplicationSpecification {
+    const char* name;
+    int width; 
+    int height; 
+}
+
+
 struct Application {
     struct ApplicationSpecification specification;
     bool running;
@@ -25,11 +32,6 @@ void RoofNut_loop(void);
 void DestroyOpenGl(void);
 void UiRender();
 
-struct ApplicationSpecification {
-    const char* name;
-    int width;
-    int height;
-};
 
 
 
