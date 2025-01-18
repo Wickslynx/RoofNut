@@ -19,13 +19,6 @@ struct ApplicationSpecification {
 };
 
 
-struct Application {
-    struct ApplicationSpecification specification;
-    bool running;
-    bool customTitleBar;
-    GLFWwindow* windowHandle;
-};
-
 
 void init_opengl(void);
 void RoofNut_loop(void);
