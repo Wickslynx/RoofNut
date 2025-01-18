@@ -1,7 +1,6 @@
-
 #include <stdlib.h>
 #include <stdio.h>
-#include <stdbool.h>   // Include <stdbool.h> for bool type
+#include <stdbool.h>   
 #include <string.h>
 
 #include <GL/glew.h>
