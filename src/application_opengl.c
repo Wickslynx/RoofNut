@@ -2,7 +2,7 @@
 #include <stdio.h>
 #include <string.h>
 
-#include "appliction_opengl.h"
+#include "application_opengl.h"
 
 
 #include <GL/glew.h>
@@ -85,7 +85,7 @@ void init_opengl() {
 
     // Set GLFW window hints before window creation
     glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
-    glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 0);
+    glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 2);
     glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
     #ifdef __APPLE__
         glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, GL_TRUE);
