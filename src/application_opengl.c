@@ -9,8 +9,6 @@
 #include "external/glfw/include/GLFW/glfw3.h"
 
 //Define and set the GLFW window to null. 
-extern GLFWwindow *g_Window; 
-GLFWwindow* g_Window = NULL;
 
 
 struct Application {
@@ -23,7 +21,7 @@ struct Application {
 
 //Additonal Nuklear setup.
 
-#ifdef ROOFNUT_NUKLEAR
+
 #define NK_INCLUDE_FIXED_TYPES
 #define NK_INCLUDE_STANDARD_IO
 #define NK_INCLUDE_DEFAULT_ALLOCATOR
@@ -41,7 +39,7 @@ struct Application {
 struct nk_allocator allocator = { 0 }; // Uncomment to use NK, Can't get it to link so don't worry bout it.
 
 
-
+extern GLFWwindow *g_Window; 
 
 
  // Note: Uncomment to use Nuklear, I can't get it to link so dont worry bout it for now.
@@ -67,10 +65,6 @@ void init_nuklear(GLFWwindow* window) {
 // Function to initialize OpenGL
 
 
-#endif
-
-extern GLFWwindow *g_Window;
-
 
 
 
@@ -85,15 +79,16 @@ void init_opengl() {
 
     // Set GLFW window hints before window creation
     glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
-    glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 0);
-    //glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE); Uncomment this and the change the context minor to 3.3 to use the newest version.
+    glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
+    glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE); // Uncomment this and the change the context minor to 3.3 to use the newest version.
 	
     #ifdef __APPLE__
         glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, GL_TRUE);
     #endif
 
-    // Create GLFW window
+    // Create GLFW window 
     g_Window = glfwCreateWindow(800, 600, "RoofNut application", NULL, NULL);
+	
     if (!g_Window) {
 	const char* error_description; 
 	glfwGetError(&error_description);
@@ -145,11 +140,17 @@ void RoofNut_loop() {
         // Render here
         glClear(GL_COLOR_BUFFER_BIT);
 		
-        #ifdef ROOFNUT_NUKLEAR
+
         nk_glfw3_new_frame(&glfw);
-        UiRender();
+	if (nk_begin(ctx, specification->name, nk_rect(50, 50, 230, 250),
+                 NK_WINDOW_BORDER | NK_WINDOW_MOVABLE | NK_WINDOW_SCALABLE |
+                 NK_WINDOW_MINIMIZABLE | NK_WINDOW_TITLE)) { UiRender() }
         nk_end(ctx);
-        #endif
+
+	nk_glfw3_render(NK_ANTI_ALIASING_ON, MAX_VERTEX_MEMORY, MAX_ELEMENT_MEMORY);
+		
+        
+		
 
 	
         // Swap front and back buffers
