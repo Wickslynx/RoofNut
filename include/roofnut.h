@@ -21,5 +21,4 @@ std::out << "Did something happen that was not expected? Please email: Wickslynx
 }
 #endif // C++
 
-
 #endif // ROOFNUT_H
