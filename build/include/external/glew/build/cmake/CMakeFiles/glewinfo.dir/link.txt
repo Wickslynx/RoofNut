@@ -1,1 +1,0 @@
-/usr/bin/cc   -rdynamic CMakeFiles/glewinfo.dir/__/__/src/glewinfo.c.o  -o ../../../../../bin/glewinfo  -Wl,-rpath,/workspaces/RoofNut/build/lib: ../../../../../lib/libGLEW.so -lSM -lICE -lX11 -lXext -lOpenGL -lGLX -lGLU 
