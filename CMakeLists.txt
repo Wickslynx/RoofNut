@@ -1,5 +1,5 @@
 # Set the minimum required version of CMake
-cmake_minimum_required(VERSION 3.10)
+cmake_minimum_required(VERSION 3.16)
 
 # Set the project name and version
 project(RoofNut VERSION 1.0 LANGUAGES C)
@@ -8,14 +8,12 @@ project(RoofNut VERSION 1.0 LANGUAGES C)
 set(CMAKE_C_STANDARD 11)
 set(CMAKE_C_STANDARD_REQUIRED True)
 
-
-
 add_subdirectory(include/external/glfw)
 
-
 find_package(Vulkan QUIET)
+find_package(OpenGL REQUIRED)
 
-if (Vulkan_FOUND)
+if (ROOFNUT_USEVULKAN)
     message(STATUS "Using Vulkan for rendering.")
     add_definitions(-DUSE_VULKAN)
     set(SOURCES
@@ -31,11 +29,10 @@ if (Vulkan_FOUND)
     )
     set(GRAPHICS_LIBRARIES Vulkan::Vulkan)
 
-else()
+elseif (OpenGL_FOUND)
     message(STATUS "Using built-in OpenGL for rendering.")
-
     add_definitions(-DUSE_OPENGL)
-    
+
     add_subdirectory(include/external/glew/build/cmake)
 
     set(SOURCES
@@ -50,9 +47,11 @@ else()
         include/roofnut.h
     )
 
-    find_package(GLEW REQUIRED) 
+    find_package(GLEW REQUIRED)
     set(EXTRA_LIBRARIES GLEW::GLEW)
     set(GRAPHICS_LIBRARIES OpenGL::GL)
+else()
+    message(FATAL_ERROR "No available drivers found, (OpenGL nor Vulkan).")
 endif()
 
 # Create the library target
@@ -85,9 +84,8 @@ install(DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/include/
     FILES_MATCHING PATTERN "*.h"
 )
 
-
 # Ignore this, It's made for my testing (Wickslynx).
 add_executable(RoofNutTest test.c)
 
 # Ignore this, made for my testing (Wickslynx).
-target_link_libraries(RoofNutTest PRIVATE RoofNut glfw ${EXTRA_LIBRARIES} ${GRAPHICS_LIBRARIES} m)
+target_link_libraries(RoofNutTest PRIVATE RoofNut glfw ${EXTRA_LIBRARIES} ${GRAPHICS_LIBRARIES} ${OPENGL_LIBRARIES} m)

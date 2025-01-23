@@ -1,6 +1,5 @@
-#!/usr/bin/env perl
+#!/usr/bin/perl
 ##
-## Copyright (C) 2008-2024, Nigel Stewart <nigels[]nigels com>
 ## Copyright (C) 2002-2008, Marcelo E. Magallon <mmagallo[]debian org>
 ## Copyright (C) 2002-2008, Milan Ikits <milan ikits[]ieee org>
 ##
@@ -11,7 +10,6 @@
 use strict;
 use warnings;
 
-use lib '.';
 do 'bin/make.pl';
 
 # token

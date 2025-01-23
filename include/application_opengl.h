@@ -4,6 +4,9 @@
 #include <stdbool.h>   
 #include <string.h>
 
+#define MAX_VERTEX_MEMORY 512 * 1024
+#define MAX_ELEMENT_MEMORY 128 * 1024
+
 
 
 struct ApplicationSpecification {

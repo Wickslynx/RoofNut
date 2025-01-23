@@ -14,15 +14,11 @@ GLboolean glxewGetExtension (const char* name)
 
 GLenum glxewInit ()
 {
-  Display* display;
   int major, minor;
   const GLubyte* extStart;
   const GLubyte* extEnd;
   /* initialize core GLX 1.2 */
   if (_glewInit_GLX_VERSION_1_2()) return GLEW_ERROR_GLX_VERSION_11_ONLY;
-  /* check for a display */
-  display = glXGetCurrentDisplay();
-  if (display == NULL) return GLEW_ERROR_NO_GLX_DISPLAY;
   /* initialize flags */
   GLXEW_VERSION_1_0 = GL_TRUE;
   GLXEW_VERSION_1_1 = GL_TRUE;
@@ -30,7 +26,7 @@ GLenum glxewInit ()
   GLXEW_VERSION_1_3 = GL_TRUE;
   GLXEW_VERSION_1_4 = GL_TRUE;
   /* query GLX version */
-  glXQueryVersion(display, &major, &minor);
+  glXQueryVersion(glXGetCurrentDisplay(), &major, &minor);
   if (major == 1 && minor <= 3)
   {
     switch (minor)
@@ -50,7 +46,7 @@ GLenum glxewInit ()
   /* query GLX extension string */
   extStart = 0;
   if (glXGetCurrentDisplay != NULL)
-    extStart = (const GLubyte*)glXGetClientString(display, GLX_EXTENSIONS);
+    extStart = (const GLubyte*)glXGetClientString(glXGetCurrentDisplay(), GLX_EXTENSIONS);
   if (extStart == 0)
     extStart = (const GLubyte *)"";
   extEnd = extStart + _glewStrLen(extStart);

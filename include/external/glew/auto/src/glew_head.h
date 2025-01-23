@@ -2,7 +2,7 @@
 #define __glew_h__
 #define __GLEW_H__
 
-#if defined(__gl_h_) || defined(__GL_H__) || defined(_GL_H) || defined(__gl_gl_h_) || defined(__X_GL_H)
+#if defined(__gl_h_) || defined(__GL_H__) || defined(_GL_H) || defined(__X_GL_H)
 #error gl.h included before glew.h
 #endif
 #if defined(__gl2_h_)
@@ -14,7 +14,7 @@
 #if defined(__REGAL_H__)
 #error Regal.h included before glew.h
 #endif
-#if defined(__glext_h_) || defined(__GLEXT_H_) || defined(__gl_glext_h_)
+#if defined(__glext_h_) || defined(__GLEXT_H_)
 #error glext.h included before glew.h
 #endif
 #if defined(__gl_ATI_h_)
@@ -25,13 +25,11 @@
 #define __gl2_h_
 #define __GL_H__
 #define _GL_H
-#define __gl_gl_h_
 #define __gltypes_h_
 #define __REGAL_H__
 #define __X_GL_H
 #define __glext_h_
 #define __GLEXT_H_
-#define __gl_glext_h_
 #define __gl_ATI_h_
 
 #if defined(_WIN32)
@@ -61,6 +59,11 @@
 #    endif
 #  else
 #    define APIENTRY
+#  endif
+#endif
+#ifndef GLAPI
+#  if defined(__MINGW32__) || defined(__CYGWIN__)
+#    define GLAPI extern
 #  endif
 #endif
 /* <winnt.h> */
@@ -136,26 +139,15 @@ typedef _W64 int ptrdiff_t;
  * (mem, 2004-01-04)
  */
 
-#if defined(__APPLE__) || defined(__linux__)
-#  if defined(__cplusplus)
-#    include <cstddef>
-#    include <cstdint>
-#  else
-#    include <stddef.h>
-#    include <stdint.h>
-#  endif
-#else
-
-# include <stddef.h>
+#include <stddef.h>
 
 /* SGI MIPSPro doesn't like stdint.h in C++ mode          */
 /* ID: 3376260 Solaris 9 has inttypes.h, but not stdint.h */
 
-#  if (defined(__sgi) || defined(__sun)) && !defined(__GNUC__)
-#    include <inttypes.h>
-#  else
-#    include <stdint.h>
-#  endif
+#if (defined(__sgi) || defined(__sun)) && !defined(__GNUC__)
+#include <inttypes.h>
+#else
+#include <stdint.h>
 #endif
 
 #define GLEW_APIENTRY_DEFINED
@@ -238,8 +230,6 @@ typedef GLuint64EXT GLuint64;
 typedef struct __GLsync *GLsync;
 
 typedef char GLchar;
-
-typedef void *GLeglImageOES; /* GL_EXT_EGL_image_storage */
 
 #define GL_ZERO 0
 #define GL_FALSE 0

@@ -1,6 +1,5 @@
-#!/usr/bin/env perl
+#!/usr/bin/perl
 ##
-## Copyright (C) 2008-2024, Nigel Stewart <nigels[]nigels com>
 ## Copyright (C) 2002-2008, Marcelo E. Magallon <mmagallo[]debian org>
 ## Copyright (C) 2002-2008, Milan Ikits <milan ikits[]ieee org>
 ##
@@ -11,7 +10,6 @@
 use strict;
 use warnings;
 
-use lib '.';
 do 'bin/make.pl';
 
 #---------------------------------------------------------------------------------------
@@ -20,7 +18,7 @@ do 'bin/make.pl';
 sub make_pfn_info($%)
 {
     my $name = $_[0];
-    return "  glewInfoFunc(fi, \"$_[0]\", $name == NULL);";
+    return "  glewInfoFunc(\"$_[0]\", $name == NULL);";
 }
 
 #---------------------------------------------------------------------------------------
@@ -44,23 +42,13 @@ if (@ARGV)
 		#make_separator($extname);
 		print "#ifdef $extname\n\n";
 		print "static void _glewInfo_$extname (void)\n{\n";
-
-		if (! %$functions)
-		{
-			print "  ";		
-		}
-		else
-		{
-			print "  GLboolean fi = ";		
-		}
-
 		if ($extvar =~ /VERSION/)
 		{
-			print "glewPrintExt(\"$extname\", $extvar, $extvar, $extvar);\n";
+			print "  glewPrintExt(\"$extname\", $extvar, $extvar, $extvar);\n";
 		}
 		else
 		{
-			print "glewPrintExt(\"$extname\", $extvar, $extpre" .
+			print "  glewPrintExt(\"$extname\", $extvar, $extpre" .
 				"ewIsSupported(\"$extname\"), $extpre" .
 				"ewGetExtension(\"$extstring\"));\n";
 		}

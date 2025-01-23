@@ -25,7 +25,7 @@ GLenum eglewInit (EGLDisplay display)
   if (!initialize || !queryString)
     return 1;
 
-  /* query EGL version */
+  /* query EGK version */
   if (initialize(display, &major, &minor) != EGL_TRUE)
     return 1;
 
