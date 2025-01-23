@@ -36,7 +36,7 @@ else()
 
     add_definitions(-DUSE_OPENGL)
     
-    add_subdirectory(include/external/glew)
+    add_subdirectory(include/external/glew/build/cmake)
 
     set(SOURCES
         src/application_opengl.c
@@ -49,6 +49,7 @@ else()
         include/Utilites.h
         include/roofnut.h
     )
+
     find_package(GLEW REQUIRED) 
     set(EXTRA_LIBRARIES GLEW::GLEW)
     set(GRAPHICS_LIBRARIES OpenGL::GL)
