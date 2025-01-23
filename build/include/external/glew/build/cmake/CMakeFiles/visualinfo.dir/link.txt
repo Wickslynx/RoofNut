@@ -1,0 +1,1 @@
+/usr/bin/cc   -rdynamic CMakeFiles/visualinfo.dir/__/__/src/visualinfo.c.o  -o ../../../../../bin/visualinfo  -Wl,-rpath,/workspaces/RoofNut/build/lib: ../../../../../lib/libGLEW.so -lSM -lICE -lX11 -lXext -lOpenGL -lGLX -lGLU 

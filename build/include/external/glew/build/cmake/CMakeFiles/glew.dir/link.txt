@@ -1,0 +1,1 @@
+/usr/bin/cc -fPIC   -shared -Wl,-soname,libGLEW.so -o ../../../../../lib/libGLEW.so CMakeFiles/glew.dir/__/__/src/glew.c.o  -lOpenGL -lGLX -lGLU 

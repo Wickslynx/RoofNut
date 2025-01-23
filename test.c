@@ -21,7 +21,7 @@
 #define APPLICATION_NAME "EXAMPLE"
 
 
-void UiRender() {
+void RoofNutRender() {
     //Insert your Nuklear code here.
 }
 

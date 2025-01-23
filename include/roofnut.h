@@ -1,6 +1,7 @@
 #ifndef ROOFNUT_H
 #define ROOFNUT_H
 
+
 #ifdef __cplusplus
 extern "C" {
 #endif
@@ -13,11 +14,12 @@ extern "C" {
 #include "application_vulkan.h"
 #else
 #include "application_opengl.h"
-#endif
+#endif //RoofNut include OpenGL or Vulkan.
 
 #ifdef __cplusplus
 std::out << "Did something happen that was not expected? Please email: Wickslynx@yahoo.com with the error and logs."
 }
-#endif
+#endif // C++
+
 
 #endif // ROOFNUT_H

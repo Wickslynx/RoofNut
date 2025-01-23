@@ -16,7 +16,7 @@ struct Application {
     GLFWwindow* windowHandle;
 };
 
-// Additional Nuklear setup.
+// Nuklear setup.
 #define NK_INCLUDE_FIXED_TYPES
 #define NK_INCLUDE_STANDARD_IO
 #define NK_INCLUDE_DEFAULT_ALLOCATOR
@@ -48,9 +48,9 @@ void init_nuklear(GLFWwindow* window) {
     nk_glfw3_font_stash_end(&glfw);
 }
 
-// Function to initialize OpenGL
+// Function to initialize OpenGL.
 void init_opengl() {
-    // Initialize GLFW
+    // Initialize GLFW.
     if (!glfwInit()) {
         const char* error_description;
         glfwGetError(&error_description);
@@ -58,7 +58,7 @@ void init_opengl() {
         exit(EXIT_FAILURE);
     }
 
-    // Set GLFW window hints before window creation
+    // Set GLFW window hints.
     glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
     glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
     glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
@@ -67,7 +67,7 @@ void init_opengl() {
         glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, GL_TRUE);
     #endif
 
-    // Create GLFW window 
+    // Create GLFW window.
     g_Window = glfwCreateWindow(800, 600, "RoofNut application", NULL, NULL);
     if (!g_Window) {
         const char* error_description; 
@@ -92,11 +92,11 @@ void init_opengl() {
         exit(EXIT_FAILURE);
     }
 
-    // Now that GLEW is initialized, we can safely check OpenGL version
+    // Check OpenGL and Glew version.
     printf("OpenGL version: %s\n", glGetString(GL_VERSION));
     printf("GLEW version: %s\n", glewGetString(GLEW_VERSION));
 
-    // Set the viewport
+    // Set the viewport.
     int width, height;
     glfwGetFramebufferSize(g_Window, &width, &height);
     glViewport(0, 0, width, height);
@@ -105,26 +105,27 @@ void init_opengl() {
 void RoofNut_Loop() {
     init_nuklear(g_Window);
 
-    // Note: OPENGL version does NOT support Nuklear.
+    
     while (!glfwWindowShouldClose(g_Window)) {
-        // Poll for and process events
+        // Poll to process events.
         glfwPollEvents();
 
-        // Render here
+        // Rendering is done from here -
         glClear(GL_COLOR_BUFFER_BIT);
 
         nk_glfw3_new_frame(&glfw);
         if (nk_begin(ctx, "UI Window", nk_rect(50, 50, 230, 250),
                      NK_WINDOW_BORDER | NK_WINDOW_MOVABLE | NK_WINDOW_SCALABLE |
                      NK_WINDOW_MINIMIZABLE | NK_WINDOW_TITLE)) {
-            // UI Render function placeholder
-            // UiRender();
+            // 
+            RoofNutRender();
         }
         nk_end(ctx);
+        // - to here.
 
         nk_glfw3_render(&glfw, NK_ANTI_ALIASING_ON, MAX_VERTEX_MEMORY, MAX_ELEMENT_MEMORY);
 
-        // Swap front and back buffers
+        // Swap front and back buffers.
         glfwSwapBuffers(g_Window);
     }
 }
@@ -146,9 +147,12 @@ struct Application* Application_Create(const struct ApplicationSpecification* sp
     // Initialize OpenGL (this will create the window and set up GLEW)
     init_opengl();
 
-    // Store the window handle
+
+    // Store the window handle.
     app->windowHandle = g_Window;
     app->running = true;
+
+    RoofNut_Loop();
 
     return app;
 }
