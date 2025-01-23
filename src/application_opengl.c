@@ -125,10 +125,9 @@ void init_opengl() {
 }
 
 
-void RoofNut_loop() {
-    #ifdef ROOFNUT_NUKLEAR
+void RoofNut_Loop();
     init_nuklear(g_Window);
-    #endif
+    
 
 	//Note: OPENGL version does NOT support Nuklear..
 
@@ -166,6 +165,7 @@ void DestroyOpenGl() {
 
 
 struct Application* Application_Create(const struct ApplicationSpecification* specification) {
+
     struct Application* app = (struct Application*)malloc(sizeof(struct Application));
     if (!app) {
         printf("Allocation of Application failed\n");

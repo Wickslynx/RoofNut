@@ -14,7 +14,6 @@ add_subdirectory(include/external/glfw)
 
 
 find_package(Vulkan QUIET)
-find_package(OpenGL QUIET)
 
 if (Vulkan_FOUND)
     message(STATUS "Using Vulkan for rendering.")
@@ -32,9 +31,13 @@ if (Vulkan_FOUND)
     )
     set(GRAPHICS_LIBRARIES Vulkan::Vulkan)
 
-elseif (OpenGL_FOUND)
-    message(STATUS "Using OpenGL for rendering.")
+else()
+    message(STATUS "Using built-in OpenGL for rendering.")
+
     add_definitions(-DUSE_OPENGL)
+    
+    add_subdirectory(include/external/glew)
+
     set(SOURCES
         src/application_opengl.c
         src/input.c
@@ -49,8 +52,6 @@ elseif (OpenGL_FOUND)
     find_package(GLEW REQUIRED) 
     set(EXTRA_LIBRARIES GLEW::GLEW)
     set(GRAPHICS_LIBRARIES OpenGL::GL)
-else()
-    message(FATAL_ERROR "Neither Vulkan nor OpenGL could be found.")
 endif()
 
 # Create the library target
@@ -85,7 +86,7 @@ install(DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/include/
 
 
 # Ignore this, It's made for my testing (Wickslynx).
-#add_executable(RoofNutTest test.c)
+add_executable(RoofNutTest test.c)
 
 # Ignore this, made for my testing (Wickslynx).
-#target_link_libraries(RoofNutTest PRIVATE RoofNut glfw ${EXTRA_LIBRARIES} ${GRAPHICS_LIBRARIES} m)
+target_link_libraries(RoofNutTest PRIVATE RoofNut glfw ${EXTRA_LIBRARIES} ${GRAPHICS_LIBRARIES} m)
