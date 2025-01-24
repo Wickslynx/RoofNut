@@ -18,6 +18,7 @@ Run this command to install required libraries automatically:
 The only command that has been proven to work from testing is the *Debian* command. **The commands for the other distros might not work as expected.**
 
 For Debian-based systems: * sudo apt-get install libx11-dev libxrandr-dev libxinerama-dev libxcursor-dev libxi-dev libxkbcommon-dev libwayland-dev *
+**(**libglew-dev or libvulkan-dev**)** 
 
 For Fedora-based systems (DNF): * sudo dnf install libX11-devel libXrandr-devel libXinerama-devel libXcursor-devel glfw-devel vulkan-loader-devel libXi-devel * 
 
@@ -37,5 +38,7 @@ Please see the *example.c* file for further explanation and examples
 **1. Segmentation fault (vulkan)**, When running program with compatible drivers i get "Segmentationfault". (Abandoned, *as of lack of driver support*)
 
 **2. Additonal debugging needed (vulkan)** , (Wickslynx) can't test the vulkan version as my drivers are outdated. Hence why i added OPENGL support. (Worked on)
+
+**3. Built in GLEW support (OpenGL)** , i can't get the compiler to reqonise the built in GLEW library.. Abandoned as of now...
 
 ***RoofNut is still in development, one stable version has released.***
