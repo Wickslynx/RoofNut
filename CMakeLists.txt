@@ -6,12 +6,18 @@ project(RoofNut VERSION 1.0 LANGUAGES C)
 
 # Set C standard
 set(CMAKE_C_STANDARD 11)
-set(CMAKE_C_STANDARD_REQUIRED True)
 
+set(CMAKE_C_STANDARD_REQUIRED True) 
+
+# Add GLFW subdirectory
 add_subdirectory(include/external/glfw)
 
+# Add GLEW subdirectory
+add_subdirectory(include/external/glew/build/cmake)
+set(GLEW_DIR ${CMAKE_CURRENT_SOURCE_DIR}/include/external/glew/src)
+
 find_package(Vulkan QUIET)
-find_package(OpenGL REQUIRED)
+find_package(OpenGL QUIET)
 
 if (ROOFNUT_USEVULKAN)
     message(STATUS "Using Vulkan for rendering.")
@@ -33,8 +39,6 @@ elseif (OpenGL_FOUND)
     message(STATUS "Using built-in OpenGL for rendering.")
     add_definitions(-DUSE_OPENGL)
 
-    add_subdirectory(include/external/glew/build/cmake)
-
     set(SOURCES
         src/application_opengl.c
         src/input.c
@@ -47,8 +51,8 @@ elseif (OpenGL_FOUND)
         include/roofnut.h
     )
 
-    find_package(GLEW REQUIRED)
-    set(EXTRA_LIBRARIES GLEW::GLEW)
+    # Set GLEW as an external library from subdirectory
+    set(EXTRA_LIBRARIES GLEW)
     set(GRAPHICS_LIBRARIES OpenGL::GL)
 else()
     message(FATAL_ERROR "No available drivers found, (OpenGL nor Vulkan).")
@@ -67,12 +71,13 @@ endif()
 # Include directories for project and dependencies
 target_include_directories(RoofNut PUBLIC
     ${CMAKE_CURRENT_SOURCE_DIR}/include
-    ${CMAKE_CURRENT_SOURCE_DIR}/include/external/glfw/include/GLFW
+    ${CMAKE_CURRENT_SOURCE_DIR}/include/external/glfw/include/GLFW/
+    ${CMAKE_CURRENT_SOURCE_DIR}/include/external/glew/include/GL/
     ${CMAKE_SOURCE_DIR}/include/librarys/Nuklear
 )
 
 # Link the appropriate libraries
-target_link_libraries(RoofNut PRIVATE glfw ${GRAPHICS_LIBRARIES} ${EXTRA_LIBRARIES} m)
+target_link_libraries(RoofNut PRIVATE glfw ${GRAPHICS_LIBRARIES} ${EXTRA_LIBRARIES} OpenGL::GL m)
 
 # Installation targets
 install(TARGETS RoofNut
@@ -88,4 +93,4 @@ install(DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/include/
 add_executable(RoofNutTest test.c)
 
 # Ignore this, made for my testing (Wickslynx).
-target_link_libraries(RoofNutTest PRIVATE RoofNut glfw ${EXTRA_LIBRARIES} ${GRAPHICS_LIBRARIES} ${OPENGL_LIBRARIES} m)
+target_link_libraries(RoofNutTest PRIVATE RoofNut glfw ${EXTRA_LIBRARIES} ${GRAPHICS_LIBRARIES} OpenGL::GL m)

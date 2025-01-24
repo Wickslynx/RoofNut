@@ -3,7 +3,7 @@
 #include <string.h>
 
 #include "application_opengl.h"
-#include <GL/glew.h>
+#include "external/glew/include/GL/glew.h"
 #include "external/glfw/include/GLFW/glfw3.h"
 
 // Define and set the GLFW window to null.
