@@ -88,7 +88,7 @@ void init_opengl() {
     // Initialize GLEW
     GLenum err = glewInit();
     if (err != GLEW_OK) {
-        fprintf("Failed to initialize GLEW: %s\n", glewGetErrorString(err));
+        fprintf(stderr, "Failed to initialize GLEW: %s\n", glewGetErrorString(err));
         fprintf(stderr, "OpenGL version: %s\n", glGetString(GL_VERSION));
         fprintf(stderr, "Vendor: %s\n", glGetString(GL_VENDOR));
         glfwDestroyWindow(g_Window);
