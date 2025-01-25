@@ -48,9 +48,6 @@ void init_nuklear(GLFWwindow* window) {
     nk_glfw3_font_stash_end(&glfw);
 }
 
-void RoofNutRender() {
-   
-}
 
 // Function to initialize OpenGL.
 void init_opengl(struct Application* app) {
