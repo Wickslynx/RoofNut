@@ -9,6 +9,8 @@ set(CMAKE_C_STANDARD 11)
 
 set(CMAKE_C_STANDARD_REQUIRED True) 
 
+set(OpenGL_GL_PREFERENCE GLVND)
+
 # Add GLFW subdirectory
 add_subdirectory(include/external/glfw)
 
@@ -38,7 +40,6 @@ if (Vulkan_FOUND)
 elseif (OpenGL_FOUND)
     message(STATUS "Using built-in OpenGL for rendering.")
     add_definitions(-DUSE_OPENGL)
-    set(OpenGL_GL_PREFERENCE GLVND)
     
     set(SOURCES
         src/application_opengl.c
