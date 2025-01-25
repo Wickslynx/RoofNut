@@ -23,7 +23,7 @@ void init_opengl(struct Application* app);
 void RoofNut_loop(struct Application* app);
 void DestroyOpenGl(void);
 void RoofNutRender() {
-    #include "include/external/Nuklear/nuklear.h"
+    #include "external/Nuklear/nuklear.h"
     struct nk_context *ctx; 
 }
 
