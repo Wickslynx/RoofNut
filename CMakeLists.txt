@@ -38,7 +38,8 @@ if (Vulkan_FOUND)
 elseif (OpenGL_FOUND)
     message(STATUS "Using built-in OpenGL for rendering.")
     add_definitions(-DUSE_OPENGL)
-
+    set(OpenGL_GL_PREFERENCE GLVND)
+    
     set(SOURCES
         src/application_opengl.c
         src/input.c
