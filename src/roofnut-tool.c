@@ -11,3 +11,4 @@ int main(int argc, char *argv[]) {
         printf("Please specify a command [--version --force-update --force-quit --logs]\n");
     }
     return 0;
+}
