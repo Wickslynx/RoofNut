@@ -17,6 +17,11 @@
 
 void RoofNutRender() {
     //Insert your Nuklear code here.
+  if (nk_begin(ctx, "", nk_rect(50, 50, 1280, 720),
+                     NK_WINDOW_BORDER | NK_WINDOW_MOVABLE | NK_WINDOW_SCALABLE |
+                     NK_WINDOW_MINIMIZABLE | NK_WINDOW_TITLE)) {
+  }
+  
 }
 
 int main() {
