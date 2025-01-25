@@ -63,6 +63,16 @@ endif()
 # Create the library target
 add_library(RoofNut STATIC ${SOURCES} ${HEADERS})
 
+# Set target properties
+set_target_properties(RoofNut PROPERTIES
+    PUBLIC_HEADER "${HEADERS}"
+)
+
+# Generate and install pkg-config file
+configure_file(RoofNut.pc.in RoofNut.pc @ONLY)
+install(FILES ${CMAKE_BINARY_DIR}/RoofNut.pc DESTINATION /usr/local/lib/pkgconfig)
+
+
 # Define macros
 if (Vulkan_FOUND)
     target_compile_definitions(RoofNut PRIVATE ROOFNUT_USE_VULKAN)
