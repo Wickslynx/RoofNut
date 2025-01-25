@@ -64,13 +64,13 @@ endif()
 add_library(RoofNut STATIC ${SOURCES} ${HEADERS})
 
 # Set target properties
-set_target_properties(RoofNut PROPERTIES
+# set_target_properties(RoofNut PROPERTIES
     PUBLIC_HEADER "${HEADERS}"
 )
 
 # Generate and install pkg-config file
-configure_file(RoofNut.pc.in RoofNut.pc @ONLY)
-install(FILES ${CMAKE_BINARY_DIR}/RoofNut.pc DESTINATION /usr/local/lib/pkgconfig)
+# configure_file(RoofNut.pc.in RoofNut.pc @ONLY)
+# install(FILES ${CMAKE_BINARY_DIR}/RoofNut.pc DESTINATION /usr/local/lib/pkgconfig)
 
 
 # Define macros
