@@ -26,6 +26,10 @@ struct Application {
 #define NK_INCLUDE_COMMAND_USERDATA
 #define NK_IMPLEMENTATION
 #define NK_GLFW_GL3_IMPLEMENTATION
+#define NK_VULKAN_IMPLEMENTATION
+
+#include "external/Nuklear/nuklear.h"
+#include "external/Nuklear/nuklear_glfw_gl3.h"
 
 
 struct nk_allocator allocator = { 0 }; // Uncomment to use NK, Can't get it to link so don't worry bout it.
@@ -45,10 +49,7 @@ void init_nuklear(GLFWwindow* window) {
 }
 
 void RoofNutRender() {
-    #define NK_VULKAN_IMPLEMENTATION
-    #include "external/Nuklear/nuklear.h"
-    #include "external/Nuklear/nuklear_glfw_gl3.h"
-    struct nk_context *ctx; 
+   
 }
 
 // Function to initialize OpenGL.
