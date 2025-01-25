@@ -20,7 +20,7 @@ struct ApplicationSpecification {
 
 
 void init_opengl(struct Application* app);
-void RoofNut_loop(void);
+void RoofNut_loop(struct Application* app);
 void DestroyOpenGl(void);
 void RoofNutRender();
 
