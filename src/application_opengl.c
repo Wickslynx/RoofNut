@@ -49,7 +49,7 @@ void init_nuklear(GLFWwindow* window) {
 }
 
 // Function to initialize OpenGL.
-void init_opengl() {
+void init_opengl(struct Application* app) {
     // Initialize GLFW.
     if (!glfwInit()) {
         const char* error_description;
@@ -73,7 +73,8 @@ void init_opengl() {
     #endif
 
     // Create GLFW window.
-    g_Window = glfwCreateWindow(800, 600, "RoofNut application", NULL, NULL);
+    
+    g_Window = glfwCreateWindow(app->specification.width, app->specification.height, app->specification.name, NULL, NULL);
     if (!g_Window) {
         const char* error_description; 
         glfwGetError(&error_description);
@@ -153,7 +154,7 @@ struct Application* Application_Create(const struct ApplicationSpecification* sp
     memcpy(&app->specification, specification, sizeof(struct ApplicationSpecification));
 
     // Initialize OpenGL (this will create the window and set up GLEW)
-    init_opengl();
+    init_opengl(app);
 
 
     // Store the window handle.

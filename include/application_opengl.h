@@ -9,7 +9,7 @@
 
 #define MAX_ELEMENT_MEMORY 128 * 1024
 
-
+struct Application;
 
 struct ApplicationSpecification {
     const char* name;
@@ -19,7 +19,7 @@ struct ApplicationSpecification {
 
 
 
-void init_opengl(void);
+void init_opengl(struct Application* app);
 void RoofNut_loop(void);
 void DestroyOpenGl(void);
 void RoofNutRender();
