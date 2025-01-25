@@ -127,7 +127,6 @@ void RoofNut_Loop(struct Application* app) {
         
         RoofNutRender();
         
-        nk_end(ctx);
         // - to here.
 
         nk_glfw3_render(&glfw, NK_ANTI_ALIASING_ON, MAX_VERTEX_MEMORY, MAX_ELEMENT_MEMORY);
