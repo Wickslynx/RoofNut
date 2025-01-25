@@ -19,7 +19,7 @@ set(GLEW_DIR ${CMAKE_CURRENT_SOURCE_DIR}/include/external/glew/src)
 find_package(Vulkan QUIET)
 find_package(OpenGL QUIET)
 
-if (ROOFNUT_USEVULKAN)
+if (Vulkan_FOUND)
     message(STATUS "Using Vulkan for rendering.")
     add_definitions(-DUSE_VULKAN)
     set(SOURCES
