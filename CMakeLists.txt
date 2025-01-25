@@ -65,8 +65,8 @@ add_library(RoofNut STATIC ${SOURCES} ${HEADERS})
 
 # Set target properties
 # set_target_properties(RoofNut PROPERTIES
-    PUBLIC_HEADER "${HEADERS}"
-)
+#    PUBLIC_HEADER "${HEADERS}"
+# )
 
 # Generate and install pkg-config file
 # configure_file(RoofNut.pc.in RoofNut.pc @ONLY)
