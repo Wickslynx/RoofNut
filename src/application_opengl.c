@@ -111,7 +111,7 @@ void init_opengl(struct Application* app) {
     glViewport(0, 0, width, height);
 }
 
-void RoofNut_Loop() {
+void RoofNut_Loop(struct Application* app) {
     init_nuklear(g_Window);
 
     
@@ -123,7 +123,7 @@ void RoofNut_Loop() {
         glClear(GL_COLOR_BUFFER_BIT);
 
         nk_glfw3_new_frame(&glfw);
-        if (nk_begin(ctx, "", nk_rect(app->specification.width, app->specification.height, 50, 50),
+        if (nk_begin(ctx, "", nk_rect(app->specification.width, app->specification.height, 50, 50)
                      NK_WINDOW_BORDER | NK_WINDOW_MOVABLE | NK_WINDOW_SCALABLE |
                      NK_WINDOW_MINIMIZABLE | NK_WINDOW_TITLE)) {
             // 
@@ -161,7 +161,7 @@ struct Application* Application_Create(const struct ApplicationSpecification* sp
     app->windowHandle = g_Window;
     app->running = true;
 
-    RoofNut_Loop();
+    RoofNut_Loop(app);
 
     return app;
 }
