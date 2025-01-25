@@ -96,8 +96,8 @@ install(DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/include/external/nuklear/
     FILES_MATCHING PATTERN "*.h"
 )
 
-install(PROGRAMS ${CMAKE_SOURCE_DIR}/src/roofnut-tool.c
-    DESTINATION /usr/local/bin
-    RENAME roofnut
-)
+add_executable(roofnut src/roofnut-tool.c)
 
+install(TARGETS roofnut
+    DESTINATION /usr/local/bin
+)
