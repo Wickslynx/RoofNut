@@ -123,7 +123,7 @@ void RoofNut_Loop(struct Application* app) {
         glClear(GL_COLOR_BUFFER_BIT);
 
         nk_glfw3_new_frame(&glfw);
-        if (nk_begin(ctx, "", nk_rect(app->specification.width, app->specification.height, 50, 50),
+        if (nk_begin(ctx, "", nk_rect(50, 50, app->specification.width, app->specification.height),
                      NK_WINDOW_BORDER | NK_WINDOW_MOVABLE | NK_WINDOW_SCALABLE |
                      NK_WINDOW_MINIMIZABLE | NK_WINDOW_TITLE)) {
             // 
