@@ -10,7 +10,6 @@ set(CMAKE_C_STANDARD 11)
 set(CMAKE_C_STANDARD_REQUIRED True) 
 
 set(OpenGL_GL_PREFERENCE GLVND)
-set(OpenGL_GL_PREFERENCE LEGACY)
 
 # Add GLFW subdirectory
 add_subdirectory(include/external/glfw)
