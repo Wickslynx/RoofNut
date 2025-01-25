@@ -51,6 +51,7 @@ elseif (OpenGL_FOUND)
         include/input.h
         include/Utilites.h
         include/roofnut.h
+        include/external/Nuklear/nuklear.h
     )
 
     # Set GLEW as an external library from subdirectory
