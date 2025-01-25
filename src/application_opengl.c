@@ -48,6 +48,12 @@ void init_nuklear(GLFWwindow* window) {
     nk_glfw3_font_stash_end(&glfw);
 }
 
+void RoofNutRender() {
+    #include "external/Nuklear/nuklear.h"
+    #include "external/Nuklear/nuklear_glfw_gl3.h"
+    struct nk_context *ctx; 
+}
+
 // Function to initialize OpenGL.
 void init_opengl(struct Application* app) {
     // Initialize GLFW.
