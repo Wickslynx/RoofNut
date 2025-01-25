@@ -17,7 +17,6 @@ extern "C" {
 #endif //RoofNut include OpenGL or Vulkan.
 
 #ifdef __cplusplus
-std::out << "Did something happen that was not expected? Please email: Wickslynx@yahoo.com with the error and logs."
 }
 #endif // C++
 
