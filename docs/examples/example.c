@@ -1,27 +1,21 @@
 #include <stdio.h>
 #include <roofnut.h>
 
-
 //Debug = On
-#define ROOFNUT_DEBUG 
-
-
+#define ROOFNUT_DEBUG  
 
 //RoofNut will automaticly detect the right lib.
-
 //Use OpenGL -- If you want to restrict it to a single lib only.
 //#define ROOFNUT_USE_OPENGL 
-
 //Uncomment to use vulkan. -- If you want to restrict it to a single lib only.
 //#define ROOFNUT_USE_VULKAN
-
+  
 #define ROOFNUT_IMPLEMENTAON
-
 //Set this to your applications name.
+  
 #define APPLICATION_NAME "EXAMPLE"
 
-
-void UiRender() {
+void RoofNutRender() {
     //Insert your Nuklear code here.
 }
 
@@ -39,10 +33,6 @@ int main() {
         fprintf(stderr, "Failed to create application!\n");
         return EXIT_FAILURE;
     }
-
-    RoofNut_loop(); //Will render a Window.
     
     Application_Destroy(app);
-
     return 0;
-}
