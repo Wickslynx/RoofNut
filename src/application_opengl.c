@@ -63,6 +63,8 @@ void init_opengl() {
     glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
     glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
 
+    glfwWindowHint(GLFW_OPENGL_DEBUG_CONTEXT, GL_TRUE);
+
     #ifdef __APPLE__
         glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, GL_TRUE);
     #endif
@@ -86,7 +88,9 @@ void init_opengl() {
     // Initialize GLEW
     GLenum err = glewInit();
     if (err != GLEW_OK) {
-        printf("Failed to initialize GLEW: %s\n", glewGetErrorString(err));
+        fprintf("Failed to initialize GLEW: %s\n", glewGetErrorString(err));
+        fprintf(stderr, "OpenGL version: %s\n", glGetString(GL_VERSION));
+        fprintf(stderr, "Vendor: %s\n", glGetString(GL_VENDOR));
         glfwDestroyWindow(g_Window);
         glfwTerminate();
         exit(EXIT_FAILURE);
