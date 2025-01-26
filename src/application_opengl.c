@@ -162,6 +162,14 @@ struct Application* Application_Create(const struct ApplicationSpecification* sp
 
     return app;
 }
+//User functions...
+void RoofNutGetWindowSize(int width, int height) {
+    glfwGetWindowSize(g_Window, &width, &height);
+}
+
+void RoofNutWindowShouldClose() {
+    glfwWindowShouldClose(g_Window, GLFW_TRUE);
+}
 
 void Application_Destroy(struct Application* app) {
     if (!app) return;
