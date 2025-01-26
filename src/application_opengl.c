@@ -168,7 +168,7 @@ void RoofNutGetWindowSize(int width, int height) {
 }
 
 void RoofNutWindowShouldClose() {
-    glfwWindowShouldClose(g_Window, GLFW_TRUE);
+    glfwSetWindowShouldClose(g_Window, GLFW_TRUE);
 }
 
 void Application_Destroy(struct Application* app) {
