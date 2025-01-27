@@ -1,62 +1,41 @@
-#include <stdio.h>
 #include <stdlib.h>
-#include <string.h>
-#include <GL/glew.h>
-#include "stb_image.h"
+#include <stdio.h>
+#include "image.h"
 
 
-static GLuint Utils_LoadTexture(const char* filepath, int* width, int* height, ImageFormat* format) {
-    int channels;
-    uint8_t* data = stbi_load(filepath, width, height, &channels, 4);
+
+unsigned char* loadImage(const char* filename, int* width, int* height, int* channels) {
+    return stbi_load(filename, width, height, channels, 0);
+}
+
+GLuint createTexture(const char* filename) {
+    int width, height, channels;
+    unsigned char* data = loadImage(filename, &width, &height, &channels);
     if (!data) {
-        fprintf(stderr, "Failed to load image: %s\n", filepath);
+        printf("Failed to load image: %s\n", filename);
         return 0;
     }
 
-    *format = IMAGE_FORMAT_RGBA;
-    GLuint textureID;
-    glGenTextures(1, &textureID);
-    glBindTexture(GL_TEXTURE_2D, textureID);
-    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, *width, *height, 0, GL_RGBA, GL_UNSIGNED_BYTE, data);
+    GLuint texture;
+    glGenTextures(1, &texture);
+    glBindTexture(GL_TEXTURE_2D, texture);
+
+    glTexImage2D(GL_TEXTURE_2D, 0, channels == 4 ? GL_RGBA : GL_RGB, width, height, 0, channels == 4 ? GL_RGBA : GL_RGB, GL_UNSIGNED_BYTE, data);
+
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
 
     stbi_image_free(data);
-    return textureID;
+    return texture;
 }
 
-Image* Image_Create(const char* path) {
-    Image* img = (Image*)malloc(sizeof(Image));
-    img->filepath = strdup(path);
+void RenderImage(const char* imagePath) {
+    GLuint texture = createTexture(imagePath);
 
-    img->textureID = Utils_LoadTexture(img->filepath, &img->width, &img->height, &img->format);
-    if (img->textureID == 0) {
-        free(img->filepath);
-        free(img);
-        return NULL;
-    }
+    // Bind the texture
+    glBindTexture(GL_TEXTURE_2D, texture);
 
-    return img;
+    
 }
-
-void Image_Destroy(Image* img) {
-    if (!img) return;
-    glDeleteTextures(1, &img->textureID);
-    free(img->filepath);
-    free(img);
-}
-
-void Image_Render(Image* img, float x, float y, float width, float height) {
-    glEnable(GL_TEXTURE_2D);
-    glBindTexture(GL_TEXTURE_2D, img->textureID);
-
-    glBegin(GL_QUADS);
-    glTexCoord2f(0.0f, 0.0f); glVertex2f(x, y);
-    glTexCoord2f(1.0f, 0.0f); glVertex2f(x + width, y);
-    glTexCoord2f(1.0f, 1.0f); glVertex2f(x + width, y + height);
-    glTexCoord2f(0.0f, 1.0f); glVertex2f(x, y + height);
-    glEnd();
-
-    glDisable(GL_TEXTURE_2D);

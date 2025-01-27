@@ -46,14 +46,14 @@ elseif (OpenGL_FOUND)
     set(SOURCES
         ${PARENT_DIR}/src/application_opengl.c
         ${PARENT_DIR}/src/input.c
-        ${PARENT_DIR}/src/Utilites.c
+        ${PARENT_DIR}/src/image.c
     )
     set(HEADERS
         ${PARENT_DIR}/include/application_opengl.h
         ${PARENT_DIR}/include/input.h
-        ${PARENT_DIR}/include/Utilites.h
         ${PARENT_DIR}/include/roofnut.h
         ${PARENT_DIR}/include/external/Nuklear/nuklear.h
+        ${PARENT_DIR}/include/image.h
     )
 
     # Set GLEW as an external library from subdirectory
@@ -78,7 +78,8 @@ target_include_directories(RoofNut PUBLIC
     ${PARENT_DIR}/include
     ${PARENT_DIR}/include/external/glfw/include/GLFW/
     ${PARENT_DIR}/include/external/glew/include/GL/
-    ${PARENT_DIR}/include/librarys/Nuklear
+    ${PARENT_DIR}/include/external/Nuklear/
+    ${PARENT_DIR}/include/external/stb/
 )
 
 # Link the appropriate libraries
