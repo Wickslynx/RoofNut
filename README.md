@@ -31,7 +31,6 @@ For Arch-based systems: * sudo pacman -S libx11 libxrandr libxinerama libxcursor
 Build your application using *chmod +x install.sh then ./install.sh*, include *<roofnut.h>* and you are all set.
 
 Alternative way:
-
 If your project has a cmake list you can use the command add_subdirectory({*path-to-roofnut*}/RoofNut/install/CMakeLists.txt)
 
 Please see the *example.c* file for further explanation and examples
