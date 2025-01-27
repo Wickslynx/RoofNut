@@ -18,7 +18,7 @@ Run this command to install required libraries automatically:
 The only command that has been proven to work from testing is the *Debian* command. **The commands for the other distros might not work as expected.**
 
 For Debian-based systems: * sudo apt-get install libx11-dev libxrandr-dev libxinerama-dev libxcursor-dev libxi-dev libxkbcommon-dev libwayland-dev *
-**(**libglew-dev or libvulkan-dev**)** 
+**(**libglew-dev libglu1-mesa-dev or libvulkan-dev**)** 
 
 For Fedora-based systems (DNF): * sudo dnf install libX11-devel libXrandr-devel libXinerama-devel libXcursor-devel glfw-devel vulkan-loader-devel libXi-devel * 
 
@@ -28,7 +28,7 @@ For Arch-based systems: * sudo pacman -S libx11 libxrandr libxinerama libxcursor
 
 
 **2. Compile and build your application using RoofNut.**
-Build your application using *cmake*, include *<roofnut.h>* and you are all set.
+Build your application using *chmod +x install.sh then ./install.sh*, include *<roofnut.h>* and you are all set.
 
 Please see the *example.c* file for further explanation and examples
 
