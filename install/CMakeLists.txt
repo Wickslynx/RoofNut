@@ -29,12 +29,12 @@ if (Vulkan_FOUND)
     set(SOURCES
         ${PARENT_DIR}/src/application_vulkan.c
         ${PARENT_DIR}/src/input.c
-        ${PARENT_DIR}/src/Utilites.c
+        ${PARENT_DIR}/src/image.c
     )
     set(HEADERS
         ${PARENT_DIR}/include/application_vulkan.h
         ${PARENT_DIR}/include/input.h
-        ${PARENT_DIR}/include/Utilites.h
+        ${PARENT_DIR}/include/image.h
         ${PARENT_DIR}/include/roofnut.h
     )
     set(GRAPHICS_LIBRARIES Vulkan::Vulkan)
@@ -54,6 +54,7 @@ elseif (OpenGL_FOUND)
         ${PARENT_DIR}/include/roofnut.h
         ${PARENT_DIR}/include/external/Nuklear/nuklear.h
         ${PARENT_DIR}/include/image.h
+        ${PARENT_DIR}/include/external/stb/stb_image.h
     )
 
     # Set GLEW as an external library from subdirectory
