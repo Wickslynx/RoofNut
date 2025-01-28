@@ -26,7 +26,6 @@ struct Application {
 #define NK_INCLUDE_COMMAND_USERDATA
 #define NK_IMPLEMENTATION
 #define NK_GLFW_GL3_IMPLEMENTATION
-#define NK_VULKAN_IMPLEMENTATION
 
 #include "external/Nuklear/nuklear.h"
 #include "external/Nuklear/nuklear_glfw_gl3.h"

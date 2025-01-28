@@ -7,6 +7,19 @@
 
 #include <vulkan/vulkan.h>
 #include <vulkan/vulkan_wayland.h>
+// Nuklear setup.
+#define NK_INCLUDE_FIXED_TYPES
+#define NK_INCLUDE_STANDARD_IO
+#define NK_INCLUDE_DEFAULT_ALLOCATOR
+#define NK_INCLUDE_VERTEX_BUFFER_OUTPUT
+#define NK_INCLUDE_FONT_BAKING
+#define NK_INCLUDE_DEFAULT_FONT
+#define NK_INCLUDE_COMMAND_USERDATA
+#define NK_IMPLEMENTATION
+#define NK_VULKAN_IMPLEMENTATION
+
+#include "external/Nuklear/nuklear.h"
+#include "external/Nuklear/nuklear_glfw_vulkan.h"
 
 // Declares the global vulkan resources.
 VkInstance g_Instance; //Declares the vulkan instance.
@@ -266,11 +279,11 @@ void RoofNut_loop() {
 
         vkQueueWaitIdle(g_Queue);
 	    
-	/* Note: Uncomment to use Nuklear, Can't get it to link so we will not care about it for now.
+	/* Note: Uncomment to use Nuklear, Can't get it to link so we will not care about it for now. */
 	nk_input_begin(ctx); 
-	OnUiRender();
+	RoofNutRender();
 	nk_input_end(ctx);
-	*/
+
 	    
         VkCommandBufferBeginInfo beginInfo = {
             .sType = VK_STRUCTURE_TYPE_COMMAND_BUFFER_BEGIN_INFO,
@@ -294,7 +307,7 @@ void RoofNut_loop() {
 
         vkCmdBeginRenderPass(g_CommandBuffer, &renderPassInfo, VK_SUBPASS_CONTENTS_INLINE);
 	    
-	 // nk_glfw3_render(g_Queue, NK_ANTI_ALIASING_ON);  Note: Uncomment to use Nuklear.
+	nk_glfw3_render(g_Queue, imageIndex, imageAvailableSemaphore, AA); //  Note: Uncomment to use Nuklear.
  
 
 	vkCmdEndRenderPass(g_CommandBuffer);

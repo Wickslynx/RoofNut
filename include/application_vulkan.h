@@ -21,9 +21,10 @@ extern GLFWwindow* g_Window;
 extern VkQueue g_Queue;
 extern uint32_t queueFamilyIndex;
 extern VkCommandBuffer g_CommandBuffer; // Command buffer for Vulkan
+enum nk_anti_aliasing AA = NK_ANTI_ALIASING_ON;
 
 // Nuklear context
-extern struct nk_context *ctx; // Nuklear context for GUI
+struct nk_context *ctx; // Nuklear context for GUI
 
  //Struct declarations.
 typedef struct {
@@ -62,6 +63,7 @@ void Application_FlushCommandBuffer(VkCommandBuffer commandBuffer);
 Application* Application_Create(const ApplicationSpecification* specification);
 void Application_Destroy(Application* app);
 
+void RoofNutRender();
 // Nuklear and GLFW Vulkan integration
 int nk_glfw_vulkan_init(GLFWwindow* window, struct nk_context** outCtx);
 void nk_glfw_vulkan_render(struct nk_context* ctx);

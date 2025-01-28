@@ -36,6 +36,9 @@ if (Vulkan_FOUND)
         ${PARENT_DIR}/include/input.h
         ${PARENT_DIR}/include/image.h
         ${PARENT_DIR}/include/roofnut.h
+        ${PARENT_DIR}/include/external/Nuklear/nuklear.h
+        ${PARENT_DIR}/include/external/stb/stb_image.h
+
     )
     set(GRAPHICS_LIBRARIES Vulkan::Vulkan)
 
