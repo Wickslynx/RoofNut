@@ -306,7 +306,7 @@ void RoofNut_loop() {
         };
 
         vkCmdBeginRenderPass(g_CommandBuffer, &renderPassInfo, VK_SUBPASS_CONTENTS_INLINE);
-	    
+	enum nk_anti_aliasing AA = NK_ANTI_ALIASING_ON;
 	nk_glfw3_render(g_Queue, imageIndex, imageAvailableSemaphore, AA); //  Note: Uncomment to use Nuklear.
  
 

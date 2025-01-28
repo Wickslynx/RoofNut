@@ -21,7 +21,6 @@ extern GLFWwindow* g_Window;
 extern VkQueue g_Queue;
 extern uint32_t queueFamilyIndex;
 extern VkCommandBuffer g_CommandBuffer; // Command buffer for Vulkan
-enum nk_anti_aliasing AA = NK_ANTI_ALIASING_ON;
 
 // Nuklear context
 struct nk_context *ctx; // Nuklear context for GUI
@@ -70,6 +69,9 @@ void nk_glfw_vulkan_render(struct nk_context* ctx);
 void nk_glfw_vulkan_shutdown(struct nk_context* ctx);
 void create_render_pass(void);
 void cleanup_vulkan(void);
+
+enum nk_anti_aliasing;
+
 
 
 #endif // APPLICATION_H
