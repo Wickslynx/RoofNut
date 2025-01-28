@@ -17,7 +17,7 @@ Run this command to install required libraries automatically:
 ***-NOTE-***
 The only command that has been proven to work from testing is the *Debian* command. **The commands for the other distros might not work as expected.**
 
-For Debian-based systems: * sudo *
+For Debian-based systems: * sudo apt-get install libx11-dev libxrandr-dev libxinerama-dev libxcursor-dev libxi-dev libxkbcommon-dev libwayland-dev *
 **(**libglew-dev libglu1-mesa-dev or libvulkan-dev**)** 
 
 For Fedora-based systems (DNF): * sudo dnf install libX11-devel libXrandr-devel libXinerama-devel libXcursor-devel glfw-devel vulkan-loader-devel libXi-devel * 
