@@ -3,6 +3,8 @@
 #include "image.h"
 
 
+#define STB_IMAGE_IMPLEMENTATION
+#include "stb_image.h"
 
 unsigned char* loadImage(const char* filename, int* width, int* height, int* channels) {
     return stbi_load(filename, width, height, channels, 0);
