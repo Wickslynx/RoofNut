@@ -147,7 +147,7 @@ ImageRenderer* createImageRenderer(const char* filename) {
     return renderer;
 }
 
-void renderImage(ImageRenderer* renderer) {
+void RenderImage(ImageRenderer* renderer) {
     if (!renderer) return;
 
     glUseProgram(renderer->shaderProgram);
