@@ -35,6 +35,15 @@ GLuint createTexture(const char* filename) {
     return texture;
 }
 
+void renderQuad() {
+    glBegin(GL_QUADS);
+    glTexCoord2f(0.0f, 0.0f); glVertex2f(-1.0f, -1.0f);
+    glTexCoord2f(1.0f, 0.0f); glVertex2f(1.0f, -1.0f);
+    glTexCoord2f(1.0f, 1.0f); glVertex2f(1.0f, 1.0f);
+    glTexCoord2f(0.0f, 1.0f); glVertex2f(-1.0f, 1.0f);
+    glEnd();
+}
+
 void RenderImage(const char* imagePath) {
     GLuint texture = createTexture(imagePath);
     if (texture == 0) {
@@ -44,5 +53,6 @@ void RenderImage(const char* imagePath) {
 
     // Bind the texture
     glBindTexture(GL_TEXTURE_2D, texture);
-
+    renderQuad();
 }
+
