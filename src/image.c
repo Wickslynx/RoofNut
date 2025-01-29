@@ -1,4 +1,4 @@
-// image.c
+#include <GL/glew.h>
 #include "image.h"
 #include <stdio.h>
 #include <stdlib.h>
