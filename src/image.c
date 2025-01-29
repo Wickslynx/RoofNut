@@ -2,19 +2,21 @@
 #include <stdio.h>
 #include "image.h"
 
-
 #define STB_IMAGE_IMPLEMENTATION
 #include "stb_image.h"
 
 unsigned char* loadImage(const char* filename, int* width, int* height, int* channels) {
-    return stbi_load(filename, width, height, channels, 0);
+    unsigned char* data = stbi_load(filename, width, height, channels, 0);
+    if (!data) {
+        fprintf(stderr, "Failed to load image: %s\n", filename);
+    }
+    return data;
 }
 
 GLuint createTexture(const char* filename) {
     int width, height, channels;
     unsigned char* data = loadImage(filename, &width, &height, &channels);
     if (!data) {
-        printf("Failed to load image: %s\n", filename);
         return 0;
     }
 
@@ -35,9 +37,12 @@ GLuint createTexture(const char* filename) {
 
 void RenderImage(const char* imagePath) {
     GLuint texture = createTexture(imagePath);
+    if (texture == 0) {
+        fprintf(stderr, "Failed to create texture from image: %s\n", imagePath);
+        return;
+    }
 
     // Bind the texture
     glBindTexture(GL_TEXTURE_2D, texture);
 
-    
 }
