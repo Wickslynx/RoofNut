@@ -2,6 +2,7 @@
 #define IMAGE_H
 
 #include <GL/glew.h>
+#include <stdbool.h>
 
 typedef struct {
     GLuint textureID;
