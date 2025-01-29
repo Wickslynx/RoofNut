@@ -18,7 +18,8 @@ ImageRenderer* imageRenderer = NULL;
 
 unsigned char* loadImage(const char* filename, int* width, int* height, int* channels);
 ImageRenderer* createImageRenderer(const char* filename);
-void RenderImage(ImageRenderer* renderer);
+void RenderImage(const char* filename);
+void renderImage(ImageRenderer* renderer);
 void destroyImageRenderer(ImageRenderer* renderer);
 
 #endif
