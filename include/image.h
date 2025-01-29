@@ -5,9 +5,6 @@
 #include <stdbool.h>
 
 
-
-ImageRenderer* imageRenderer = NULL;
-
 typedef struct {
     GLuint textureID;
     GLuint VAO;
@@ -15,6 +12,9 @@ typedef struct {
     GLuint EBO;
     GLuint shaderProgram;
 } ImageRenderer;
+
+
+ImageRenderer* imageRenderer = NULL;
 
 unsigned char* loadImage(const char* filename, int* width, int* height, int* channels);
 ImageRenderer* createImageRenderer(const char* filename);
