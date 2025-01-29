@@ -7,6 +7,8 @@
 #define STB_IMAGE_IMPLEMENTATION
 #include "stb_image.h"
 
+extern ImageRenderer* imageRenderer = NULL;
+
 // Vertex shader
 const char* vertexShaderSource = 
     "#version 330 core\n"
@@ -147,13 +149,17 @@ ImageRenderer* createImageRenderer(const char* filename) {
     return renderer;
 }
 
-void RenderImage(ImageRenderer* renderer) {
+void renderImage(ImageRenderer* renderer) {
     if (!renderer) return;
 
     glUseProgram(renderer->shaderProgram);
     glBindTexture(GL_TEXTURE_2D, renderer->textureID);
     glBindVertexArray(renderer->VAO);
     glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
+}
+
+void RoofNutRenderImage() {
+    imageRenderer = createImageRenderer("path/to/your/image.jpg");
 }
 
 void destroyImageRenderer(ImageRenderer* renderer) {
