@@ -4,6 +4,10 @@
 #include <GL/gl.h>
 #include <stdbool.h>
 
+
+
+ImageRenderer* imageRenderer = NULL;
+
 typedef struct {
     GLuint textureID;
     GLuint VAO;
