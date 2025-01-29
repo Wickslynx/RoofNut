@@ -157,7 +157,7 @@ void renderImage(ImageRenderer* renderer) {
     glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
 }
 
-void RoofNutRenderImage(const char* filename) {
+void RenderImage(const char* filename) {
     imageRenderer = createImageRenderer(filename);
 }
 
