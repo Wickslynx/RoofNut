@@ -23,26 +23,7 @@ set(GLEW_DIR ${PARENT_DIR}/include/external/glew/src)
 find_package(Vulkan QUIET)
 find_package(OpenGL QUIET)
 
-if (Vulkan_FOUND)
-    message(STATUS "Using Vulkan for rendering.")
-    add_definitions(-DUSE_VULKAN)
-    set(SOURCES
-        ${PARENT_DIR}/src/application_vulkan.c
-        ${PARENT_DIR}/src/input.c
-        ${PARENT_DIR}/src/image.c
-    )
-    set(HEADERS
-        ${PARENT_DIR}/include/application_vulkan.h
-        ${PARENT_DIR}/include/input.h
-        ${PARENT_DIR}/include/image.h
-        ${PARENT_DIR}/include/roofnut.h
-        ${PARENT_DIR}/include/external/Nuklear/nuklear.h
-        ${PARENT_DIR}/include/external/stb/stb_image.h
-
-    )
-    set(GRAPHICS_LIBRARIES Vulkan::Vulkan)
-
-elseif (OpenGL_FOUND)
+if (OpenGL_FOUND)
     message(STATUS "Using built-in OpenGL for rendering.")
     add_definitions(-DUSE_OPENGL)
     
@@ -63,6 +44,26 @@ elseif (OpenGL_FOUND)
     # Set GLEW as an external library from subdirectory
     set(EXTRA_LIBRARIES GLEW)
     set(GRAPHICS_LIBRARIES OpenGL::GL)
+    
+elseif (Vulkan_FOUND)
+   message(STATUS "Using Vulkan for rendering.")
+    add_definitions(-DUSE_VULKAN)
+    set(SOURCES
+        ${PARENT_DIR}/src/application_vulkan.c
+        ${PARENT_DIR}/src/input.c
+        ${PARENT_DIR}/src/image.c
+    )
+    set(HEADERS
+        ${PARENT_DIR}/include/application_vulkan.h
+        ${PARENT_DIR}/include/input.h
+        ${PARENT_DIR}/include/image.h
+        ${PARENT_DIR}/include/roofnut.h
+        ${PARENT_DIR}/include/external/Nuklear/nuklear.h
+        ${PARENT_DIR}/include/external/stb/stb_image.h
+
+    )
+    set(GRAPHICS_LIBRARIES Vulkan::Vulkan)
+
 else()
     message(FATAL_ERROR "No available drivers found, (OpenGL nor Vulkan).")
 endif()
