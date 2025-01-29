@@ -1,25 +1,16 @@
 
 #include <stdio.h>
+
+#define ROOFNUT_IMPLEMENTAON
 #include <roofnut.h>
 
-//Debug = On
-#define ROOFNUT_DEBUG  
-
-//RoofNut will automaticly detect the right lib.
-//Use OpenGL -- If you want to restrict it to a single lib only.
-//#define ROOFNUT_USE_OPENGL 
-//Uncomment to use vulkan. -- If you want to restrict it to a single lib only.
-//#define ROOFNUT_USE_VULKAN
-  
-#define ROOFNUT_IMPLEMENTAON
-//Set this to your applications name.
   
 #define APPLICATION_NAME "EXAMPLE"
 
 extern struct nk_context *ctx; 
 
 void RoofNutRender() {
-    //Insert your Nuklear code here.
+
   if (nk_begin(ctx, "", nk_rect(50, 50, 1280, 720),
                      NK_WINDOW_BORDER | NK_WINDOW_MOVABLE | NK_WINDOW_SCALABLE |
                      NK_WINDOW_MINIMIZABLE | NK_WINDOW_TITLE)) {
