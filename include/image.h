@@ -1,7 +1,7 @@
 #ifndef IMAGE_H
 #define IMAGE_H
 
-#include <GL/glew.h>
+#include <GL/gl.h>
 #include <stdbool.h>
 
 typedef struct {
