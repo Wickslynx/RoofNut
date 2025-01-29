@@ -22,3 +22,9 @@ jobs:
 
     - name: Install library.
       run: ./install.sh
+
+    - name: Run tests.
+      run: |
+        g++ install/tests/main-test.c -lglfw -lGL -lGLEW -lRoofNut -o main
+
+      
