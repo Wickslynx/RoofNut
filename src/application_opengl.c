@@ -16,6 +16,8 @@ struct Application {
     GLFWwindow* windowHandle;
 };
 
+ImageRenderer* imageRenderer = NULL;
+
 // Nuklear setup.
 #define NK_INCLUDE_FIXED_TYPES
 #define NK_INCLUDE_STANDARD_IO
@@ -128,6 +130,11 @@ void RoofNut_Loop(struct Application* app) {
         glClear(GL_COLOR_BUFFER_BIT);
 
         nk_glfw3_new_frame(&glfw);
+
+        //If there is a image to render, render it.
+        if (imageRenderer) {
+            renderImage(imageRenderer);
+        }
         
         RoofNutRender();
         
