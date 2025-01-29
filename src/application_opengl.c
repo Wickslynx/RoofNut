@@ -1,10 +1,14 @@
+#include "external/glew/include/GL/glew.h"
+#include "external/glfw/include/GLFW/glfw3.h"
+
+
 #include <stdlib.h>
 #include <stdio.h>
 #include <string.h>
 
+
 #include "application_opengl.h"
-#include "external/glew/include/GL/glew.h"
-#include "external/glfw/include/GLFW/glfw3.h"
+#include "image.h"
 
 // Define and set the GLFW window to null.
 GLFWwindow *g_Window = NULL;
@@ -15,8 +19,6 @@ struct Application {
     bool customTitleBar;
     GLFWwindow* windowHandle;
 };
-
-ImageRenderer* imageRenderer = NULL;
 
 // Nuklear setup.
 #define NK_INCLUDE_FIXED_TYPES
