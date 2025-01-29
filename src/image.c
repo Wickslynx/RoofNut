@@ -7,7 +7,6 @@
 #define STB_IMAGE_IMPLEMENTATION
 #include "stb_image.h"
 
-extern ImageRenderer* imageRenderer = NULL;
 
 // Vertex shader
 const char* vertexShaderSource = 
