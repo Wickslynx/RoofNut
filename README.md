@@ -43,4 +43,8 @@ Please see the *docs* folder for further explanation and examples
 
 **3. Built in GLEW support (OpenGL)** , i can't get the compiler to reqonise the built in GLEW library.. Abandoned as of now...
 
+# Support:
+Please email me on Wickslynx@yahoo.com
+I will respond as soon as possible, updates come regularly. On School days almost every day.
+
 ***RoofNut is still in development, one stable version has released.***
