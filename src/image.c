@@ -1,11 +1,35 @@
-#include <stdlib.h>
-#include <stdio.h>
+// image.c
 #include "image.h"
-
+#include <stdio.h>
+#include <stdlib.h>
 #define STB_IMAGE_IMPLEMENTATION
 #include "stb_image.h"
 
+// Vertex shader
+const char* vertexShaderSource = 
+    "#version 330 core\n"
+    "layout (location = 0) in vec3 aPos;\n"
+    "layout (location = 1) in vec2 aTexCoord;\n"
+    "out vec2 TexCoord;\n"
+    "void main()\n"
+    "{\n"
+    "    gl_Position = vec4(aPos, 1.0);\n"
+    "    TexCoord = aTexCoord;\n"
+    "}\0";
+
+// Fragment shader
+const char* fragmentShaderSource = 
+    "#version 330 core\n"
+    "out vec4 FragColor;\n"
+    "in vec2 TexCoord;\n"
+    "uniform sampler2D texture1;\n"
+    "void main()\n"
+    "{\n"
+    "    FragColor = texture(texture1, TexCoord);\n"
+    "}\0";
+
 unsigned char* loadImage(const char* filename, int* width, int* height, int* channels) {
+    stbi_set_flip_vertically_on_load(true);  // Flip image vertically for OpenGL
     unsigned char* data = stbi_load(filename, width, height, channels, 0);
     if (!data) {
         fprintf(stderr, "Failed to load image: %s\n", filename);
@@ -13,46 +37,130 @@ unsigned char* loadImage(const char* filename, int* width, int* height, int* cha
     return data;
 }
 
-GLuint createTexture(const char* filename) {
+GLuint createShaderProgram() {
+    // Vertex shader
+    GLuint vertexShader = glCreateShader(GL_VERTEX_SHADER);
+    glShaderSource(vertexShader, 1, &vertexShaderSource, NULL);
+    glCompileShader(vertexShader);
+
+    // Check vertex shader compilation
+    int success;
+    char infoLog[512];
+    glGetShaderiv(vertexShader, GL_COMPILE_STATUS, &success);
+    if (!success) {
+        glGetShaderInfoLog(vertexShader, 512, NULL, infoLog);
+        fprintf(stderr, "Vertex shader compilation failed: %s\n", infoLog);
+    }
+
+    // Fragment shader
+    GLuint fragmentShader = glCreateShader(GL_FRAGMENT_SHADER);
+    glShaderSource(fragmentShader, 1, &fragmentShaderSource, NULL);
+    glCompileShader(fragmentShader);
+
+    // Check fragment shader compilation
+    glGetShaderiv(fragmentShader, GL_COMPILE_STATUS, &success);
+    if (!success) {
+        glGetShaderInfoLog(fragmentShader, 512, NULL, infoLog);
+        fprintf(stderr, "Fragment shader compilation failed: %s\n", infoLog);
+    }
+
+    // Shader program
+    GLuint shaderProgram = glCreateProgram();
+    glAttachShader(shaderProgram, vertexShader);
+    glAttachShader(shaderProgram, fragmentShader);
+    glLinkProgram(shaderProgram);
+
+    // Check program linking
+    glGetProgramiv(shaderProgram, GL_LINK_STATUS, &success);
+    if (!success) {
+        glGetProgramInfoLog(shaderProgram, 512, NULL, infoLog);
+        fprintf(stderr, "Shader program linking failed: %s\n", infoLog);
+    }
+
+    glDeleteShader(vertexShader);
+    glDeleteShader(fragmentShader);
+
+    return shaderProgram;
+}
+
+ImageRenderer* createImageRenderer(const char* filename) {
+    ImageRenderer* renderer = (ImageRenderer*)malloc(sizeof(ImageRenderer));
+    if (!renderer) return NULL;
+
+    // Load texture
     int width, height, channels;
     unsigned char* data = loadImage(filename, &width, &height, &channels);
     if (!data) {
-        return 0;
+        free(renderer);
+        return NULL;
     }
 
-    GLuint texture;
-    glGenTextures(1, &texture);
-    glBindTexture(GL_TEXTURE_2D, texture);
-
-    glTexImage2D(GL_TEXTURE_2D, 0, channels == 4 ? GL_RGBA : GL_RGB, width, height, 0, channels == 4 ? GL_RGBA : GL_RGB, GL_UNSIGNED_BYTE, data);
-
+    // Create texture
+    glGenTextures(1, &renderer->textureID);
+    glBindTexture(GL_TEXTURE_2D, renderer->textureID);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-
+    glTexImage2D(GL_TEXTURE_2D, 0, channels == 4 ? GL_RGBA : GL_RGB, width, height, 0,
+                 channels == 4 ? GL_RGBA : GL_RGB, GL_UNSIGNED_BYTE, data);
     stbi_image_free(data);
-    return texture;
+
+    // Create shader program
+    renderer->shaderProgram = createShaderProgram();
+
+    // Vertex data
+    float vertices[] = {
+        // positions        // texture coords
+        -0.5f, -0.5f, 0.0f, 0.0f, 0.0f,  // bottom left
+         0.5f, -0.5f, 0.0f, 1.0f, 0.0f,  // bottom right
+         0.5f,  0.5f, 0.0f, 1.0f, 1.0f,  // top right
+        -0.5f,  0.5f, 0.0f, 0.0f, 1.0f   // top left
+    };
+    unsigned int indices[] = {
+        0, 1, 2,  // first triangle
+        2, 3, 0   // second triangle
+    };
+
+    // Create buffers
+    glGenVertexArrays(1, &renderer->VAO);
+    glGenBuffers(1, &renderer->VBO);
+    glGenBuffers(1, &renderer->EBO);
+
+    glBindVertexArray(renderer->VAO);
+
+    glBindBuffer(GL_ARRAY_BUFFER, renderer->VBO);
+    glBufferData(GL_ARRAY_BUFFER, sizeof(vertices), vertices, GL_STATIC_DRAW);
+
+    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, renderer->EBO);
+    glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(indices), indices, GL_STATIC_DRAW);
+
+    // Position attribute
+    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 5 * sizeof(float), (void*)0);
+    glEnableVertexAttribArray(0);
+    // Texture attribute
+    glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, 5 * sizeof(float), (void*)(3 * sizeof(float)));
+    glEnableVertexAttribArray(1);
+
+    return renderer;
 }
 
-void renderQuad() {
-    glBegin(GL_QUADS);
-    glTexCoord2f(0.0f, 0.0f); glVertex2f(-1.0f, -1.0f);
-    glTexCoord2f(1.0f, 0.0f); glVertex2f(1.0f, -1.0f);
-    glTexCoord2f(1.0f, 1.0f); glVertex2f(1.0f, 1.0f);
-    glTexCoord2f(0.0f, 1.0f); glVertex2f(-1.0f, 1.0f);
-    glEnd();
+void renderImage(ImageRenderer* renderer) {
+    if (!renderer) return;
+
+    glUseProgram(renderer->shaderProgram);
+    glBindTexture(GL_TEXTURE_2D, renderer->textureID);
+    glBindVertexArray(renderer->VAO);
+    glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
 }
 
-void RenderImage(const char* imagePath) {
-    GLuint texture = createTexture(imagePath);
-    if (texture == 0) {
-        fprintf(stderr, "Failed to create texture from image: %s\n", imagePath);
-        return;
-    }
+void destroyImageRenderer(ImageRenderer* renderer) {
+    if (!renderer) return;
 
-    // Bind the texture
-    glBindTexture(GL_TEXTURE_2D, texture);
-    renderQuad();
+    glDeleteVertexArrays(1, &renderer->VAO);
+    glDeleteBuffers(1, &renderer->VBO);
+    glDeleteBuffers(1, &renderer->EBO);
+    glDeleteTextures(1, &renderer->textureID);
+    glDeleteProgram(renderer->shaderProgram);
+    free(renderer);
 }
-
