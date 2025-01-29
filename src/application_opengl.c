@@ -101,6 +101,10 @@ void init_opengl(struct Application* app) {
         exit(EXIT_FAILURE);
     }
 
+    glEnable(GL_TEXTURE_2D);
+    glEnable(GL_BLEND);
+    glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+
     // Check OpenGL and Glew version.
     printf("OpenGL version: %s\n", glGetString(GL_VERSION));
     printf("GLEW version: %s\n", glewGetString(GLEW_VERSION));
@@ -114,6 +118,7 @@ void init_opengl(struct Application* app) {
 void RoofNut_Loop(struct Application* app) {
     init_nuklear(g_Window);
 
+    glEnable(GL_TEXTURE_2D);
     
     while (!glfwWindowShouldClose(g_Window)) {
         // Poll to process events.
@@ -136,7 +141,8 @@ void RoofNut_Loop(struct Application* app) {
 }
 
 void DestroyOpenGl() {
-    // No code here rn.
+    glDisable(GL_TEXTURE_2D);
+    // Not much code here rn.
 }
 
 struct Application* Application_Create(const struct ApplicationSpecification* specification) {
