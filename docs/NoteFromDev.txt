@@ -8,7 +8,7 @@ Please support this project as it is alot to maintain and build while having alo
 
 I would also like to thank Elliot711823 for being a part of this project for such a long time and being one of my maintainers.
 I will leave a list of contributors under this:
-Elliot711823 (Built utils).
+Elliot711823 (Built utils that was removed for some time as request by him.).
 
 
 
