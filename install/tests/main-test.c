@@ -15,7 +15,7 @@ void RoofNutRender() {
                      NK_WINDOW_BORDER | NK_WINDOW_MOVABLE | NK_WINDOW_SCALABLE |
                      NK_WINDOW_MINIMIZABLE | NK_WINDOW_TITLE)) {
   }
-  RenderImage("assets/test-image.png");
+  RenderImage("assets/test-image.png", 100, 200);
   nk_end(ctx);
 
   
