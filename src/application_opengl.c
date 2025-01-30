@@ -129,21 +129,22 @@ void RoofNut_Loop(struct Application* app) {
         // Poll to process events.
         glfwPollEvents();
 
-        // Rendering is done from here -
+        // NK Rendering is done from here -
         glClear(GL_COLOR_BUFFER_BIT);
 
         nk_glfw3_new_frame(&glfw);
 
-        //If there is a image to render, render it.
+        RoofNutRender();
+
+        // - to here.
+
+        nk_glfw3_render(&glfw, NK_ANTI_ALIASING_ON, MAX_VERTEX_MEMORY, MAX_ELEMENT_MEMORY);
+
+          //If there is a image to render, render it.
         if (imageRenderer) {
             renderImage(imageRenderer);
         }
         
-        RoofNutRender();
-        
-        // - to here.
-
-        nk_glfw3_render(&glfw, NK_ANTI_ALIASING_ON, MAX_VERTEX_MEMORY, MAX_ELEMENT_MEMORY);
 
         // Swap front and back buffers.
         glfwSwapBuffers(g_Window);
