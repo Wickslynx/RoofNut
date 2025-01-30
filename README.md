@@ -37,11 +37,17 @@ Please see the *docs* folder for further explanation and examples
 
 # Current Issues:
 
-**1. Segmentation fault (vulkan)**, When running program with compatible drivers i get "Segmentationfault". (Abandoned, *as of lack of driver support*)
 
-**2. Additonal debugging needed (vulkan)** , (Wickslynx) can't test the vulkan version as my drivers are outdated. Hence why i added OPENGL support. (Worked on)
+**1. Image rendering (vulkan)**, Images is not supported in the vulkan version". (Abandoned, *as of lack of driver support*)
 
-**3. Built in GLEW support (OpenGL)** , i can't get the compiler to reqonise the built in GLEW library.. Abandoned as of now...
+**2. Segmentation fault (vulkan)**, When running program with compatible drivers i get "Segmentationfault". (Abandoned, *as of lack of driver support*)
+
+**3. Additonal debugging needed (vulkan)** , (Wickslynx) can't test the vulkan version as my drivers are outdated. Hence why i added OPENGL support. (Worked on)
+
+**4. Built in GLEW support (OpenGL)** , i can't get the compiler to reqonise the built in GLEW library.. Abandoned as of now...
+
+**5. Images in the README.md (OpenGL)** , Need to make an example project and take some screenshots of it :D. (Worked on.)
+
 
 # Support:
 Please email me on Wickslynx@yahoo.com
