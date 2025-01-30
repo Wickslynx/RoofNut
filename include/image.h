@@ -16,8 +16,8 @@ typedef struct {
 extern ImageRenderer* imageRenderer;
 
 unsigned char* loadImage(const char* filename, int* width, int* height, int* channels);
-ImageRenderer* createImageRenderer(const char* filename);
-void RenderImage(const char* filename);
+ImageRenderer* createImageRenderer(const char* filename, int width, int height);
+void RenderImage(const char* filename, int width, int height);
 void renderImage(ImageRenderer* renderer);
 void destroyImageRenderer(ImageRenderer* renderer);
 
