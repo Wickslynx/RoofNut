@@ -158,7 +158,7 @@ void renderImage(ImageRenderer* renderer) {
 }
 
 void RenderImage(const char* filename) {
-    imageRenderer = createImageRenderer(filename);
+    extern imageRenderer = createImageRenderer(filename);
 }
 
 void destroyImageRenderer(ImageRenderer* renderer) {
