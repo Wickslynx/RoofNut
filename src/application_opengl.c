@@ -12,6 +12,7 @@
 
 // Define and set the GLFW window to null.
 GLFWwindow *g_Window = NULL;
+extern ImageRenderer* imageRenderer;
 
 struct Application {
     struct ApplicationSpecification specification;
