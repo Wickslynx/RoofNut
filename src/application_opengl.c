@@ -153,6 +153,7 @@ void RoofNut_Loop(struct Application* app) {
 
 void DestroyOpenGl() {
     glDisable(GL_TEXTURE_2D);
+    destroyImageRenderer(ImageRender);
     // Not much code here rn.
 }
 
