@@ -32,9 +32,9 @@ const char* fragmentShaderSource =
     "    FragColor = texture(texture1, TexCoord);\n"
     "}\0";
 
-unsigned char* loadImage(const char* filename, int width, int height, int* channels) {
+unsigned char* loadImage(const char* filename, int* width, int* height, int* channels) {
     stbi_set_flip_vertically_on_load(true);  // Flip image vertically for OpenGL
-    unsigned char* data = stbi_load(filename, width, height, channels, 0);
+    unsigned char* data = stbi_load(filename, &width, &height, channels, 0);
     if (!data) {
         fprintf(stderr, "Failed to load image: %s\n", filename);
     }
@@ -159,8 +159,8 @@ void renderImage(ImageRenderer* renderer) {
     glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
 }
 
-void RenderImage(const char* filename, int width, int height, float posX, float posY) {
-    imageRenderer = createImageRenderer(filename, width, height, posX, posY);
+void RenderImage(const char* filename, int* width, int* height, float posX, float posY) {
+    imageRenderer = createImageRenderer(filename, &width, &height, posX, posY);
 }
 
 void destroyImageRenderer(ImageRenderer* renderer) {
