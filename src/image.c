@@ -87,12 +87,12 @@ GLuint createShaderProgram() {
     return shaderProgram;
 }
 
-ImageRenderer* createImageRenderer(const char* filename) {
+ImageRenderer* createImageRenderer(const char* filename, int width, int height) {
     ImageRenderer* renderer = (ImageRenderer*)malloc(sizeof(ImageRenderer));
     if (!renderer) return NULL;
 
     // Load texture
-    int width, height, channels;
+    int channels;
     unsigned char* data = loadImage(filename, &width, &height, &channels);
     if (!data) {
         free(renderer);
@@ -158,8 +158,8 @@ void renderImage(ImageRenderer* renderer) {
     glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
 }
 
-void RenderImage(const char* filename) {
-    imageRenderer = createImageRenderer(filename);
+void RenderImage(const char* filename, int width, int height) {
+    imageRenderer = createImageRenderer(filename, &width, &height);
 }
 
 void destroyImageRenderer(ImageRenderer* renderer) {
