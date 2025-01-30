@@ -87,7 +87,8 @@ GLuint createShaderProgram() {
     return shaderProgram;
 }
 
-ImageRenderer* createImageRenderer(const char* filename, int width, int height) {
+
+ImageRenderer* createImageRenderer(const char* filename, int width, int height, float posX, float posY) {
     ImageRenderer* renderer = (ImageRenderer*)malloc(sizeof(ImageRenderer));
     if (!renderer) return NULL;
 
@@ -113,13 +114,13 @@ ImageRenderer* createImageRenderer(const char* filename, int width, int height) 
     // Create shader program
     renderer->shaderProgram = createShaderProgram();
 
-    // Vertex data
+    // Vertex data with dynamic position
     float vertices[] = {
-        // positions        // texture coords
-        -0.5f, -0.5f, 0.0f, 0.0f, 0.0f,  // bottom left
-         0.5f, -0.5f, 0.0f, 1.0f, 0.0f,  // bottom right
-         0.5f,  0.5f, 0.0f, 1.0f, 1.0f,  // top right
-        -0.5f,  0.5f, 0.0f, 0.0f, 1.0f   // top left
+        // positions                  // texture coords
+        posX - 0.5f, posY - 0.5f, 0.0f,  0.0f, 0.0f,  // bottom left
+        posX + 0.5f, posY - 0.5f, 0.0f,  1.0f, 0.0f,  // bottom right
+        posX + 0.5f, posY + 0.5f, 0.0f,  1.0f, 1.0f,  // top right
+        posX - 0.5f, posY + 0.5f, 0.0f,  0.0f, 1.0f   // top left
     };
     unsigned int indices[] = {
         0, 1, 2,  // first triangle
@@ -158,8 +159,8 @@ void renderImage(ImageRenderer* renderer) {
     glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
 }
 
-void RenderImage(const char* filename, int width, int height) {
-    imageRenderer = createImageRenderer(filename, width, height);
+void RenderImage(const char* filename, int width, int height, float posX, float posY) {
+    imageRenderer = createImageRenderer(filename, width, height, posX, posY);
 }
 
 void destroyImageRenderer(ImageRenderer* renderer) {
