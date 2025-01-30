@@ -157,7 +157,7 @@ void RoofNutRender() {
         }
     }
 
-    RenderImage("Downloads/beautiful-selective-focus-shot-crystal-ball-reflecting-breathtaking-sunset(1).jpg", 1920, 1080, 0.5, -0.5);
+    RenderImage("--insert your image path--", 1920, 1080, 0.5, -0.5);
 
 
 }
