@@ -1,6 +1,7 @@
 #ifndef ROOFNUT_H
 #define ROOFNUT_H
 
+ifdef ROOFNUT_IMPLEMENTATION
 #include "external/Nuklear/nuklear.h"
 
 #ifdef __cplusplus
@@ -19,5 +20,7 @@ extern "C" {
 #ifdef __cplusplus
 }
 #endif // C++
+
+#endif // ROOFNUT_IMPLEMENTATION
 
 #endif // ROOFNUT_H
