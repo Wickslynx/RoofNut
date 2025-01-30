@@ -1,7 +1,7 @@
 
 #include <stdio.h>
 
-#define ROOFNUT_IMPLEMENTAON
+#define ROOFNUT_IMPLEMENTATION
 #include <roofnut.h>
 
   
