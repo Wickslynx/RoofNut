@@ -1,7 +1,7 @@
 #ifndef ROOFNUT_H
 #define ROOFNUT_H
 
-ifdef ROOFNUT_IMPLEMENTATION
+#ifdef ROOFNUT_IMPLEMENTATION
 #include "external/Nuklear/nuklear.h"
 
 #ifdef __cplusplus
