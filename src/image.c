@@ -159,7 +159,7 @@ void renderImage(ImageRenderer* renderer) {
 }
 
 void RenderImage(const char* filename, int width, int height) {
-    imageRenderer = createImageRenderer(filename, &width, &height);
+    imageRenderer = createImageRenderer(filename, width, height);
 }
 
 void destroyImageRenderer(ImageRenderer* renderer) {
