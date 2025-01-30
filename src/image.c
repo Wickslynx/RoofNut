@@ -87,7 +87,7 @@ GLuint createShaderProgram() {
 }
 
 ImageRenderer* createImageRenderer(const char* filename) {
-    extern ImageRenderer* renderer = (ImageRenderer*)malloc(sizeof(ImageRenderer));
+    ImageRenderer* renderer = (ImageRenderer*)malloc(sizeof(ImageRenderer));
     if (!renderer) return NULL;
 
     // Load texture
@@ -158,7 +158,7 @@ void renderImage(ImageRenderer* renderer) {
 }
 
 void RenderImage(const char* filename) {
-    extern imageRenderer = createImageRenderer(filename);
+    imageRenderer = createImageRenderer(filename);
 }
 
 void destroyImageRenderer(ImageRenderer* renderer) {
