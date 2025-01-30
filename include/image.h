@@ -14,7 +14,7 @@ typedef struct {
 } ImageRenderer;
 
 
-ImageRenderer* imageRenderer = NULL;
+ImageRenderer* imageRenderer;
 
 unsigned char* loadImage(const char* filename, int* width, int* height, int* channels);
 ImageRenderer* createImageRenderer(const char* filename);
