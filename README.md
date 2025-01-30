@@ -1,4 +1,3 @@
-![Uhhh ooo, Error! Please contanct me.](docs/examples/example-images/main-screenshot.png)
 # RoofNut
 
 **Version 1.12**
@@ -36,6 +35,8 @@ Alternative way, If your project has a cmake list you can use the command:      
 
 Please see the *docs* folder for further explanation and examples
 
+# Examples:
+![Uhhh ooo, Error! Please contanct me.](docs/examples/example-images/main-screenshot.png)
 
 # Current Issues:
 
