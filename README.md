@@ -8,6 +8,7 @@ RoofNut is a lightweight GUI framework inspired by Walnut, using GLFW and Vulkan
 Built on GLFW and Vulkan for efficient rendering.
 Uses Nuklear for immediate-mode GUI.
 OpenGL support. (1.12)
+Uses stb_image to load images. (Only OpenGL version, vulkan version still in development)
 
 # Getting Started:
 
