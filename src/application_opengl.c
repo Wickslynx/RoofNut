@@ -26,7 +26,7 @@ struct Application {
     } nuklear;
 };
 
-void cleanup_resources(struct Application* app) {
+void DestroyOpenGL(struct Application* app) {
     if (app->nuklear.ctx) {
         nk_glfw3_shutdown(&app->nuklear.glfw);
     }
