@@ -4,8 +4,9 @@
 
 #define ROOFNUT_IMPLEMENTATION //If not defined, roofnut wont be able to be used.
 #define ROOFNUT_DEBUG //Set roofnut to debug mode.
-//ROOFNUT_USE_VULKAN (Restrict it to only Vulkan)
-//ROOFNUT_USE_OPENGL (Restrict it to only OpenGL)
+//ROOFNUT_IMAGE_SUPPORT_OFF //Remove the image support, (slight speed improvment.)
+//ROOFNUT_USE_VULKAN // (Restrict it to only Vulkan)
+//ROOFNUT_USE_OPENGL // (Restrict it to only OpenGL)
 
 #include <roofnut.h>
 
