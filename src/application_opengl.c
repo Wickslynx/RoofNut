@@ -10,7 +10,7 @@ GLFWwindow *g_Window = NULL;
 extern ImageRenderer* imageRenderer;
 
 struct Application {
-    struct RoofNutSpecification specification;
+    struct Applicationspecification specification;
     bool running;
     bool customTitleBar;
     GLFWwindow* windowHandle;
