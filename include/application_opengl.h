@@ -23,22 +23,6 @@ struct ApplicationSpecification {
 
 
 
-struct Application {
-    struct ApplicationSpecification specification;
-    bool running;
-    bool customTitleBar;
-    GLFWwindow* windowHandle;
-    struct {
-        double lastFrameTime;
-        double targetFrameRate;
-        bool vsyncEnabled;
-    } timing;
-    struct {
-        struct nk_context *ctx;
-        struct nk_font_atlas *atlas;
-        struct nk_glfw *glfw;  
-    } nuklear;
-};
 
 
 // Function declarations:
