@@ -24,7 +24,7 @@ void RoofNutRender() {
 
 int main() {
     // Application Specification
-    struct Applicationspecification appSpec = {
+    struct ApplicationSpecification appSpec = {
         .name = APPLICATION_NAME,
         .width = 1280,  // Window width
         .height = 720   // Window height
