@@ -1,197 +1,192 @@
 #include "external/glew/include/GL/glew.h"
 #include "external/glfw/include/GLFW/glfw3.h"
-
-
 #include <stdlib.h>
 #include <stdio.h>
 #include <string.h>
-
-
 #include "application_opengl.h"
 #include "image.h"
 
-// Define and set the GLFW window to null.
 GLFWwindow *g_Window = NULL;
 extern ImageRenderer* imageRenderer;
 
 struct Application {
-    struct ApplicationSpecification specification;
+    struct RoofNutSpecification specification;
     bool running;
     bool customTitleBar;
     GLFWwindow* windowHandle;
+    struct {
+        double lastFrameTime;
+        double targetFrameRate;
+        bool vsyncEnabled;
+    } timing;
+    struct {
+        struct nk_context *ctx;
+        struct nk_font_atlas *atlas;
+        struct nk_glfw glfw;
+    } nuklear;
 };
 
-// Nuklear setup.
-#define NK_INCLUDE_FIXED_TYPES
-#define NK_INCLUDE_STANDARD_IO
-#define NK_INCLUDE_DEFAULT_ALLOCATOR
-#define NK_INCLUDE_VERTEX_BUFFER_OUTPUT
-#define NK_INCLUDE_FONT_BAKING
-#define NK_INCLUDE_DEFAULT_FONT
-#define NK_INCLUDE_COMMAND_USERDATA
-#define NK_IMPLEMENTATION
-#define NK_GLFW_GL3_IMPLEMENTATION
-
-#include "external/Nuklear/nuklear.h"
-#include "external/Nuklear/nuklear_glfw_gl3.h"
-
-
-struct nk_allocator allocator = { 0 }; // Uncomment to use NK, Can't get it to link so don't worry bout it.
-
-struct nk_context *ctx; 
-struct nk_font_atlas *atlas;
-struct nk_glfw glfw;
-
-void init_nuklear(GLFWwindow* window) {
-    ctx = nk_glfw3_init(&glfw, window, NK_GLFW3_INSTALL_CALLBACKS);
-
-    /* Load Fonts */
-    nk_glfw3_font_stash_begin(&glfw, &atlas);
-    /* If you have a ttf file, you can add it here */
-    /* struct nk_font *droid = nk_font_atlas_add_from_file(atlas, "path-to-custom-font", 14, 0); */
-    nk_glfw3_font_stash_end(&glfw);
+void cleanup_resources(struct Application* app) {
+    if (app->nuklear.ctx) {
+        nk_glfw3_shutdown(&app->nuklear.glfw);
+    }
+    if (imageRenderer) {
+        destroyImageRenderer(imageRenderer);
+    }
+    if (app->windowHandle) {
+        glfwDestroyWindow(app->windowHandle);
+    }
+    glfwTerminate();
 }
 
+bool init_nuklear(struct Application* app) {
+    app->nuklear.ctx = nk_glfw3_init(&app->nuklear.glfw, app->windowHandle, NK_GLFW3_INSTALL_CALLBACKS);
+    if (!app->nuklear.ctx) {
+        printf("Failed to initialize Nuklear\n");
+        return false;
+    }
 
-// Function to initialize OpenGL.
-void init_opengl(struct Application* app) {
-    // Initialize GLFW.
+    nk_glfw3_font_stash_begin(&app->nuklear.glfw, &app->nuklear.atlas);
+    nk_glfw3_font_stash_end(&app->nuklear.glfw);
+    return true;
+}
+
+bool init_opengl(struct Application* app) {
     if (!glfwInit()) {
         const char* error_description;
         glfwGetError(&error_description);
         printf("GLFW Initialization failed: %s\n", error_description);
-        exit(EXIT_FAILURE);
+        return false;
     }
 
-    // Set GLFW window hints.
     glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
     glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
     glfwWindowHint(GLFW_OPENGL_COMPAT_PROFILE, GLFW_OPENGL_CORE_PROFILE);
     glfwWindowHint(GLFW_CONTEXT_ROBUSTNESS, GLFW_LOSE_CONTEXT_ON_RESET);
-
     glfwWindowHint(GLFW_OPENGL_DEBUG_CONTEXT, GL_TRUE);
     glfwWindowHint(GLFW_CLIENT_API, GLFW_OPENGL_API);
-    
 
     #ifdef __APPLE__
         glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, GL_TRUE);
     #endif
 
-    // Create GLFW window.
-    
-    g_Window = glfwCreateWindow(app->specification.width, app->specification.height, app->specification.name, NULL, NULL);
+    g_Window = glfwCreateWindow(app->specification.width, 
+                               app->specification.height, 
+                               app->specification.name, 
+                               NULL, NULL);
     if (!g_Window) {
-        const char* error_description; 
+        const char* error_description;
         glfwGetError(&error_description);
         printf("Failed to create GLFW window: %s\n", error_description);
-        glfwTerminate();
-        exit(EXIT_FAILURE);
+        return false;
     }
 
-    // Make the OpenGL context current BEFORE initializing GLEW
     glfwMakeContextCurrent(g_Window);
+    
+    if (app->timing.vsyncEnabled) {
+        glfwSwapInterval(1);
+    } else {
+        glfwSwapInterval(0);
+    }
 
-    // Enable vsync (optional but recommended)
-    glfwSwapInterval(1);
-
-    // Initialize GLEW
     GLenum err = glewInit();
     if (err != GLEW_OK) {
-        fprintf(stderr, "GLEW Error Code: %d\n", err);
         fprintf(stderr, "Failed to initialize GLEW: %s\n", glewGetErrorString(err));
-        fprintf(stderr, "OpenGL version: %s\n", glGetString(GL_VERSION));
-        fprintf(stderr, "Vendor: %s\n", glGetString(GL_VENDOR));
-        glfwDestroyWindow(g_Window);
-        glfwTerminate();
-        exit(EXIT_FAILURE);
+        return false;
     }
 
     glEnable(GL_TEXTURE_2D);
     glEnable(GL_BLEND);
     glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
-    // Check OpenGL and Glew version.
-    printf("OpenGL version: %s\n", glGetString(GL_VERSION));
-    printf("GLEW version: %s\n", glewGetString(GLEW_VERSION));
-
-    // Set the viewport.
     int width, height;
     glfwGetFramebufferSize(g_Window, &width, &height);
     glViewport(0, 0, width, height);
+
+    return true;
 }
 
-void RoofNut_Loop(struct Application* app) {
-    init_nuklear(g_Window);
+void limit_frame_rate(struct Application* app) {
+    if (app->timing.targetFrameRate <= 0) return;
 
-    glEnable(GL_TEXTURE_2D);
-    
+    double currentTime = glfwGetTime();
+    double frameTime = currentTime - app->timing.lastFrameTime;
+    double targetFrameTime = 1.0 / app->timing.targetFrameRate;
+
+    if (frameTime < targetFrameTime) {
+        double sleepTime = targetFrameTime - frameTime;
+        glfwWaitEventsTimeout(sleepTime);
+    }
+
+    app->timing.lastFrameTime = glfwGetTime();
+}
+
+void RoofNutLoop(struct Application* app) {
+    if (!init_nuklear(app)) {
+        return;
+    }
+
+    app->timing.lastFrameTime = glfwGetTime();
+
     while (!glfwWindowShouldClose(g_Window)) {
-        // Poll to process events.
         glfwPollEvents();
 
-        // NK Rendering is done from here -
         glClear(GL_COLOR_BUFFER_BIT);
-
-        nk_glfw3_new_frame(&glfw);
+        nk_glfw3_new_frame(&app->nuklear.glfw);
 
         RoofNutRender();
 
-        // - to here.
+        nk_glfw3_render(&app->nuklear.glfw, NK_ANTI_ALIASING_ON, 
+                        MAX_VERTEX_MEMORY, MAX_ELEMENT_MEMORY);
 
-        nk_glfw3_render(&glfw, NK_ANTI_ALIASING_ON, MAX_VERTEX_MEMORY, MAX_ELEMENT_MEMORY);
-
-          //If there is a image to render, render it.
         if (imageRenderer) {
             renderImage(imageRenderer);
         }
-        
 
-        // Swap front and back buffers.
         glfwSwapBuffers(g_Window);
+        limit_frame_rate(app);
     }
 }
 
-void DestroyOpenGl() {
-    glDisable(GL_TEXTURE_2D);
-    destroyImageRenderer(imageRenderer);
-    // Not much code here rn.
-}
-
-struct Application* Application_Create(const struct ApplicationSpecification* specification) {
+struct Application* RoofNutCreate(const struct ApplicationSpecification* specification) {
     struct Application* app = (struct Application*)malloc(sizeof(struct Application));
     if (!app) {
         printf("Allocation of Application failed\n");
         return NULL;
     }
 
-    // Copy specification
     memcpy(&app->specification, specification, sizeof(struct ApplicationSpecification));
-
-    // Initialize OpenGL (this will create the window and set up GLEW)
-    init_opengl(app);
-
-
-    // Store the window handle.
-    app->windowHandle = g_Window;
+    
+    // Initialize default values
+    app->timing.targetFrameRate = 60.0;  // Default to 60 FPS
+    app->timing.vsyncEnabled = true;     // Default vsync on
     app->running = true;
+    
+    if (!init_opengl(app)) {
+        free(app);
+        return NULL;
+    }
 
+    app->windowHandle = g_Window;
     RoofNut_Loop(app);
 
     return app;
 }
-//User functions...
-void RoofNutGetWindowSize(int width, int height) {
-    glfwGetWindowSize(g_Window, &width, &height);
+
+void RoofNutGetWindowSize(int* width, int* height) {
+    if (g_Window && width && height) {
+        glfwGetWindowSize(g_Window, width, height);
+    }
 }
 
 void RoofNutWindowShouldClose() {
-    glfwSetWindowShouldClose(g_Window, GLFW_TRUE);
+    if (g_Window) {
+        glfwSetWindowShouldClose(g_Window, GLFW_TRUE);
+    }
 }
 
-void Application_Destroy(struct Application* app) {
+void RoofNutDestroy(struct Application* app) {
     if (!app) return;
-
-    DestroyOpenGl();
-    glfwDestroyWindow(app->windowHandle);
-    glfwTerminate();
+    cleanup_resources(app);
+    free(app);
 }
