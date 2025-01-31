@@ -21,7 +21,7 @@
 static GLFWwindow *g_Window; 
 extern ImageRenderer* imageRenderer;  
 
-static void cleanup_resources(struct Application* app) {
+static void DestroyOpenGL(struct Application* app) {
     if (app->nuklear.ctx) {
         nk_glfw3_shutdown(app->nuklear.glfw);
     }
@@ -173,6 +173,6 @@ void RoofNutWindowShouldClose(void) {
 
 void RoofNutDestroy(struct Application* app) {
     if (!app) return;
-    cleanup_resources(app);
+    DestroyOpenGL(app);
     free(app);
 }
