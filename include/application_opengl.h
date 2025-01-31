@@ -47,7 +47,7 @@ void RoofNutDestroy(struct Application* app);
 void RoofNutGetWindowSize(int* width, int* height);
 void RoofNutWindowShouldClose(void);
 void RoofNutRender();
-void DestroyOpenGL(struct Application* app);
-void limit_frame_rate(struct Application* app);
+static void DestroyOpenGL(struct Application* app);
+static void limit_frame_rate(struct Application* app);
 
 #endif // APPLICATION_OPENGL_H
