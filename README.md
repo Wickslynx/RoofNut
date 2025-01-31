@@ -38,10 +38,11 @@ Compile command: g++ *path-to-your-file* -o *-your-executables-name-* -lRoofNut 
 Please see the *docs* folder for further explanation and examples
 
 # Examples:
-Never need to write that 1000 lines of code to make that simple application again! This example was made with a total of 180 lines of code!
-
+How many lines of code do you think this application took? I made this application with around 180 lines of code.
 
 ![Uhhh ooo, Error! Please contanct me.](docs/examples/example-images/main-screenshot.png)
+
+
 
 # Current Issues:
 
