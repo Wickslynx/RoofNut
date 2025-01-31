@@ -20,12 +20,13 @@ struct ApplicationSpecification {
 
 
 void init_opengl(struct Application* app);
-void RoofNut_loop(struct Application* app);
+void RoofNutLoop(struct Application* app);
+void limit_frame_rate(struct Application* app)
 void DestroyOpenGl(void);
 void RoofNutRender();
 
 
 
 
-struct Application* Application_Create(const struct ApplicationSpecification* specification);
-void Application_Destroy(struct Application* app);
+struct Application* RoofNutCreate(const struct ApplicationSpecification* specification);
+void RoofNutDestroy(struct Application* app);
