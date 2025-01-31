@@ -157,9 +157,9 @@ struct Application* RoofNutCreate(const struct ApplicationSpecification* specifi
 
     memcpy(&app->specification, specification, sizeof(struct ApplicationSpecification));
     
-    // Initialize default values
-    app->timing.targetFrameRate = 60.0;  // Default to 60 FPS
-    app->timing.vsyncEnabled = true;     // Default vsync on
+   
+    app->timing.targetFrameRate = 60.0;  // Default to 60 FPS.
+    app->timing.vsyncEnabled = true;     // Default vsync on.
     app->running = true;
     
     if (!init_opengl(app)) {
