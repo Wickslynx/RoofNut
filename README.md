@@ -31,12 +31,14 @@ For Arch-based systems: * sudo pacman -S libx11 libxrandr libxinerama libxcursor
 **2. Compile and build your application using RoofNut.**
 Build your application using *./install.sh*, include *<roofnut.h>* and you are all set.
 
-Alternative way, If your project has a cmake list you can use the command:            add_subdirectory({*path-to-roofnut*}/RoofNut/install/CMakeLists.txt)
+Alternative way, If your project has a cmake list you can use the command: add_subdirectory({*path-to-roofnut*}/RoofNut/install/CMakeLists.txt)
+
+Compile command: g++ *path-to-your-file* -o *-your-executables-name-* -lRoofNut  -lGLEW -lGL -lglfw
 
 Please see the *docs* folder for further explanation and examples
 
 # Examples:
-Never need to write that 1000 lines of code to make that application again! This example was made with a total of 180 lines of code!
+Never need to write that 1000 lines of code to make that simple application again! This example was made with a total of 180 lines of code!
 
 
 ![Uhhh ooo, Error! Please contanct me.](docs/examples/example-images/main-screenshot.png)
