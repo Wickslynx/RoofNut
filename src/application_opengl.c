@@ -43,7 +43,7 @@ static GLFWwindow *g_Window;
 extern ImageRenderer* imageRenderer;  
 
 static void DestroyOpenGL(struct Application* app) {
-    if (!ctx) {
+    if (ctx) {
         nk_glfw3_shutdown(app->nuklear.glfw);
     }
     if (imageRenderer) {
@@ -84,9 +84,10 @@ static bool init_opengl(struct Application* app) {
     glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
     glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
     glfwWindowHint(GLFW_CONTEXT_ROBUSTNESS, GLFW_LOSE_CONTEXT_ON_RESET);
-    glfwWindowHint(GLFW_OPENGL_DEBUG_CONTEXT, GL_TRUE);
-
-    #ifdef __APPLE__
+    
+    #ifdef _WIN32
+        glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, GL_FALSE);
+    #elif defined(__APPLE__)
         glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, GL_TRUE);
     #endif
 
