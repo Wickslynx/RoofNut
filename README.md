@@ -54,7 +54,7 @@ Never need to write that 1000 lines of code to make that simple application agai
 
 **4. Built in GLEW support (OpenGL)** , i can't get the compiler to reqonise the built in GLEW library.. Abandoned as of now...
 
-**5. Images in the README.md (OpenGL)** , Need to make an example project and take some screenshots of it :D. (Worked on.)
+**5. Alot of bugs (OpenGL)** , there is alot of bugs that i havent noticed yet, would need someone to test it. (Worked on.)
 
 
 # Support:
