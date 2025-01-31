@@ -7,6 +7,7 @@
 #include <stdio.h>
 #include <string.h>
 
+struct nk_context *ctx;
 
 struct Application {
     struct ApplicationSpecification specification;
@@ -19,7 +20,6 @@ struct Application {
         bool vsyncEnabled;
     } timing;
     struct {
-        struct nk_context *ctx;
         struct nk_font_atlas *atlas;
         struct nk_glfw *glfw;  
     } nuklear;
