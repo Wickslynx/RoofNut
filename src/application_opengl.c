@@ -187,6 +187,6 @@ void RoofNutWindowShouldClose() {
 
 void RoofNutDestroy(struct Application* app) {
     if (!app) return;
-    cleanup_resources(app);
+    DestroyOpenGL(app);
     free(app);
 }
