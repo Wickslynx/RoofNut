@@ -4,7 +4,8 @@
 #include <stdio.h>
 #include <string.h>
 
-
+#include "external/glew/include/GL/glew.h"
+#include "external/glfw/include/GLFW/glfw3.h"
 
 struct Application {
     struct ApplicationSpecification specification;
@@ -22,13 +23,6 @@ struct Application {
         struct nk_glfw *glfw;  
     } nuklear;
 };
-
-
-
-
-
-
-
 
 // Define Nuklear implementation:
 #define NK_INCLUDE_FIXED_TYPES
