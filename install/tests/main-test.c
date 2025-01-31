@@ -23,19 +23,19 @@ void RoofNutRender() {
 
 int main() {
     // Application Specification
-    struct ApplicationSpecification appSpec = {
+    struct Applicationspecification appSpec = {
         .name = APPLICATION_NAME,
         .width = 1280,  // Window width
         .height = 720   // Window height
     };
 
     // Create Application
-    struct Application* app = Application_Create(&appSpec);
+    struct Application* app = RoofNutCreate(&appSpec);
     if (!app) {
         fprintf(stderr, "Failed to create application!\n");
         return EXIT_FAILURE;
     }
     
-    Application_Destroy(app);
+    RoofNutDestroy(app);
     return 0;
 }
