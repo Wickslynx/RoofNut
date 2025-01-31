@@ -4,6 +4,32 @@
 #include <stdio.h>
 #include <string.h>
 
+
+
+struct Application {
+    struct ApplicationSpecification specification;
+    bool running;
+    bool customTitleBar;
+    GLFWwindow* windowHandle;
+    struct {
+        double lastFrameTime;
+        double targetFrameRate;
+        bool vsyncEnabled;
+    } timing;
+    struct {
+        struct nk_context *ctx;
+        struct nk_font_atlas *atlas;
+        struct nk_glfw *glfw;  
+    } nuklear;
+};
+
+
+
+
+
+
+
+
 // Define Nuklear implementation:
 #define NK_INCLUDE_FIXED_TYPES
 #define NK_INCLUDE_STANDARD_IO
