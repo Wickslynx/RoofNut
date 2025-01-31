@@ -43,7 +43,7 @@ static GLFWwindow *g_Window;
 extern ImageRenderer* imageRenderer;  
 
 static void DestroyOpenGL(struct Application* app) {
-    if (app->nuklear.ctx) {
+    if (!ctx) {
         nk_glfw3_shutdown(app->nuklear.glfw);
     }
     if (imageRenderer) {
@@ -62,7 +62,7 @@ static bool init_nuklear(struct Application* app) {
     }
     
     app->nuklear.ctx = nk_glfw3_init(app->nuklear.glfw, app->windowHandle, NK_GLFW3_INSTALL_CALLBACKS);
-    if (!app->nuklear.ctx) {
+    if (!ctx) {
         free(app->nuklear.glfw);
         return false;
     }
