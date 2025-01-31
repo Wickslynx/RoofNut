@@ -146,7 +146,7 @@ static void RoofNut_Loop(struct Application* app) {
         glClear(GL_COLOR_BUFFER_BIT);
         
         nk_glfw3_new_frame(app->nuklear.glfw);
-        RoofNutRender();  // Assuming this is defined elsewhere
+        RoofNutRender();  
         nk_glfw3_render(app->nuklear.glfw, NK_ANTI_ALIASING_ON, 
                         MAX_VERTEX_MEMORY, MAX_ELEMENT_MEMORY);
 
