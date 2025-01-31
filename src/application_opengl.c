@@ -87,8 +87,10 @@ static bool init_opengl(struct Application* app) {
     
     #ifdef _WIN32
         glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, GL_FALSE);
+        printf("Detected windows: Running RoofNut WIN-experimental.");
     #elif defined(__APPLE__)
         glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, GL_TRUE);
+        printf("Detected Apple: Running RoofNut MAC-experimental.");
     #endif
 
     g_Window = glfwCreateWindow(app->specification.width, 
