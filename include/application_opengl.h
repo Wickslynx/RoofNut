@@ -21,7 +21,7 @@ struct ApplicationSpecification {
 
 void init_opengl(struct Application* app);
 void RoofNutLoop(struct Application* app);
-void limit_frame_rate(struct Application* app)
+void limit_frame_rate(struct Application* app);
 void DestroyOpenGl(void);
 void RoofNutRender();
 
