@@ -61,4 +61,4 @@ Never need to write that 1000 lines of code to make that simple application agai
 Please email me on Wickslynx@yahoo.com
 I will respond as soon as possible, updates come regularly. On School days almost every day.
 
-***RoofNut is still in development, one stable version has released.***
+***RoofNut is still in development!***
