@@ -61,7 +61,7 @@ static bool init_nuklear(struct Application* app) {
         return false;
     }
     
-    app->nuklear.ctx = nk_glfw3_init(app->nuklear.glfw, app->windowHandle, NK_GLFW3_INSTALL_CALLBACKS);
+    ctx = nk_glfw3_init(app->nuklear.glfw, app->windowHandle, NK_GLFW3_INSTALL_CALLBACKS);
     if (!ctx) {
         free(app->nuklear.glfw);
         return false;
