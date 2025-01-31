@@ -1,11 +1,12 @@
+#include "external/glew/include/GL/glew.h"
+#include "external/glfw/include/GLFW/glfw3.h"
+
 #include "application_opengl.h"
 #include "image.h"
 #include <stdlib.h>
 #include <stdio.h>
 #include <string.h>
 
-#include "external/glew/include/GL/glew.h"
-#include "external/glfw/include/GLFW/glfw3.h"
 
 struct Application {
     struct ApplicationSpecification specification;
