@@ -1,3 +1,4 @@
+#ifndef ROOFNUT_IMAGE_SUPPORT_OFF
 #include <GL/glew.h>
 #include "image.h"
 #include <stdio.h>
@@ -171,3 +172,5 @@ void destroyImageRenderer(ImageRenderer* renderer) {
     glDeleteProgram(renderer->shaderProgram);
     free(renderer);
 }
+
+#endif //ROOFNUT_IMAGE_SUPPORT_OFF
