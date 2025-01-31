@@ -2,8 +2,7 @@
 #define APPLICATION_OPENGL_H
 
 #include <stdbool.h>
-#include "external/glew/include/GL/glew.h"
-#include "external/glfw/include/GLFW/glfw3.h"
+
 
 // Forward declarations:
 struct nk_context;
@@ -14,15 +13,14 @@ struct nk_glfw;
 
 #define MAX_ELEMENT_MEMORY 128 * 1024
 
+struct Application;
+
 
 struct ApplicationSpecification {
     int width;
     int height;
     const char* name;
 };
-
-
-
 
 
 // Function declarations:
