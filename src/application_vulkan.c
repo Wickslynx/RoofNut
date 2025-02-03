@@ -7,6 +7,7 @@
 
 #include <vulkan/vulkan.h>
 #include <vulkan/vulkan_wayland.h>
+
 // Nuklear setup.
 #define NK_INCLUDE_FIXED_TYPES
 #define NK_INCLUDE_STANDARD_IO
@@ -272,17 +273,19 @@ void RoofNut_loop() {
     init_swapchain();
     init_buffers();
 	
-    // init_nuklear(g_Window, g_Device, g_PhysicalDevice, queueFamilyIndex, imageViews, swapchainImageCount, selectedFormat.format, g_SwapChainExtent); // Note: Uncomment to use Nuklear.
+    //init_nuklear(g_Window, g_Device, g_PhysicalDevice, queueFamilyIndex, imageViews, swapchainImageCount, selectedFormat.format, g_SwapChainExtent); // Note: Uncomment to use Nuklear.
 
     while (!glfwWindowShouldClose(g_Window)) {
         glfwPollEvents();
 
         vkQueueWaitIdle(g_Queue);
 	    
-	/* Note: Uncomment to use Nuklear, Can't get it to link so we will not care about it for now. */
+	/* Note: Uncomment to use Nuklear, Can't get it to link so we will not care about it for now. 
 	nk_input_begin(ctx); 
 	RoofNutRender();
 	nk_input_end(ctx);
+    */
+    
 
 	    
         VkCommandBufferBeginInfo beginInfo = {
@@ -307,7 +310,7 @@ void RoofNut_loop() {
 
         vkCmdBeginRenderPass(g_CommandBuffer, &renderPassInfo, VK_SUBPASS_CONTENTS_INLINE);
 	enum nk_anti_aliasing AA = NK_ANTI_ALIASING_ON;
-	nk_glfw3_render(g_Queue, imageIndex, imageAvailableSemaphore, AA); //  Note: Uncomment to use Nuklear.
+	//nk_glfw3_render(g_Queue, imageIndex, imageAvailableSemaphore, AA); //  Note: Uncomment to use Nuklear.
  
 
 	vkCmdEndRenderPass(g_CommandBuffer);
@@ -337,7 +340,7 @@ void RoofNut_loop() {
 }
 
 
-Application* Application_Create(const ApplicationSpecification* specification) {
+Application* RoofNutCreate(const ApplicationSpecification* specification) {
     if (!glfwInit()) {
         const char* error_description;
         glfwGetError(&error_description);
@@ -383,7 +386,7 @@ void DestroyVulkan() {
 }
 
 
-void Application_Destroy(Application* app) {
+void RoofNutDestroy(Application* app) {
     if (!app) return;
    
     DestroyVulkan();
@@ -393,5 +396,3 @@ void Application_Destroy(Application* app) {
 
     
 }
-
-
