@@ -251,7 +251,7 @@ unsigned int nuklearshaders_nuklear_frag_spv_len = 860;
 #include <stddef.h>
 #include <string.h>
 #define GLFW_INCLUDE_VULKAN
-#include <GLFW/glfw3.h>
+#include "glfw3.h"
 
 enum nk_glfw_init_state { NK_GLFW3_DEFAULT = 0, NK_GLFW3_INSTALL_CALLBACKS };
 

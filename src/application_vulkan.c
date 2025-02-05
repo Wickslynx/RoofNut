@@ -2,9 +2,10 @@
 #include "application_vulkan.h"
 #include <stdlib.h>
 #include <stdio.h>
+#define GLFW_INCLUDE_VULKAN
 #include "external/glfw/include/GLFW/glfw3.h"
-#define VK_USE_PLATFORM_WAYLAND_KHR
 
+#define VK_USE_PLATFORM_WAYLAND_KHR
 #include <vulkan/vulkan.h>
 #include <vulkan/vulkan_wayland.h>
 
@@ -17,10 +18,11 @@
 #define NK_INCLUDE_DEFAULT_FONT
 #define NK_INCLUDE_COMMAND_USERDATA
 #define NK_IMPLEMENTATION
-#define NK_VULKAN_IMPLEMENTATION
+#define NK_GLFW_VULKAN_IMPLEMENTATION
 
 #include "external/Nuklear/nuklear.h"
 #include "external/Nuklear/nuklear_glfw_vulkan.h"
+
 
 // Declares the global vulkan resources.
 VkInstance g_Instance; //Declares the vulkan instance.
@@ -197,7 +199,10 @@ void init_swapchain() {
     vkGetSwapchainImagesKHR(g_Device, g_Swapchain, &swapchainImageCount, NULL);
 }
 
+void init_nuklear() {
+    nk_init_default(ctx, NULL);
 
+}
 
 void init_buffers() {
     g_Framebuffers = malloc(sizeof(VkFramebuffer) * swapchainImageCount);
@@ -279,19 +284,20 @@ void RoofNut_loop() {
     init_swapchain();
     init_buffers();
 	
-    //init_nuklear(g_Window, g_Device, g_PhysicalDevice, queueFamilyIndex, imageViews, swapchainImageCount, selectedFormat.format, g_SwapChainExtent); // Note: Uncomment to use Nuklear.
+    init_nuklear(); // Note: Uncomment to use Nuklear.
 
     while (!glfwWindowShouldClose(g_Window)) {
         glfwPollEvents();
 
         vkQueueWaitIdle(g_Queue);
-	    
-	/* Note: Uncomment to use Nuklear, Can't get it to link so we will not care about it for now. 
-	nk_input_begin(ctx); 
-	RoofNutRender();
-	nk_input_end(ctx);
-    */
-    
+        //NK rendering code here.
+
+        nk_glfw3_new_frame();
+
+
+	    nk_input_begin(ctx); 
+	    RoofNutRender();
+	    nk_input_end(ctx);
 
 	    
         VkCommandBufferBeginInfo beginInfo = {
@@ -315,8 +321,9 @@ void RoofNut_loop() {
         };
 
         vkCmdBeginRenderPass(g_CommandBuffer, &renderPassInfo, VK_SUBPASS_CONTENTS_INLINE);
-	enum nk_anti_aliasing AA = NK_ANTI_ALIASING_ON;
-	//nk_glfw3_render(g_Queue, imageIndex, imageAvailableSemaphore, AA); //  Note: Uncomment to use Nuklear.
+	    enum nk_anti_aliasing AA = NK_ANTI_ALIASING_ON;
+
+	    nk_glfw3_render(g_Queue, imageIndex, imageAvailableSemaphore, AA); //  Note: Uncomment to use Nuklear.
  
 
 	vkCmdEndRenderPass(g_CommandBuffer);
