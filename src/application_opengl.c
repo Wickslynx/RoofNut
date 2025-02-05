@@ -1,5 +1,12 @@
+/**
+@file application_opengl.c
+@brief Implementation of OpenGL application.
+*/
+
+/**@brief Include all nessecary headers.*/
 #include "external/glew/include/GL/glew.h"
 #include "external/glfw/include/GLFW/glfw3.h"
+
 
 #include "application_opengl.h"
 #include "image.h"
@@ -7,8 +14,10 @@
 #include <stdio.h>
 #include <string.h>
 
+/**@brief Set up the Nuklear Context.*/
 struct nk_context *ctx;
 
+/**@brief Set up the main Application struct.*/
 struct Application {
     struct ApplicationSpecification specification;
     bool running;
@@ -25,7 +34,7 @@ struct Application {
     } nuklear;
 };
 
-// Define Nuklear implementation:
+/**@brief Define the nuklear implementation:*/
 #define NK_INCLUDE_FIXED_TYPES
 #define NK_INCLUDE_STANDARD_IO
 #define NK_INCLUDE_DEFAULT_ALLOCATOR
@@ -38,10 +47,14 @@ struct Application {
 #include "external/Nuklear/nuklear.h"
 #include "external/Nuklear/nuklear_glfw_gl3.h"
 
-// Global variables:
+/**@brief Global variables:*/
 static GLFWwindow *g_Window; 
 extern ImageRenderer* imageRenderer;  
 
+/**
+*@brief Destroys the OpenGL and nuklear contextes.
+*@param app The main application struct.
+*/
 static void DestroyOpenGL(struct Application* app) {
     if (ctx) {
         nk_glfw3_shutdown(app->nuklear.glfw);
@@ -54,6 +67,11 @@ static void DestroyOpenGL(struct Application* app) {
     }
     glfwTerminate();
 }
+
+/**
+*@brief Initializes Nuklear context.
+*@param app The main application struct.
+*/
 
 static bool init_nuklear(struct Application* app) {
     app->nuklear.glfw = malloc(sizeof(struct nk_glfw));
@@ -71,6 +89,11 @@ static bool init_nuklear(struct Application* app) {
     nk_glfw3_font_stash_end(app->nuklear.glfw);
     return true;
 }
+
+/**
+*@brief Initializes OpenGL context.
+*@param app The main application struct.
+*/
 
 static bool init_opengl(struct Application* app) {
     if (!glfwInit()) {
@@ -121,6 +144,11 @@ static bool init_opengl(struct Application* app) {
     app->windowHandle = g_Window;
     return true;
 }
+
+/**
+*@brief Limits the frame rate. 
+*@param app The main application struct.
+*/
 
 static void limit_frame_rate(struct Application* app) {
     if (app->timing.targetFrameRate <= 0) return;
