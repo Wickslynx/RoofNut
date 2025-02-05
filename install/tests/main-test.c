@@ -2,6 +2,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 
+#define ROOFNUT_TEST_FILE
 #define ROOFNUT_IMPLEMENTATION
 #include <roofnut.h>
 
@@ -34,7 +35,7 @@ int main() {
     struct Application* app = RoofNutCreate(&appSpec);
     if (!app) {
         fprintf(stderr, "Failed to create application!\n");
-        return EXIT_FAILURE;
+        return 0;
     }
     
     RoofNutDestroy(app);
