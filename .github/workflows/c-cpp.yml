@@ -26,6 +26,7 @@ jobs:
     - name: Run tests.
       run: |
         g++ install/tests/main-test.c -o main -lRoofNut  -lGLEW -lGL -lglfw -lvulkan
+        ./main
 
 
 
