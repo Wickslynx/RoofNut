@@ -17,12 +17,14 @@
 extern struct nk_context *ctx; 
 
 void RoofNutRender() {
-  //Insert your Nuklear code here.
+  //Insert your rendering code here. (Nuklear and image rendering).
+
   if (nk_begin(ctx, "", nk_rect(50, 50, 1280, 720),
-                     NK_WINDOW_BORDER | NK_WINDOW_MOVABLE | NK_WINDOW_SCALABLE |
-                     NK_WINDOW_MINIMIZABLE | NK_WINDOW_TITLE)) {
+                     NK_WINDOW_BORDER | NK_WINDOW_TITLE)) {
   }
+
   RenderImage("path-to-image", 100, 100, 100, 100);
+ 
   nk_end(ctx);
 
   

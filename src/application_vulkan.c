@@ -1,4 +1,4 @@
-
+#include "image.h"
 #include "application_vulkan.h"
 #include <stdlib.h>
 #include <stdio.h>
@@ -58,6 +58,12 @@ void check_vk_result(VkResult err) {
 }
 
 void init_vulkan() {
+    if (glfwVulkanSupported()) {
+        printf("GLFW version - Fine.");
+    } else {
+        printf("Your GLFW version dosen't support vulkan, use OpenGL mode instead.");
+        exit(EXIT_FAILURE);
+    }
     VkApplicationInfo appInfo = {
         .sType = VK_STRUCTURE_TYPE_APPLICATION_INFO,
         .pApplicationName = "RoofNut application",

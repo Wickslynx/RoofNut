@@ -1,6 +1,7 @@
 #ifndef IMAGE_H
 #define IMAGE_H
 
+#ifdef ROOFNUT_USE_OPENGL
 #include <GL/gl.h>
 #include <stdbool.h>
 
@@ -21,4 +22,10 @@ void RenderImage(const char* filename, int width, int height, float posX, float 
 void renderImage(ImageRenderer* renderer);
 void destroyImageRenderer(ImageRenderer* renderer);
 
-#endif
+#else
+
+void RenderImage(const char* filename, int width, int height, float posX, float posY);
+
+#endif //ROOFNUT_USE_OPENGl
+
+#endif //IMAGE_H

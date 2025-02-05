@@ -20,12 +20,12 @@ add_subdirectory(${PARENT_DIR}/include/external/glfw ${CMAKE_BINARY_DIR}/glfw)
 find_package(Vulkan QUIET)
 find_package(OpenGL QUIET)
 
-if (OpenGL_FOUND)
+if (OenGL_FOUND)
     # Add GLEW subdirectory
     add_subdirectory(${PARENT_DIR}/include/external/glew/build/cmake ${CMAKE_BINARY_DIR}/glew)
     set(GLEW_DIR ${PARENT_DIR}/include/external/glew/src)
     
-    message(STATUS "Using built-in OpenGL for rendering.")
+    message(STATUS "Using OpenGL for rendering.")
     add_definitions(-DUSE_OPENGL)
     
     set(SOURCES

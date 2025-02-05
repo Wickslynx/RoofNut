@@ -5,6 +5,7 @@
 #include <stdlib.h>
 #include <stdio.h>
 #include <vulkan/vulkan.h>
+#define GLFW_INCLUDE_VULKAN
 #include "external/glfw/include/GLFW/glfw3.h"
 
 // Define constants, if needed, for Vulkan or GLFW initialization

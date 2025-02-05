@@ -1,5 +1,12 @@
 #ifndef ROOFNUT_IMAGE_SUPPORT_OFF
+
+#ifdef ROOFNUT_USE_VULKAN
+#include <vulkan/vulkan.h>
+#else 
 #include <GL/glew.h>
+#endif
+
+
 #include "image.h"
 #include <stdio.h>
 #include <stdlib.h>
@@ -8,6 +15,7 @@
 #define STB_IMAGE_IMPLEMENTATION
 #include "stb_image.h"
 
+#ifdef ROOFNUT_USE_OPENGL
 ImageRenderer* imageRenderer = NULL;  
 
 // Vertex shader
@@ -172,5 +180,13 @@ void destroyImageRenderer(ImageRenderer* renderer) {
     glDeleteProgram(renderer->shaderProgram);
     free(renderer);
 }
+
+#else
+
+void RenderImage(const char* filename, int width, int height, float posX, float posY) {
+    printf("(WARNING) Images is not supported in the vulkan version, will not be rendered.");
+}
+
+#endif //ROOFNUT_USE_OPENGL
 
 #endif //ROOFNUT_IMAGE_SUPPORT_OFF
