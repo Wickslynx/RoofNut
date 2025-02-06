@@ -1,6 +1,6 @@
 # RoofNut
 
-**Version 1.23**
+**Version 1.24**
 
 RoofNut is a lightweight GUI framework inspired by Walnut, using GLFW and Vulkan or OPENGL for rendering, and Nuklear for the GUI. It's an evolving library designed for high performance with a customizable, immediate-mode interface.
 
