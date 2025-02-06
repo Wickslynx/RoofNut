@@ -7,3 +7,6 @@ Roofnut was heavily inspired by Studio Chernos Walnut application framework and 
 Nuclear.
 GLFW.
 
+
+# THIS WAS THE FIRST VERSION OF ROOFNUT 101% wont run.. No idea what the .... i made here. .....Why is this even here anymore?
+
