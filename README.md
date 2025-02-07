@@ -61,6 +61,6 @@ How many lines of code do you think this application took? I made this applicati
 
 # Support:
 Please email me on Wickslynx@yahoo.com
-I will respond as soon as possible, updates come regularly. On School days almost every day.
+I will respond as soon as possible, updates come regularly. ***I'm aiming to drop weekly releases with changes and performace updates, and bit updates each month.***
 
 ***RoofNut is still in development!***
