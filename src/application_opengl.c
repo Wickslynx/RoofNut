@@ -176,7 +176,6 @@ static void limit_frame_rate(struct Application* app) {
 }
 
 static void RoofNut_Loop(struct Application* app) {
-    
     #ifndef ROOFNUT_INCLUDE_INTERNAL_WIDGETS
     if (!init_nuklear(app)) {
         return;
