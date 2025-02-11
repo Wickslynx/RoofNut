@@ -14,9 +14,11 @@
 #include <stdio.h>
 #include <string.h>
 
-/**@brief Set up the Nuklear Context.*/
-struct nk_context *ctx;
+#ifdef ROOFNUT_INCLUDE_INTERNAL_WIDGETS
 
+#include "widgets.h"
+
+#else
 /**@brief Set up the main Application struct.*/
 struct Application {
     struct ApplicationSpecification specification;
@@ -47,6 +49,11 @@ struct Application {
 #include "external/Nuklear/nuklear.h"
 #include "external/Nuklear/nuklear_glfw_gl3.h"
 
+/**@brief Set up the Nuklear Context.*/
+struct nk_context *ctx;
+
+#endif 
+
 /**@brief Global variables:*/
 static GLFWwindow *g_Window; 
 extern ImageRenderer* imageRenderer;  
@@ -73,6 +80,7 @@ static void DestroyOpenGL(struct Application* app) {
 *@param app The main application struct.
 */
 
+#ifndef ROOFNUT_INCLUDE_INTERNAL_WIDGETS
 static bool init_nuklear(struct Application* app) {
     app->nuklear.glfw = malloc(sizeof(struct nk_glfw));
     if (!app->nuklear.glfw) {
@@ -89,6 +97,8 @@ static bool init_nuklear(struct Application* app) {
     nk_glfw3_font_stash_end(app->nuklear.glfw);
     return true;
 }
+
+#endif
 
 /**
 *@brief Initializes OpenGL context.
@@ -166,9 +176,12 @@ static void limit_frame_rate(struct Application* app) {
 }
 
 static void RoofNut_Loop(struct Application* app) {
+    
+    #ifndef ROOFNUT_INCLUDE_INTERNAL_WIDGETS
     if (!init_nuklear(app)) {
         return;
     }
+    #endif
 
     app->timing.lastFrameTime = glfwGetTime();
 
