@@ -1,4 +1,6 @@
 /**
+Copyright (C) <2025>  <Wickslynx>
+
 @file application_opengl.c
 @brief Implementation of OpenGL application.
 */
