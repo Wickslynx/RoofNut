@@ -1,3 +1,5 @@
+//Copyright (C) <2025>  <Wickslynx>
+
 #include "image.h"
 #include "application_vulkan.h"
 #include <stdlib.h>
