@@ -1,3 +1,6 @@
+//Copyright (C) <2025>  <Wickslynx>
+
+
 #ifndef ROOFNUT_IMAGE_SUPPORT_OFF
 
 #ifdef ROOFNUT_USE_VULKAN
