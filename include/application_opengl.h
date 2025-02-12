@@ -1,3 +1,6 @@
+// Copyright (C) <2025>  <Wickslynx>
+
+
 #ifndef APPLICATION_OPENGL_H
 #define APPLICATION_OPENGL_H
 
