@@ -9,8 +9,8 @@
 #define GLFW_INCLUDE_VULKAN
 #include "external/glfw/include/GLFW/glfw3.h"
 
-// Define constants, if needed, for Vulkan or GLFW initialization
-#define APPLICATION_NAME "RoofNut Application"
+//Define global error application name.
+#define ROOFNUT_ERROR_NAME = "RoofNut Error"
 
 // Vulkan global resources
 extern VkInstance g_Instance;
