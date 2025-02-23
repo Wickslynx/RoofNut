@@ -3,6 +3,7 @@
 #include <stdlib.h>
 
 #define ROOFNUT_TEST_FILE
+#define ROOFNUT_EXPERIMENTAL_INTERNAL_WIDGETS
 #define ROOFNUT_IMPLEMENTATION
 #include <roofnut.h>
 
@@ -19,6 +20,8 @@ void RoofNutRender() {
   }
   RenderImage("assets/test-image.png", 100, 200, 0.0, 0.0);
   nk_end(ctx);
+
+  RoofNutTriangle();
 
   
 }
