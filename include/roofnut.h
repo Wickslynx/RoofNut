@@ -15,8 +15,8 @@ extern "C" {
 #include "application_vulkan.h"
 #include "widgets.h"
 #else
-#include "widgets.h"
 #include "application_opengl.h"
+#include "widgets.h"
 #endif //RoofNut include OpenGL or Vulkan.
 
 #ifdef __cplusplus
