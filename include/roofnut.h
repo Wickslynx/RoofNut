@@ -13,7 +13,9 @@ extern "C" {
 
 #ifdef ROOFNUT_USE_VULKAN
 #include "application_vulkan.h"
+#include "widgets.h"
 #else
+#include "widgets.h"
 #include "application_opengl.h"
 #endif //RoofNut include OpenGL or Vulkan.
 
