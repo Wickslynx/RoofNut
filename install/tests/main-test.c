@@ -21,7 +21,7 @@ void RoofNutRender() {
   RenderImage("assets/test-image.png", 100, 200, 0.0, 0.0);
   nk_end(ctx);
 
-  RoofNutTriangle(3.03, 443.4, 44l.3, 413.4, 3.12, 313.4);
+  //RoofNutTriangle(3.03, 443.4, 44l.3, 413.4, 3.12, 313.4);
 
   
 }
