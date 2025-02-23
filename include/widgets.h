@@ -1,8 +1,7 @@
-//
-#include "external/glew/include/GL/glew.h"
-#include "external/glfw/include/GLFW/glfw3.h"
+#ifndef WIDGETS_H
+#define WIDGETS_H
 
-
+#ifdef ROOFNUT_USE_OPENGL
 //Shaders and stuff.
 const char* vertexShaderSource = "#version 330 core\n"
 "layout (location = 0) in vec3 aPos;\n"
@@ -17,5 +16,6 @@ const char* fragmentShaderSource = "#version 330 core\n"
 "{\n"
 "   FragColor = vec4(1.0, 0.5, 0.2, 1.0);\n"
 "}\n\0"
+#endif
 
-
+#endif
