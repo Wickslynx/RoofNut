@@ -8,6 +8,9 @@
 #ifdef ROOFNUT_USE_VULKAN
 
 
+void RoofNutTriangle(float x1, float y1, float x2, float y2, float x3, float y3) {
+    printf("WARNING: RoofNut widgets are not supported in the vulkan version.")
+}
 
 #else //ROOFNUT_USE_OPENGL
 
